@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/imageNewMessagesLabel_rcvd"
+        style="@style/DateHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Messages"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/new_messages_header_back"
+        android:gravity="center"
+        android:visibility="gone"
+        android:elevation="10dp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_user_profile_rcvd"
+        android:layout_width="@dimen/message_recvd_sender_image_width"
+        android:layout_height="@dimen/message_recvd_sender_image_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/account_gray_192"
+        />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/image_bubble_rcvd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="48dp"
+        app:layout_goneMarginBottom="10dp"
+        app:layout_goneMarginTop="10dp"
+        app:layout_constraintWidth_default="spread"
+        app:layout_constraintTop_toBottomOf="@id/imageNewMessagesLabel_rcvd"
+        app:layout_constraintStart_toEndOf="@id/image_user_profile_rcvd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/bubble_received_1_nine"
+
+        >
+
+        <TextView
+            android:id="@+id/image_user_alias_rcvd"
+            style="@style/ChatLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Alias"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/image_user_role_rcvd"
+            style="@style/ChatRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="- Role"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_user_alias_rcvd"
+            />
+
+        <FrameLayout
+            android:id="@+id/image_bubble_frame_rcvd"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_user_alias_rcvd"
+            >
+
+            <ImageView
+                android:id="@+id/image_bubble_image_rcvd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/attachment_default" />
+
+            <ImageView
+                android:id="@+id/alert_image_rcvd"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:src="@drawable/alert_circle"
+                android:visibility="gone"
+                android:tint="@color/white"
+                />
+
+            <ImageView
+                android:id="@+id/image_bubble_download_rcvd"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:src="@drawable/download"
+                android:visibility="gone"/>
+
+
+            <ProgressBar
+                android:id="@+id/image_load_progress_rcvd"
+                style="?android:progressBarStyleHorizontal"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:min="0"
+                android:max="100"
+                android:progressDrawable="@drawable/custom_progress_bar_small"
+                android:visibility="gone"/>
+
+
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/image_message_rcvd"
+            style="@style/ChatNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_bubble_frame_rcvd"
+            android:text="Testing stuff not showing initially but then it started to roll into something bigger and bigger and bigger and bigger mmanhf shdfs js kju dfjuhcv jhf vchvuixchv j" />
+
+        <TextView
+            android:id="@+id/image_time_rcvd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3:45 pm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_message_rcvd"
+            style="@style/ChatTime"/>
+
+        <TextView
+            android:id="@+id/continue_rcvd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="continue.."
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_message_rcvd"
+            style="@style/ChatContinueLink"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <ImageView
+        android:id="@+id/urgent_image_rcvd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/image_bubble_rcvd"
+        app:layout_constraintBottom_toBottomOf="@id/image_bubble_rcvd"
+        app:layout_constraintStart_toEndOf="@id/image_bubble_rcvd"
+        app:layout_constraintLeft_toRightOf="@id/image_bubble_rcvd"
+        android:src="@drawable/urgent_message_small"
+        android:visibility="visible"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

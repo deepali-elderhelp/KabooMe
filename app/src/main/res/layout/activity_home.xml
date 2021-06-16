@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    >
+
+    <!-- Other components and views -->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/mainAppBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/mainToolbar"
+            style="@style/Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextAppearance="@style/ToolbarTitleAppearance"
+            app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance"
+            app:title="@string/app_name"
+            >
+            <ImageView
+                android:id="@+id/mainToolbarNetworkOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/network_off"
+                android:visibility="gone"
+                />
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <fragment
+        android:id="@+id/fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:navGraph="@navigation/home_nav"
+        app:defaultNavHost="true"
+        />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="bottom"
+        app:buttonGravity="bottom|top"
+        app:fabAlignmentMode="end"
+        app:fabCradleMargin="10dp"
+        app:navigationIcon="@drawable/nav_drawer_icon"
+        app:menu="@menu/bottom_menu"
+        app:hideOnScroll="true"
+        />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createGroupFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/new_group_fav"
+        app:backgroundTint="@color/white"
+        app:fabSize="normal"
+        app:layout_anchor="@id/bottomAppBar"
+
+
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

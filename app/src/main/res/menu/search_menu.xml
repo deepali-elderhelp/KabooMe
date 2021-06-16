@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/search_PTL"
+        android:title="Search"
+        android:orderInCategory="100"
+        android:icon="@drawable/search"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView">
+    </item>
+    <item android:id="@+id/search_by_qr_code"
+        android:title="QR"
+        android:orderInCategory="200"
+        android:icon="@drawable/bs_qrcode"
+        android:visible="true"
+        app:showAsAction="always">
+    </item>
+
+
+</menu>

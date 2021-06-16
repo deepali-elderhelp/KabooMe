@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_fr_cr_gr_2_vertical_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_fr_cr_gr_2_vertical_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fr_cr_gr_2_text_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_fr_cr_gr_2_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_fr_cr_gr_2_vertical_end"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="40dp"
+        android:hint="@string/enter_your_alias_hint"
+        android:background="@drawable/edit_box_selector"
+        >
+
+        <EditText
+            android:id="@+id/fr_cr_gr_2_alias"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:background="@null"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fr_cr_gr_3_role_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_fr_cr_gr_2_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_fr_cr_gr_2_vertical_end"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fr_cr_gr_2_text_layout"
+        android:layout_marginTop="20dp"
+        android:hint="@string/enter_group_role_hint"
+        android:background="@drawable/edit_box_selector"
+        >
+
+        <EditText
+            android:id="@+id/fr_cr_gr_3_role"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:background="@null"
+
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/fr_cr_gr_2_role_explain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_fr_cr_gr_2_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_fr_cr_gr_2_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/fr_cr_gr_3_role_layout"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/enter_group_role_text"
+        android:textSize="11sp"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/fr_cr_gr_2_user_image"
+        android:layout_width="@dimen/group_join_user_image_width"
+        android:layout_height="@dimen/group_join_user_image_height"
+        app:layout_constraintTop_toBottomOf="@id/fr_cr_gr_2_role_explain"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_fr_cr_gr_2_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_fr_cr_gr_2_vertical_end">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+
+    <TextView
+        android:id="@+id/fr_cr_gr_2_change_picture_label"
+        style="@style/JoinGroupLabelsHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/change_your_group_picture"
+        app:layout_constraintStart_toStartOf="@id/guideline_fr_cr_gr_2_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_fr_cr_gr_2_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/fr_cr_gr_2_user_image" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

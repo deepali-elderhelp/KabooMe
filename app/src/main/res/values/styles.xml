@@ -1,0 +1,603 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorWindowStatusBar</item>
+<!--        <item name="windowActionBarOverlay">true</item>-->
+<!--        <item name="android:windowActionBarOverlay">true</item>-->
+<!--        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/grey</item>-->
+        <item name="android:windowFullscreen">false</item>-->
+<!--        <item name="inputBackground">@color/input_message_background</item>-->
+        <item name="inputBackground">@color/white</item>
+    </style>
+
+    <style name="AppTheme.GradientBackground" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/shape_gradient_background</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
+        </item>
+    </style>
+
+
+    <style name="ToolbarTitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20dp</item>
+        <!-- include other attributes you want to change: textColor, textStyle, etc -->
+    </style>
+
+    <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="ImageButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/color_states_image_button</item>
+    </style>
+
+    <style name="MyCustomDialogTheme" parent="@android:style/Theme.Panel">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/anim_in</item>
+        <item name="android:windowExitAnimation">@anim/anim_out</item>
+    </style>
+
+    <style name="OutlineTextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textColorHint">@color/selector_text_input_hint</item>
+<!--        <item name="helperTextTextColor">@color/greyDark</item>-->
+        <item name="helperTextTextAppearance">@style/SmallText</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="boxStrokeColor">@color/selector_text_input_border</item>
+        <item name="boxBackgroundColor">@color/white</item>
+<!--        <item name="boxCornerRadiusBottomEnd">8dp</item>-->
+<!--        <item name="boxCornerRadiusBottomStart">8dp</item>-->
+<!--        <item name="boxCornerRadiusTopEnd">8dp</item>-->
+<!--        <item name="boxCornerRadiusTopStart">8dp</item>-->
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+    </style>
+
+    <style name="OutlineEditText">
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <style name="OutlineTextMessageInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textColorHint">@color/selector_text_input_hint</item>
+        <!--        <item name="helperTextTextColor">@color/greyDark</item>-->
+        <item name="helperTextTextAppearance">@style/SmallText</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="boxStrokeColor">@color/selector_text_input_border</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <!--        <item name="boxCornerRadiusBottomEnd">8dp</item>-->
+        <!--        <item name="boxCornerRadiusBottomStart">8dp</item>-->
+        <!--        <item name="boxCornerRadiusTopEnd">8dp</item>-->
+        <!--        <item name="boxCornerRadiusTopStart">8dp</item>-->
+        <item name="boxCornerRadiusBottomEnd">25dp</item>
+        <item name="boxCornerRadiusBottomStart">25dp</item>
+        <item name="boxCornerRadiusTopEnd">25dp</item>
+        <item name="boxCornerRadiusTopStart">25dp</item>
+    </style>
+
+    <style name="OutlineEditMessageText">
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="GradientButton">
+<!--        <item name="android:background">@drawable/drawable_button_gradient_background</item>-->
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingTop">19dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+
+    <style name="LighterButton">
+        <item name="android:background">@drawable/drawable_button_light_background</item>
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingTop">19dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SmallGradientButton">
+        <item name="android:background">@drawable/button_selector</item>
+<!--        <item name="android:background">@drawable/drawable_button_gradient_background</item>-->
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="SmallLighterButton">
+        <item name="android:background">@drawable/drawable_button_light_background</item>
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="SmallGreyGradientButton">
+        <item name="android:background">@drawable/drawable_button_grey_gradient_background</item>
+        <!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+    <style name="SmallRedGradientButton">
+        <item name="android:background">@drawable/drawable_button_red_gradient_background</item>
+        <!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+    <style name="Toolbar">
+        <item name="android:background">@color/white</item>
+        <item name="navigationIcon">@drawable/ic_back</item>
+<!--        <item name="contentInsetLeft">0dp</item>-->
+<!--        <item name="contentInsetStart">0dp</item>-->
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="titleMarginStart">0dp</item>
+        <item name="titleTextAppearance">@style/TitleText</item>
+    </style>
+
+
+    <style name="Toolbar.Gradient">
+        <item name="android:background">@drawable/gradient</item>
+        <item name="navigationIcon">@drawable/back_white</item>
+        <item name="contentInsetLeft">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="titleMarginStart">0dp</item>
+        <item name="titleTextAppearance">@style/MessageGroupLabel</item>
+    </style>
+
+    <style name="Toolbar.NoNavigation">
+        <item name="android:background">@color/white</item>
+        <item name="titleTextAppearance">@style/TitleText</item>
+        <item name="contentInsetStart">16dp</item>
+        <item name="navigationIcon">@null</item>
+    </style>
+
+    <style name="DialogStyle" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+
+    <style name="TitleText">
+        <item name="android:textColor">@color/deepBlue</item>
+        <item name="android:textSize">22sp</item>
+<!--        <item name="android:fontFamily">sans-serif-medium</item>-->
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="SmallText">
+        <item name="android:textColor">@color/greyDark</item>
+        <item name="android:textColorLink">@color/colorAccent</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="MediumText">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="HugeText">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="HugeText.White">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="SmallText.Primary" parent="SmallText">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+        <style name="group_list_group_heading">
+
+            <item name="android:lineHeight">14sp</item>
+            <item name="android:textSize">14sp</item>
+            <item name="android:textColor">#243E45</item>
+            <item name="android:textStyle">bold</item>
+<!--            <item name="android:fontFamily">sans-serif-medium</item>-->
+<!--            <item name="android:fontFamily">@font/roboto_bold</item>-->
+            <item name="android:fontFamily">@font/biryani</item>
+
+
+        </style>
+
+        <style name="expiry_warning">
+
+            <item name="android:textSize">
+                12sp
+            </item>
+
+            <item name="android:textColor">
+                #FE967F
+            </item>
+
+        </style>
+
+    <style name="message_time">
+
+        <item name="android:textSize">
+            8sp
+        </item>
+        <item name="android:textColor">
+            #7C8990
+        </item>
+        <item name="android:fontFamily">@font/biryani_light</item>
+    </style>
+
+
+        <style name="group_list_last_message">
+            <item name="android:lineHeight">12sp</item>
+            <item name="android:textSize">12sp</item>
+            <item name="android:textColor">#7C8990</item>
+            <!--            <item name="android:fontFamily">sans-serif-medium</item>-->
+<!--            <item name="android:fontFamily">@font/roboto_medium</item>-->
+            <item name="android:fontFamily">@font/biryani_light</item>
+        </style>
+
+        <style name="kaboome_appbar">
+
+            <item name="android:textSize">
+                22sp
+            </item>
+
+            <item name="android:textColor">
+                #243E45
+            </item>
+<!--            <item name="android:fontFamily">@font/roboto_bold</item>-->
+            <item name="android:fontFamily">@font/biryani_bold</item>
+
+        </style>
+
+    <style name="MessageGroupLabel">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="GroupQRLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupQRLabelsNormal">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupQRLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupRequestHelp">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#243E45</item>
+    </style>
+
+    <style name="NoData">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="NoDataSmall">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="NoDataVerySmall">
+        <item name="android:textColor">#7C8990</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/biryani</item>
+    </style>
+
+    <style name="GroupActionsLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupActionsLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="InvitationLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="InvitationLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="JoinGroupsLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="JoinGroupNormal">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="JoinGroupLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="JoinGroupLabelsHint">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+<!--        <item name="android:textColor">@color/header_bold_color</item>-->
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ContactLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+<!--        <item name="android:textColor">@color/header_bold_color</item>-->
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupInfoLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ProfileLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ProfileLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupInfoLabelsSmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupInfoLabelsVerySmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupInfoLinks">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:textColor">#01ACD3</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="GroupInfoLeave">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textColor">#EB5757</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+<!--    <style name="GroupInfoSmallDetails">-->
+<!--        <item name="android:lineSpacingMultiplier">1.12</item>-->
+<!--        <item name="android:textColor">#243E45</item>-->
+<!--        <item name="android:textSize">12sp</item>-->
+<!--    </style>-->
+
+    <style name="GroupInfoSmallDetailsInGrey">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textColor">#7C8990</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+
+    <style name="GroupNotificationsLevels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textColor">#7C8990</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="ChatLabels">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textColor">@color/header_bold_color</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatNormal">
+        <item name="android:lineSpacingMultiplier">1</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatRole">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatTime">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatWelcomeLabel">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatWelcome">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ChatContinueLink">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="DateHeader">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani_bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="FileName">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="ProgressBarPrimary" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">true</item>
+        <item name="android:progressDrawable">@drawable/progess_bar_drawable</item>
+        <item name="android:minHeight">10dip</item>
+        <item name="android:maxHeight">20dip</item>
+    </style>
+
+
+    <color name="colorWindowStatusBar">#B9BBBB</color>
+</resources>
+
+
+
+
+
+
+
+

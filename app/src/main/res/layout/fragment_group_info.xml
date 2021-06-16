@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".presentation.views.features.groupInfo.GroupInfoActivity"
+        android:scrollbars="vertical"
+        >
+
+        <ProgressBar
+            android:id="@+id/group_info_full_progress_bar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:indeterminateDrawable="@drawable/custom_progress_bar"
+            android:indeterminateDuration="1000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"
+            android:elevation="10dp"
+            />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_group_info_vertical_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_group_info_vertical_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/group_info_image_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/guideline_group_info_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_group_info_vertical_start"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/group_info_edit_image_card_progress_bar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:indeterminateDrawable="@drawable/custom_progress_bar"
+                    android:indeterminateDuration="1000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:elevation="10dp"
+                    android:visibility="gone"
+                    />
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/group_info_edit_image"-->
+<!--                    android:layout_width="@dimen/group_info_edit_arrow_width"-->
+<!--                    android:layout_height="@dimen/group_info_edit_arrow_height"-->
+<!--                    android:layout_marginRight="15dp"-->
+<!--                    android:src="@drawable/more_arrow"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@id/group_info_image_frame"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="@id/group_info_image_frame" />-->
+
+                <ImageView
+                    android:id="@+id/group_info_edit_image"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/more_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_info_image" />
+
+<!--                <TextView-->
+<!--                    android:id="@+id/group_info_name"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="15dp"-->
+<!--                    android:text=""-->
+<!--                    style="@style/GroupActionsLabels"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/group_info_image_frame"></TextView>-->
+
+                <TextView
+                    android:id="@+id/group_info_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text=""
+                    style="@style/GroupActionsLabels"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_image"></TextView>
+
+
+                <TextView
+                    android:id="@+id/group_info_members_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="13dp"
+                    android:text=""
+                    style="@style/GroupActionsLabelsSmall"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_name"
+                    app:layout_constraintBottom_toBottomOf="parent"></TextView>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/group_info_image"
+                    android:layout_width="@dimen/group_actions_dialog_image_width"
+                    android:layout_height="@dimen/group_actions_dialog_image_height"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                                        />
+
+<!--                <FrameLayout-->
+<!--                    android:id="@+id/group_info_image_frame"-->
+<!--                    android:layout_width="@dimen/group_actions_dialog_image_width"-->
+<!--                    android:layout_height="@dimen/group_actions_dialog_image_height"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginTop="20dp"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent">-->
+
+<!--                    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--                        android:id="@+id/group_info_image"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        />-->
+
+<!--                    <ProgressBar-->
+<!--                        android:id="@+id/group_info_image_progress"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:indeterminateDrawable="@drawable/custom_progress_bar_small"-->
+<!--                        android:indeterminateDuration="1000"-->
+<!--                        android:visibility="gone"/>-->
+<!--                </FrameLayout>-->
+
+
+                <!--            <de.hdodenhof.circleimageview.CircleImageView-->
+                <!--                android:id="@+id/group_info_image"-->
+                <!--                android:layout_width="@dimen/group_actions_dialog_image_width"-->
+                <!--                android:layout_height="@dimen/group_actions_dialog_image_height"-->
+                <!--                android:layout_gravity="center"-->
+                <!--                android:layout_marginTop="20dp"-->
+                <!--                app:layout_constraintLeft_toLeftOf="parent"-->
+                <!--                app:layout_constraintRight_toRightOf="parent"-->
+                <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/group_info_details_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guideline_group_info_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_group_info_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/group_info_image_card">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/group_info_description_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp">
+
+                <ProgressBar
+                    android:id="@+id/group_info_edit_details_card_progress_bar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:indeterminateDrawable="@drawable/custom_progress_bar"
+                    android:indeterminateDuration="1000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:visibility="gone"
+                    android:elevation="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/group_info_divider_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:paddingLeft="0dp"
+                    android:src="@drawable/group_info_line_divider"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_description" />
+
+                <ImageView
+                    android:id="@+id/group_info_edit_description"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/more_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_divider_line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_info_descrption_label" />
+
+                <ImageView
+                    android:id="@+id/group_info_expiration_divider_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/group_info_line_divider"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_expiration" />
+
+
+                <ImageView
+                    android:id="@+id/group_info_edit_expiration"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/more_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_expiration_divider_line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_info_expiration_label" />
+
+                <TextView
+                    android:id="@+id/group_info_expiration_label"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:text="Expiry Date"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_divider_line" />
+
+                <TextView
+                    android:id="@+id/group_info_expiration"
+                    style="@style/GroupInfoLabelsSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="60dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    app:layout_constraintTop_toBottomOf="@id/group_info_expiration_label" />
+
+                <TextView
+                    android:id="@+id/group_info_descrption_label"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/group_info_description"
+                    style="@style/GroupInfoLabelsSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="60dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text=""
+                    app:layout_constraintTop_toBottomOf="@id/group_info_descrption_label" />
+
+                <TextView
+                    android:id="@+id/group_info_notifications_label"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notifications"
+                    app:layout_constraintTop_toTopOf="@id/group_info_expiration_divider_line"
+                    android:layout_marginTop="13dp"/>
+
+                <TextView
+                    android:id="@+id/group_info_notifications"
+                    style="@style/GroupInfoLabelsSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="60dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text=""
+                    app:layout_constraintTop_toBottomOf="@id/group_info_notifications_label" />
+
+                <ImageView
+                    android:id="@+id/group_info_edit_notifications"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginRight="15dp"
+                    android:src="@drawable/more_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_notifications_divider_line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_info_notifications_label" />
+
+                <ImageView
+                    android:id="@+id/group_info_notifications_divider_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/group_info_line_divider"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_notifications" />
+
+                <TextView
+                    android:id="@+id/group_info_accept_requests_label"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:layout_marginBottom="13dp"
+                    android:layout_marginRight="60dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Do not accept new requests"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_notifications_divider_line"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/group_info_accept_requests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_info_notifications_divider_line"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/group_info_members_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guideline_group_info_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_group_info_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/group_info_details_card">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/group_info_members_card_progress_bar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:indeterminateDrawable="@drawable/custom_progress_bar"
+                    android:indeterminateDuration="1000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:visibility="gone"
+                    android:elevation="10dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/group_info_add_admin_image"
+                    android:layout_width="@dimen/group_info_add_admin_width"
+                    android:layout_height="@dimen/group_info_add_admin_height"
+                    android:src="@drawable/admin_big"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_admin_recycler" />
+
+                <ImageView
+                    android:id="@+id/group_info_admins_divider_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/group_info_line_divider"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_add_more_admins" />
+
+                <TextView
+                    android:id="@+id/group_info_add_more_admins"
+                    style="@style/GroupInfoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Add more admins"
+                    app:layout_constraintStart_toEndOf="@id/group_info_add_admin_image"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_admin_recycler" />
+
+                <TextView
+                    android:id="@+id/group_info_group_admins"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Group Admins ()"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/group_info_group_members"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:text="Members ()"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_admins_divider_line" />
+
+                <ImageView
+                    android:id="@+id/group_info_group_members_divider_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:src="@drawable/group_info_line_divider"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_invite_people_image" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/group_info_members_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_group_members_divider_line" />
+
+                <TextView
+                    android:id="@+id/group_info_see_all_member"
+                    style="@style/GroupInfoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="13dp"
+                    android:text="@string/see_all_members"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_members_recycler"
+                    />
+
+                <!--            <ImageView-->
+                <!--                android:id="@+id/group_info_group_members_edit"-->
+                <!--                android:layout_width="10dp"-->
+                <!--                android:layout_height="15dp"-->
+                <!--                android:layout_marginRight="15dp"-->
+                <!--                android:src="@drawable/more_arrow"-->
+                <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                app:layout_constraintTop_toTopOf="@id/group_info_group_members" />-->
+
+                <ImageView
+                    android:id="@+id/group_info_invite_people_image"
+                    android:layout_width="@dimen/group_info_add_admin_width"
+                    android:layout_height="@dimen/group_info_add_admin_height"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/invite_member"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_group_members" />
+
+                <TextView
+                    android:id="@+id/group_info_invite_people"
+                    style="@style/GroupInfoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="13dp"
+                    android:text="@string/invite_members"
+                    app:layout_constraintStart_toEndOf="@id/group_info_invite_people_image"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_group_members"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/group_info_admin_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_group_admins" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/group_info_qr_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guideline_group_info_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_group_info_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/group_info_members_card">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/group_info_edit_qr_code_card_progress_bar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:indeterminateDrawable="@drawable/custom_progress_bar"
+                    android:indeterminateDuration="1000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:visibility="gone"
+                    android:elevation="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/group_info_qr_code_label"
+                    style="@style/GroupInfoLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="QR Code"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/group_info_qr_code_description"
+                    style="@style/GroupInfoLabelsSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="This QR code can be scanned to join the group or you can print QR code for ease in scanning"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_qr_code_label" />
+
+                <ImageView
+                    android:id="@+id/group_info_qr_image"
+                    android:layout_width="190dp"
+                    android:layout_height="190dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_qr_code_description"
+                    app:layout_constraintBottom_toTopOf="@id/group_info_share_qr_code"
+                    android:layout_marginTop="20dp"
+                    />
+
+                <ImageView
+                    android:id="@+id/group_info_share_qr_image"
+                    android:layout_width="@dimen/group_info_add_admin_width"
+                    android:layout_height="@dimen/group_info_add_admin_height"
+                    android:src="@drawable/share"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_qr_image" />
+
+
+                <TextView
+                    android:id="@+id/group_info_share_qr_code"
+                    style="@style/GroupInfoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Share QR Code"
+                    app:layout_constraintStart_toEndOf="@id/group_info_share_qr_image"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_qr_image" />
+
+
+                <ImageView
+                    android:id="@+id/group_info_print_qr_image"
+                    android:layout_width="@dimen/group_info_add_admin_width"
+                    android:layout_height="@dimen/group_info_add_admin_height"
+                    android:src="@drawable/print"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_share_qr_image" />
+
+
+                <TextView
+                    android:id="@+id/group_info_print_qr_code"
+                    style="@style/GroupInfoLinks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Print QR Code"
+                    app:layout_constraintStart_toEndOf="@id/group_info_print_qr_image"
+                    app:layout_constraintTop_toBottomOf="@id/group_info_share_qr_code" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/group_info_leave_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="@id/guideline_group_info_vertical_end"
+            app:layout_constraintStart_toStartOf="@id/guideline_group_info_vertical_start"
+            app:layout_constraintTop_toBottomOf="@id/group_info_qr_code">
+
+            <TextView
+                android:id="@+id/group_info_edit_leave_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/GroupInfoLeave"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="13dp"
+                android:text="Leave and Delete the Group">
+
+
+            </TextView>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

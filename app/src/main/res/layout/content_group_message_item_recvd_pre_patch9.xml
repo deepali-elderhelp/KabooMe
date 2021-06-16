@@ -1,0 +1,74 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="8dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_message_profile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"/>
+
+<!--    <com.stfalcon.chatkit.utils.ShapeImageView-->
+<!--        android:id="@+id/messageUserAvatar"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginRight="8dp"/>-->
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/bubble_recvd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/message_incoming_bubble_margin_right"
+        android:layout_marginRight="@dimen/message_incoming_bubble_margin_right"
+        android:layout_toEndOf="@id/image_message_profile"
+        android:layout_toRightOf="@id/image_message_profile"
+        android:orientation="vertical"
+        app:flexDirection="column"
+        app:alignContent="stretch"
+        app:alignItems="stretch"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_end">
+
+        <TextView
+            android:id="@+id/text_user_alias_role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_alignSelf="flex_start"
+            android:text="User Alias + Role"
+            android:textStyle="bold"
+            style="@style/ChatLabels"/>
+
+        <TextView
+            android:id="@+id/text_message_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="testing the message etc"
+            style="@style/ChatNormal"/>
+
+        <TextView
+            android:id="@+id/text_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_message_body"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_alignSelf="flex_end"
+            android:text="3:45"
+            style="@style/ChatNormal"/>
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+
+
+
+</RelativeLayout>

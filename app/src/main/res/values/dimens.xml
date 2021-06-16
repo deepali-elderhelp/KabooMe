@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recycler_loading_view_height">80dp</dimen>
+<!--    <dimen name="input_button_width">36dp</dimen>-->
+<!--    <dimen name="input_button_height">36dp</dimen>-->
+<!--    <dimen name="input_button_margin">16dp</dimen>-->
+    <dimen name="input_button_width">35dp</dimen>
+    <dimen name="input_button_height">35dp</dimen>
+<!--    <dimen name="input_button_margin">8dp</dimen>-->
+    <dimen name="input_button_margin">0dp</dimen>
+    <dimen name="input_text_size">14sp</dimen>
+<!--    <dimen name="input_padding_left">16sp</dimen>-->
+<!--    <dimen name="input_padding_right">16sp</dimen>-->
+<!--    <dimen name="input_padding_left">8sp</dimen>-->
+<!--    <dimen name="input_padding_right">8sp</dimen>-->
+
+<!--    <dimen name="input_padding_top">8sp</dimen>-->
+<!--    <dimen name="input_padding_bottom">8sp</dimen>-->
+
+    <dimen name="input_padding_left">0sp</dimen>
+    <dimen name="input_padding_right">0sp</dimen>
+
+    <dimen name="input_padding_top">0sp</dimen>
+    <dimen name="input_padding_bottom">0sp</dimen>
+
+    <dimen name="attachment_button_width">28dp</dimen>
+    <dimen name="attachment_button_height">28dp</dimen>
+    <dimen name="attachment_button_margin">8dp</dimen>
+
+    <dimen name="message_bubble_corners_radius">15dp</dimen>
+
+    <dimen name="dialog_avatar_width">56dp</dimen>
+    <dimen name="dialog_avatar_height">56dp</dimen>
+    <dimen name="dialog_last_message_avatar_width">24dp</dimen>
+    <dimen name="dialog_last_message_avatar_height">24dp</dimen>
+    <dimen name="dialog_title_text_size">18sp</dimen>
+    <dimen name="dialog_message_text_size">16sp</dimen>
+    <dimen name="dialog_date_text_size">14sp</dimen>
+    <dimen name="dialog_unread_bubble_text_size">13sp</dimen>
+    <dimen name="dialog_divider_margin_left">88dp</dimen>
+    <dimen name="dialog_divider_margin_right">0dp</dimen>
+
+    <dimen name="message_avatar_width">40dp</dimen>
+    <dimen name="message_avatar_height">40dp</dimen>
+<!--    <dimen name="message_padding_left">16dp</dimen>-->
+<!--    <dimen name="message_padding_right">16dp</dimen>-->
+<!--    <dimen name="message_padding_top">16dp</dimen>-->
+<!--    <dimen name="message_padding_bottom">16dp</dimen>-->
+    <dimen name="message_padding_left">6dp</dimen>
+    <dimen name="message_padding_right">6dp</dimen>
+    <dimen name="message_padding_top">6dp</dimen>
+    <dimen name="message_padding_bottom">6dp</dimen>
+
+    <dimen name="message_alias_text_size">12sp</dimen>
+    <dimen name="message_text_size">14sp</dimen>
+    <dimen name="message_time_text_size">11sp</dimen>
+    <dimen name="message_date_header_text_size">16sp</dimen>
+    <dimen name="message_date_header_padding">16dp</dimen>
+    <dimen name="message_incoming_bubble_margin_right">40dp</dimen>
+    <dimen name="message_outcoming_bubble_margin_left">88dp</dimen>
+
+    <dimen name="group_join_user_image_width">100dp</dimen>
+    <dimen name="group_join_user_image_height">100dp</dimen>
+
+    <dimen name="group_actions_dialog_image_width">152dp</dimen>
+    <dimen name="group_actions_dialog_image_height">152dp</dimen>
+    <dimen name="group_actions_icon_width">20dp</dimen>
+    <dimen name="group_actions_icon_height">20dp</dimen>
+    <dimen name="group_info_add_admin_width">20dp</dimen>
+    <dimen name="group_info_add_admin_height">20dp</dimen>
+    <dimen name="group_user_add_admin_width">20dp</dimen>
+    <dimen name="group_user_add_admin_height">20dp</dimen>
+
+    <dimen name="group_search_dialog_image_width">152dp</dimen>
+    <dimen name="group_search_dialog_image_height">152dp</dimen>
+    <dimen name="group_info_edit_arrow_width">20dp</dimen>
+    <dimen name="group_info_edit_arrow_height">20dp</dimen>
+    <dimen name="user_group_list_image_width">60dp</dimen>
+    <dimen name="user_group_list_image_height">60dp</dimen>
+    <dimen name="group_search_list_item_image_width">60dp</dimen>
+    <dimen name="group_search_list_item_image_height">60dp</dimen>
+    <dimen name="message_recvd_sender_image_width">30dp</dimen>
+    <dimen name="message_recvd_sender_image_height">30dp</dimen>
+    <dimen name="message_sent_sender_image_width">30dp</dimen>
+    <dimen name="message_sent_sender_image_height">30dp</dimen>
+    <dimen name="group_user_list_image_width">36dp</dimen>
+    <dimen name="group_user_list_image_height">36dp</dimen>
+    <dimen name="image_big_progress_bar_circle_width">182dp</dimen>
+    <dimen name="image_big_progress_bar_circle_height">182dp</dimen>
+
+</resources>

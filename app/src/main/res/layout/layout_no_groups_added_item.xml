@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <TextView
+            android:id="@+id/no_convs_added_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/no_groups_added_yet"
+            style="@style/NoData"/>
+
+        <TextView
+            android:id="@+id/no_convs_added_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/no_convs_added_title"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="@string/no_groups_added_yet_detail"
+            style="@style/NoDataSmall"
+            android:gravity="center"
+            android:maxLines="3"/>
+
+        <TextView
+            android:id="@+id/no_groups_create_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/no_convs_added_desc"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            style="@style/NoDataVerySmall"
+            android:gravity="center"
+            android:maxLines="3"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

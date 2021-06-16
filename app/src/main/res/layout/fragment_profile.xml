@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ProgressBar
+        android:id="@+id/profile_full_progress_bar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminateDrawable="@drawable/custom_progress_bar"
+        android:indeterminateDuration="1000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_profile_vertical_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_profile_vertical_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_profile_horizontal_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_profile_horizontal_below_email"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.51"/>
+
+    <FrameLayout
+        android:id="@+id/profile_image_frame"
+        android:layout_width="@dimen/group_actions_dialog_image_width"
+        android:layout_height="@dimen/group_actions_dialog_image_height"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_profile_horizontal_middle">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" />
+
+        <ProgressBar
+            android:id="@+id/profile_image_progress"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:indeterminateDrawable="@drawable/custom_progress_bar"
+            android:indeterminateDuration="1000"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="User Name"
+        style="@style/ProfileLabelsSmall"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/profile_image_frame"></TextView>
+
+    <ImageView
+        android:id="@+id/profile_edit_profile_name"
+        android:layout_width="@dimen/group_info_edit_arrow_width"
+        android:layout_height="@dimen/group_info_edit_arrow_height"
+        android:src="@drawable/more_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_profile_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/profile_image_frame" />
+
+
+
+    <ImageView
+        android:id="@+id/profile_edit_image"
+        android:layout_width="@dimen/group_info_edit_arrow_width"
+        android:layout_height="@dimen/group_info_edit_arrow_height"
+        android:src="@drawable/more_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_profile_horizontal_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/profile_email_label"
+        style="@style/ProfileLabels"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        app:layout_constraintTop_toBottomOf="@id/guideline_profile_horizontal_middle"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        android:layout_marginTop="20dp"/>
+
+
+    <TextView
+        android:id="@+id/profile_email"
+        style="@style/ProfileLabelsSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="User Email"
+        app:layout_constraintTop_toBottomOf="@id/profile_email_label"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"/>
+
+
+
+    <ImageView
+        android:id="@+id/profile_divider_line"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/profile_email"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_profile_horizontal_below_email"
+        android:layout_marginTop="10dp"/>
+
+
+    <ImageView
+        android:id="@+id/profile_edit_email"
+        android:layout_width="@dimen/group_info_edit_arrow_width"
+        android:layout_height="@dimen/group_info_edit_arrow_height"
+        android:src="@drawable/more_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_profile_horizontal_below_email"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        app:layout_constraintTop_toTopOf="@id/guideline_profile_horizontal_middle" />
+
+
+    <TextView
+        android:id="@+id/profile_phone_label"
+        style="@style/ProfileLabels"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Phone"
+        app:layout_constraintTop_toBottomOf="@id/guideline_profile_horizontal_below_email"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"
+        android:layout_marginTop="20dp"/>
+
+
+    <TextView
+        android:id="@+id/profile_phone"
+        style="@style/ProfileLabelsSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="User Phone"
+        app:layout_constraintTop_toBottomOf="@id/profile_phone_label"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_profile_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_profile_vertical_end"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

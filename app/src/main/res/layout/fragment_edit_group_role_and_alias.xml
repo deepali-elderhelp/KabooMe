@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_group_name_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="20dp"
+        >
+
+<!--        <com.google.android.material.appbar.AppBarLayout-->
+<!--            android:id="@+id/groupEditAliasAndRoleAppBarLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
+
+<!--            <androidx.appcompat.widget.Toolbar-->
+<!--                android:id="@+id/groupEditAliasAndRoleToolbar"-->
+<!--                style="@style/Toolbar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:title="@string/group_edit_label" />-->
+
+<!--        </com.google.android.material.appbar.AppBarLayout>-->
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupAliasAndRoleGuidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupAliasAndRoleGuidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <ImageView
+            android:id="@+id/group_edit_alias_role_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/content_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/close" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_edit_alias_role_user_image"
+            android:layout_width="@dimen/group_actions_dialog_image_width"
+            android:layout_height="@dimen/group_actions_dialog_image_height"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/account_gray_192"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd">
+
+        </de.hdodenhof.circleimageview.CircleImageView>
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/group_edit_alias_role_user_image_pb"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toStartOf="@id/group_edit_alias_role_user_image"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/group_edit_alias_role_user_image"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/group_edit_alias_role_user_image"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginRight="20dp"-->
+<!--            style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
+<!--            android:indeterminateOnly="true"-->
+<!--             />-->
+
+
+<!--        <ProgressBar-->
+
+<!--            android:id="@+id/group_edit_alias_role_user_image_pb"-->
+<!--            style="@style/ProgressBarPrimary"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="2dp"-->
+<!--            app:layout_constraintStart_toStartOf="@id/group_edit_alias_role_user_image"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/group_edit_alias_role_user_image"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/group_edit_alias_role_user_image"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginRight="20dp"-->
+<!--            android:max="100"-->
+<!--            android:progress="50"-->
+<!--            android:indeterminate="true"-->
+<!--             />-->
+
+        <ProgressBar
+            android:id="@+id/group_edit_alias_role_user_image_pb"
+            android:layout_width="@dimen/group_actions_dialog_image_width"
+            android:layout_height="@dimen/group_actions_dialog_image_height"
+            android:indeterminateDrawable="@drawable/progress"
+            android:indeterminateDuration="1000"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="50dp"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            android:visibility="visible"
+            />
+
+        <TextView
+            android:id="@+id/group_edit_alias_role_change_picture_label"
+            style="@style/JoinGroupLabelsHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/change_your_user_group_picture"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/group_edit_alias_role_user_image" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_group_alias_layout"
+            style="@style/OutlineTextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/group_edit_alias_role_change_picture_label">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editGroupAlias"
+                style="@style/OutlineEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/group_aliasAndRoler_hint"
+                android:inputType="text"
+                android:lines="1"
+                 />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_group_role_layout"
+            style="@style/OutlineTextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/edit_group_alias_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editGroupRole"
+                style="@style/OutlineEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/group_role_hint"
+                android:inputType="text"
+                android:lines="1"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            app:layout_constraintTop_toBottomOf="@id/edit_group_role_layout"
+            style="@style/GroupInfoSmallDetailsInGrey"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="left"
+            android:text="Add the Role that you will play in the organization. Role shows up next to your Alias in the group messages. For example, Alias 'John's Mom' with role 'Room Rep'."
+            />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save_group_aliasAndRole"
+            style="@style/GradientButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="@id/editGroupAliasAndRoleGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/editGroupAliasAndRoleGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/edit_group_role_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:enabled="false"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "813361026393",
+    "firebase_url": "https://kaboome-24570.firebaseio.com",
+    "project_id": "kaboome-24570",
+    "storage_bucket": "kaboome-24570.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813361026393:android:0e6da2ca9c7e707b",
+        "android_client_info": {
+          "package_name": "com.java.kaboome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813361026393-g90m9cnj6l5rkmet33hdttrjt7ad2ucc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOBEJUibj3-Ua1_-z86TXPEVTXyUQj6Xw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813361026393-g90m9cnj6l5rkmet33hdttrjt7ad2ucc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

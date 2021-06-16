@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+<resources>
+    <color name="colorPrimary">#19D1EA</color>
+    <color name="colorPrimaryDark">#16ADDD</color>
+    <color name="colorAccent">#19D1EA</color>
+    <color name="deepBlue">#243E45</color>
+    <color name="grey">#BBC2C6</color>
+    <color name="greyTransparent30">#4DBBC2C6</color>
+    <color name="greyTransparent50">#80BBC2C6</color>
+    <color name="greyDark">#7C8990</color>
+    <color name="greyDarkTransparent60">#99BBC2C6</color>
+    <color name="lightBlue">#D5F3FA</color>
+    <color name="lightBlueTransparent20">#33D5F3FA</color>
+    <color name="white">#ffffff</color>
+    <color name="whiteTransparent30">#4DFFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
+-->
+<resources>
+    <color name="colorPrimary">#19D1EA</color>
+    <color name="colorPrimaryDark">#16ADDD</color>
+    <!--<color name="colorAccent">#D81B60</color>-->
+    <color name="signUpHeader">#157D94</color>
+
+    <color name="colorAccent">#19D1EA</color>
+<!--    <color name="colorAccent">#a6afb1</color>-->
+    <color name="deepBlue">#243E45</color>
+    <color name="grey">#BBC2C6</color>
+    <color name="greyAsWindow">#B9BBBB</color>
+    <color name="greyTransparent30">#4DBBC2C6</color>
+    <color name="greyTransparent50">#80BBC2C6</color>
+    <color name="greyDark">#7C8990</color>
+    <color name="greyDarkTransparent60">#99BBC2C6</color>
+    <color name="lightBlue">#D5F3FA</color>
+    <color name="lightBlueTransparent20">#33D5F3FA</color>
+    <color name="whiteTransparent30">#4DFFFFFF</color>
+    <color name="lightButtonBackground">#D5F3FA</color>
+    <color name="chatInputBackground">#F8FAFB</color>
+
+
+
+    <color name="colorOffWhite">#FAF8D2</color>
+
+    <color name="colorNavBarPrimary">#19D1EA</color>
+    <color name="colorNavBarPrimaryDark">#159CC7</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red">#FF0000</color>
+
+    <color name="edit_border">#DFD2D6D6</color>
+    <color name="edit_border_selected">#19D1EA</color>
+
+    <color name="activeDots">#fffafa</color>
+    <color name="inactiveDots">#83878b</color>
+
+    <color name="appnar_title_color">#243E45</color>
+
+    <color name="grey_100">#F5F7F7</color>
+    <color name="grey_200">#FFD1DADC</color>
+    <color name="grey_250">#abb2b4</color>
+    <color name="grey_300">#8D9496</color>
+    <color name="grey_400">#5A5D5E</color>
+    <color name="grey_500">#404142</color>
+    <color name="grey_600">#303232</color>
+    <color name="grey_700">#1D1E1E</color>
+
+    <color name="outgoingMessageBubbleColor">#00718B</color>
+    <color name="incomingMessageBubbleColor">#BBCFD3</color>
+    <color name="incomingTextColor">#243E45</color>
+    <color name="incomingAliasTextColor">#243E45</color>
+    <color name="incomingTimeTextColor">#7C8990</color>
+
+    <color name="group_actions_dialog_name">#243E45</color>
+    <color name="group_actions_dialog_members">#7C8991</color>
+
+    <color name="group_search_dialog_name">#243E45</color>
+    <color name="group_search_dialog_members">#7C8991</color>
+
+    <color name="header_bold_color">#243E45</color>
+
+
+
+    <color name="white60">#a0ffffff</color>
+    <color name="white_two">#efefef</color>
+    <color name="white_three">#ebebeb</color>
+    <color name="white_four">#e0e0e0</color>
+    <color name="white_five">#dadada</color>
+    <color name="blue">#031cd7</color>
+    <color name="transparent">#00000000</color>
+    <color name="gray">#333333</color>
+    <color name="dark_gray">#282a2b</color>
+    <color name="dark_grey_two">#191a1b</color>
+    <color name="warm_grey">#7f7f7f</color>
+    <color name="warm_grey_two">#9c9c9c</color>
+    <color name="warm_grey_three">#8b8b8b</color>
+    <color name="warm_grey_four">#979797</color>
+    <color name="dark_mint">#51c05c</color>
+    <color name="cornflower_blue_two">#4f62d7</color>
+    <color name="cornflower_blue_two_24">#3d4f62d7</color>
+    <color name="cornflower_blue_two_dark">#475bd4</color>
+    <color name="cornflower_blue_light_40">#64bec5f7</color>
+
+    <color name="dialog_divider">@color/white_three</color>
+    <color name="dialog_title_text">@color/dark_gray</color>
+    <color name="dialog_message_text">@color/warm_grey</color>
+    <color name="dialog_date_text">@color/warm_grey_two</color>
+    <color name="dialog_unread_text">@color/white</color>
+    <color name="dialog_unread_bubble">@color/dark_mint</color>
+    <color name="input_message_background">#F8FAFB</color>
+    <color name="urgency_button_text_color">#7C8990</color>
+    <color name="urgent_background">#EF6D6D</color>
+    <color name="urgent_background_dark">#F65858</color>
+</resources>
+

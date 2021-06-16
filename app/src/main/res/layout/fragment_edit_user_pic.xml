@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_group_name_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="20dp"
+        >
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editUserPicGuidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editUserPicGuidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <ImageView
+            android:id="@+id/edit_user_pic_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/content_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/close" />
+
+        <FrameLayout
+            android:id="@+id/user_change_image_frame"
+            android:layout_width="@dimen/group_actions_dialog_image_width"
+            android:layout_height="@dimen/group_actions_dialog_image_height"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="@+id/editUserPicGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editUserPicGuidelineStart"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_change_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp" />
+
+            <ProgressBar
+                android:id="@+id/user_change_image_progress"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="match_parent"
+                android:indeterminateDrawable="@drawable/custom_progress_bar"
+                android:indeterminateDuration="1000"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+<!--        <de.hdodenhof.circleimageview.CircleImageView-->
+<!--            android:id="@+id/user_change_image"-->
+<!--            android:layout_width="@dimen/group_actions_dialog_image_width"-->
+<!--            android:layout_height="@dimen/group_actions_dialog_image_height"-->
+<!--            android:layout_marginTop="50dp"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/editUserNameGuidelineEnd"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/editUserNameGuidelineStart"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:ignore="ContentDescription" />-->
+
+        <TextView
+            android:id="@+id/change_picture_label"
+            style="@style/TitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:text="@string/change_picture"
+            app:layout_constraintEnd_toEndOf="@+id/editUserPicGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editUserPicGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/user_change_image_frame" />
+
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save_user_image"
+            style="@style/GradientButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="@+id/editUserPicGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editUserPicGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/change_picture_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:enabled="false"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

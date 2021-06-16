@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_group_name_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="20dp"
+        android:focusableInTouchMode="true"
+        >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupNameGuidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupNameGuidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <ImageView
+            android:id="@+id/edit_group_pic_name_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/content_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/close" />
+
+        <FrameLayout
+            android:id="@+id/edit_group_pic_name_image_frame"
+            android:layout_width="@dimen/group_actions_dialog_image_width"
+            android:layout_height="@dimen/group_actions_dialog_image_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/edit_group_pic_name_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bs_profile"
+                />
+
+            <ProgressBar
+                android:id="@+id/edit_group_pic_name_image_progress"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="match_parent"
+                android:indeterminateDrawable="@drawable/custom_progress_bar_small"
+                android:indeterminateDuration="1000"
+                android:visibility="gone"/>
+        </FrameLayout>
+
+
+<!--        <ImageView-->
+<!--            android:id="@+id/group_change_image"-->
+<!--            android:layout_width="@dimen/group_actions_dialog_image_width"-->
+<!--            android:layout_height="@dimen/group_actions_dialog_image_height"-->
+<!--            android:layout_marginTop="50dp"-->
+<!--            android:src="@drawable/bs_profile"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:ignore="ContentDescription" />-->
+
+        <TextView
+            android:id="@+id/change_picture_label"
+            style="@style/GroupInfoLinks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:text="@string/change_picture"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/edit_group_pic_name_image_frame" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/save_picture_label"-->
+<!--            style="@style/GroupInfoLinks"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="35dp"-->
+<!--            android:text="@string/save_picture"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/edit_group_pic_name_image_frame"-->
+<!--            android:visibility="gone"/>-->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_group_name_layout"
+            style="@style/OutlineTextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/change_picture_label">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editGroupName"
+                style="@style/OutlineEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/group_name_hint"
+                android:inputType="textPersonName|textCapWords"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+<TextView
+    android:id="@+id/edit_group_name_private_lbl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/edit_group_name_layout"
+    app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"
+    android:layout_marginTop="25dp"
+    android:text="Private Group"
+    style="@style/GroupInfoLabelsSmall"/>
+
+
+<androidx.appcompat.widget.SwitchCompat
+    android:id="@+id/edit_group_name_private_switch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"
+    app:layout_constraintLeft_toRightOf="@id/edit_group_name_private_lbl"
+    app:layout_constraintTop_toBottomOf="@id/edit_group_name_layout"
+    android:layout_marginTop="25dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save_group_name_and_image"
+            style="@style/GradientButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupNameGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupNameGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/edit_group_name_private_lbl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:enabled="false"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

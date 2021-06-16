@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by KabooMe, Inc.
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  */
+  -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    android:useLevel="true"
+    android:dither="true">
+
+    <size android:height="8dp" android:width="8dp"/>
+    <solid android:color="@color/colorPrimary"/>
+
+</shape>

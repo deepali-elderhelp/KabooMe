@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav.xml"
+    app:startDestination="@id/groupsListFragment">
+
+    <fragment
+        android:id="@+id/groupsListFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupList.GroupsListFragment"
+        android:label="Kaboo Me"
+        tools:layout="@layout/fragment_groups_list" >
+        <action
+            android:id="@+id/action_groupsListFragment_self"
+            app:destination="@id/groupsListFragment"
+            app:popUpTo="@id/groupsListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_groupsListFragment_to_groupActionsDialog"
+            app:destination="@id/groupActionsDialog" />
+        <action
+            android:id="@+id/action_groupsListFragment_to_groupRequestsFragment"
+            app:destination="@id/groupRequestsFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_groupsListFragment_to_groupMessagesFragment"
+            app:destination="@id/groupMessagesFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/invitationsListFragment"
+        android:name="com.java.kaboome.presentation.views.features.invitationsList.InvitationsListFragment"
+        android:label="Invitations"
+        tools:layout="@layout/fragment_invitations_list" >
+        <action
+            android:id="@+id/action_invitationsListFragment_to_joinInvitedGroupDialog"
+            app:destination="@id/joinInvitedGroupDialog"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_invitationsListFragment_to_joinInvitedPrivateGroupDialog"
+            app:destination="@id/joinInvitedPrivateGroupDialog"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/searchGroupFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupSearch.SearchGroupFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search_group" >
+        <action
+            android:id="@+id/action_searchGroupFragment_to_scanQRCodeFragment"
+            app:destination="@id/scanQRCodeFragment" />
+        <action
+            android:id="@+id/action_searchGroupFragment_to_groupActionsDialog"
+            app:destination="@id/groupActionsDialog" />
+        <action
+            android:id="@+id/action_searchGroupFragment_to_joinGroupDialog"
+            app:destination="@id/joinGroupDialog" />
+        <action
+            android:id="@+id/action_searchGroupFragment_to_joinPrivateGroupDialog"
+            app:destination="@id/joinPrivateGroupDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/groupActionsDialog"
+        android:name="com.java.kaboome.presentation.views.features.groupActions.GroupActionsDialog"
+        tools:layout="@layout/fragment_group_actions_dialog" >
+        <action
+            android:id="@+id/action_groupActionsDialog_to_groupQRFragment"
+            app:destination="@id/groupQRFragment" />
+        <action
+            android:id="@+id/action_groupActionsDialog_to_inviteContactsFragment"
+            app:destination="@id/inviteContactsFragment" />
+        <action
+            android:id="@+id/action_groupActionsDialog_to_groupRequestsFragment"
+            app:destination="@id/groupRequestsFragment" />
+        <action
+            android:id="@+id/action_groupActionsDialog_to_groupInfoFragment"
+            app:destination="@id/groupInfoFragment" />
+        <action
+            android:id="@+id/action_groupActionsDialog_to_groupMessagesFragment"
+            app:destination="@id/groupMessagesFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/scanQRCodeFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupSearch.ScanQRCodeFragment"
+        android:label="Scan QR Code"
+        tools:layout="@layout/fragment_scan_qrcode" >
+        <action
+            android:id="@+id/action_scanQRCodeFragment_to_scanQRCodeGalleryFragment"
+            app:destination="@id/scanQRCodeGalleryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scanQRCodeGalleryFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupSearch.ScanQRCodeGalleryFragment"
+        android:label="Pick QR From Gallery"
+        tools:layout="@layout/fragment_scan_qrcode_gallery" />
+    <dialog
+        android:id="@+id/joinGroupDialog"
+        android:name="com.java.kaboome.presentation.views.features.joinGroup.JoinGroupDialog"
+        android:label="Join Group"
+        tools:layout="@layout/fragment_join_group_dialog" >
+        <action
+            android:id="@+id/action_joinGroupDialog_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/joinPrivateGroupDialog"
+        android:name="com.java.kaboome.presentation.views.features.joinGroup.JoinPrivateGroupDialog"
+        android:label="Join Group"
+        tools:layout="@layout/fragment_join_private_group_dialog" >
+        <action
+            android:id="@+id/action_joinPrivateGroupDialog_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/joinInvitedGroupDialog"
+        android:name="com.java.kaboome.presentation.views.features.invitationsList.JoinInvitedGroupDialog"
+        android:label="fragment_join_invited_group_dialog"
+        tools:layout="@layout/fragment_join_invited_group_dialog" >
+        <action
+            android:id="@+id/action_joinInvitedGroupDialog_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/joinInvitedPrivateGroupDialog"
+        android:name="com.java.kaboome.presentation.views.features.invitationsList.JoinInvitedPrivateGroupDialog"
+        android:label="fragment_join_invited_private_group_dialog"
+        tools:layout="@layout/fragment_join_invited_private_group_dialog" >
+        <action
+            android:id="@+id/action_joinInvitedPrivateGroupDialog_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <fragment
+        android:id="@+id/groupQRFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupQRCode.GroupQRFragment"
+        android:label="QR Code"
+        tools:layout="@layout/fragment_group_qr" />
+    <dialog
+        android:id="@+id/inviteContactsMessageDialog"
+        android:name="com.java.kaboome.presentation.views.features.inviteContacts.InviteContactsMessageDialog"
+        android:label="Message for contacts"
+        tools:layout="@layout/fragment_invite_contacts_message_dialog" />
+    <fragment
+        android:id="@+id/inviteContactsFragment"
+        android:name="com.java.kaboome.presentation.views.features.inviteContacts.InviteContactsFragment"
+        android:label="Invite Contacts"
+        tools:layout="@layout/fragment_invite_contacts">
+        <action
+            android:id="@+id/action_inviteContactsFragment_to_inviteContactsMessageDialog"
+            app:destination="@id/inviteContactsMessageDialog" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupRequestsFragment"
+        android:name="com.java.kaboome.presentation.views.features.requestsList.GroupRequestsFragment"
+        android:label="Requests"
+        tools:layout="@layout/fragment_group_requests" />
+    <fragment
+        android:id="@+id/groupInfoFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupInfoFragment"
+        android:label="Group Info"
+        tools:layout="@layout/fragment_group_info" >
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupPicAndNameFragment"
+            app:destination="@id/editGroupPicAndNameFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupDescription"
+            app:destination="@id/editGroupDescription" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupExpiryFragment"
+            app:destination="@id/editGroupExpiryFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupUserNotificationFragment"
+            app:destination="@id/editGroupUserNotificationFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupRoleAndAliasFragment"
+            app:destination="@id/editGroupRoleAndAliasFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_editGroupAddAdminFragment"
+            app:destination="@id/editGroupAddAdminFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_inviteContactsFragment"
+            app:destination="@id/inviteContactsFragment" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_userPicDisplayFragment"
+            app:destination="@id/userPicDisplayFragment"
+            app:popUpTo="@id/groupInfoFragment"
+            />
+        <!-- app:enterAnim="@anim/anim_in"
+            app:exitAnim="@anim/anim_out" -->
+        <action
+            android:id="@+id/action_groupInfoFragment_to_groupUserActionsDialog"
+            app:destination="@id/groupUserActionsDialog" />
+        <action
+            android:id="@+id/action_groupInfoFragment_to_groupPicDisplayFragment"
+            app:destination="@id/groupPicDisplayFragment" />
+
+    </fragment>
+    <dialog
+        android:id="@+id/editGroupPicAndNameFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupPicAndNameFragment"
+        android:label="Edit Group Info"
+        tools:layout="@layout/fragment_edit_group_pic_and_name" >
+        <action
+            android:id="@+id/action_editGroupPicAndNameFragment_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+        <action
+            android:id="@+id/action_editGroupPicAndNameFragment_to_groupPicDisplayFragment"
+            app:destination="@id/groupPicDisplayFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/editGroupDescription"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupDescription"
+        android:label="fragment_edit_group_description"
+        tools:layout="@layout/fragment_edit_group_description" />
+    <dialog
+        android:id="@+id/editGroupExpiryFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupExpiryFragment"
+        android:label="Edit Group Expiry"
+        tools:layout="@layout/fragment_edit_group_expiry" />
+    <dialog
+        android:id="@+id/editGroupUserNotificationFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupUserNotificationFragment"
+        android:label="Edit Notification"
+        tools:layout="@layout/fragment_edit_group_user_notification" />
+    <dialog
+        android:id="@+id/editGroupRoleAndAliasFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupRoleAndAliasFragment"
+        android:label="Edit Role/Alias"
+        tools:layout="@layout/fragment_edit_group_role_and_alias" >
+        <action
+            android:id="@+id/action_editGroupRoleAndAliasFragment_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/editGroupAddAdminFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupAddAdminFragment"
+        android:label="Add Admins"
+        tools:layout="@layout/fragment_edit_group_add_admin" >
+        <action
+            android:id="@+id/action_editGroupAddAdminFragment_to_userPicDisplayFragment"
+            app:destination="@id/userPicDisplayFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/drawerBottomSheetFragment"
+        android:name="com.java.kaboome.presentation.views.features.home.DrawerBottomSheetFragment"
+        tools:layout="@layout/drawer_bottom_sheet" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.java.kaboome.presentation.views.features.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_editUserEmailFragment"
+            app:destination="@id/editUserEmailFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editUserPicFragment"
+            app:destination="@id/editUserPicFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editUserName"
+            app:destination="@id/editUserName" />
+    </fragment>
+    <dialog
+        android:id="@+id/editUserName"
+        android:name="com.java.kaboome.presentation.views.features.profile.EditUserNameFragment"
+        android:label="Edit Name"
+        tools:layout="@layout/fragment_edit_user_name" />
+    <dialog
+        android:id="@+id/editUserEmailFragment"
+        android:name="com.java.kaboome.presentation.views.features.profile.EditUserEmailFragment"
+        android:label="Edit Email"
+        tools:layout="@layout/fragment_edit_user_email" />
+    <dialog
+        android:id="@+id/editUserPicFragment"
+        android:name="com.java.kaboome.presentation.views.features.profile.EditUserPicFragment"
+        android:label="Edit Picture"
+        tools:layout="@layout/fragment_edit_user_pic" >
+        <action
+            android:id="@+id/action_editUserPicFragment_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+    </dialog>
+    <dialog
+        android:id="@+id/pictureDialog"
+        android:name="com.java.kaboome.presentation.images.PictureDialog"
+        android:label="picture_dialog_layout"
+        tools:layout="@layout/picture_dialog_layout" />
+    <fragment
+        android:id="@+id/createGroupFragment"
+        android:name="com.java.kaboome.presentation.views.features.createGroup.CreateGroupFragment"
+        android:label="Create New Group"
+        tools:layout="@layout/fragment_create_group" >
+        <action
+            android:id="@+id/action_createGroupFragment_to_pictureDialog"
+            app:destination="@id/pictureDialog" />
+        <action
+            android:id="@+id/action_createGroupFragment_to_groupMessagesFragment"
+            app:destination="@id/groupMessagesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newGroupInfo1Fragment"
+        android:name="com.java.kaboome.presentation.views.features.createGroup.NewGroupInfo1Fragment"
+        tools:layout="@layout/fragment_new_group_info1" />
+    <fragment
+        android:id="@+id/newGroupInfo2Fragment"
+        android:name="com.java.kaboome.presentation.views.features.createGroup.NewGroupInfo2Fragment"
+        tools:layout="@layout/fragment_new_group_info2" />
+    <fragment
+        android:id="@+id/newGroupInfo3Fragment"
+        android:name="com.java.kaboome.presentation.views.features.createGroup.NewGroupInfo3Fragment"
+        tools:layout="@layout/fragment_new_group_info3" />
+    <fragment
+        android:id="@+id/groupMessagesFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.GroupMessagesFragment"
+        tools:layout="@layout/fragment_group_messages_try_patch9" >
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_messageAttachmentsDialog"
+            app:destination="@id/messageAttachmentsDialog" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_imageViewerFragment"
+            app:destination="@id/imageViewerFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_videoViewerFragment"
+            app:destination="@id/videoViewerFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_audioViewerFragment"
+            app:destination="@id/audioViewerFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_inviteContactsFragment"
+            app:destination="@id/inviteContactsFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_userImageDisplayFragment"
+            app:destination="@id/userImageDisplayFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_groupUserAdminMessagesFragment"
+            app:destination="@id/groupUserAdminMessagesFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_groupConversationsFragment"
+            app:destination="@id/groupConversationsFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/messageAttachmentsDialog"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.MessageAttachmentsDialog"
+        android:label="Attachments"
+        tools:layout="@layout/fragment_message_attachments" >
+        <action
+            android:id="@+id/action_messageAttachmentsDialog_to_finishAttachmentFragment"
+            app:destination="@id/finishAttachmentFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/finishAttachmentFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.FinishAttachmentFragment"
+        android:label="Send Attachment"
+        tools:layout="@layout/fragment_finish_attachment" />
+    <fragment
+        android:id="@+id/imageViewerFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.viewers.ImageViewerFragment"
+        android:label="Image"
+        tools:layout="@layout/fragment_image_viewer" />
+    <fragment
+        android:id="@+id/videoViewerFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.viewers.VideoViewerFragment"
+        android:label="Video"
+        tools:layout="@layout/fragment_video_viewer" />
+    <fragment
+        android:id="@+id/audioViewerFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.viewers.AudioViewerFragment"
+        android:label="Audio"
+        tools:layout="@layout/fragment_audio_viewer" />
+    <dialog
+        android:id="@+id/userPicDisplayFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.UserPicDisplayFragment"
+        android:label="Image"
+        tools:layout="@layout/fragment_user_pic_display" />
+    <dialog
+        android:id="@+id/groupUserActionsDialog"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupUserActionsDialog"
+        android:label="Member"
+        tools:layout="@layout/fragment_group_user_actions_dialog" />
+    <dialog
+        android:id="@+id/groupPicDisplayFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupPicDisplayFragment"
+        android:label="Group"
+        tools:layout="@layout/fragment_group_pic_display" />
+    <dialog
+        android:id="@+id/userImageDisplayFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.UserImageDisplayFragment"
+        android:label="Image"
+        tools:layout="@layout/fragment_group_user_display_dialog" />
+    <fragment
+        android:id="@+id/groupUserAdminMessagesFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.GroupUserAdminMessagesFragment"
+        android:label="Admin Messages" >
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_messageAttachmentsDialog"
+            app:destination="@id/messageAttachmentsDialog" />
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_imageViewerFragment"
+            app:destination="@id/imageViewerFragment" />
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_videoViewerFragment"
+            app:destination="@id/videoViewerFragment" />
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_audioViewerFragment"
+            app:destination="@id/audioViewerFragment" />
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_inviteContactsFragment"
+            app:destination="@id/inviteContactsFragment" />
+        <action
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_userImageDisplayFragment"
+            app:destination="@id/userImageDisplayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupConversationsFragment"
+        android:name="com.java.kaboome.presentation.views.features.conversations.GroupConversationsFragment"
+        android:label="Private Conversations"
+        tools:layout="@layout/fragment_group_conversations" >
+        <action
+            android:id="@+id/action_groupConversationsFragment_to_groupAdminUserMessagesFragment"
+            app:destination="@id/groupAdminUserMessagesFragment" />
+        <action
+            android:id="@+id/action_groupConversationsFragment_to_addAdminUserConversationFragment"
+            app:destination="@id/addAdminUserConversationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupAdminUserMessagesFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupMessages.GroupAdminUserMessagesFragment"
+        android:label="Private Messages" >
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_messageAttachmentsDialog"
+            app:destination="@id/messageAttachmentsDialog" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_imageViewerFragment"
+            app:destination="@id/imageViewerFragment" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_videoViewerFragment"
+            app:destination="@id/videoViewerFragment" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_audioViewerFragment"
+            app:destination="@id/audioViewerFragment" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_inviteContactsFragment"
+            app:destination="@id/inviteContactsFragment" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_userImageDisplayFragment"
+            app:destination="@id/userImageDisplayFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/addAdminUserConversationFragment"
+        android:name="com.java.kaboome.presentation.views.features.conversations.AddAdminUserConversationFragment"
+        android:label="AddAdminUserConversationFragment"
+        tools:layout="@layout/fragment_add_admin_user_conversation">
+        <action
+            android:id="@+id/action_addAdminUserConversationFragment_to_groupAdminUserMessagesFragment"
+            app:destination="@id/groupAdminUserMessagesFragment" />
+    </dialog>
+</navigation>

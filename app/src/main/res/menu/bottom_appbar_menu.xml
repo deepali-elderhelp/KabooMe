@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item
+        android:id="@+id/app_bar_invitations"
+        android:icon="@drawable/invitations"
+        android:title="@string/invitations"
+        android:actionLayout="@layout/new_invitation_count"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/search"
+        android:title="@string/search"
+        app:showAsAction="ifRoom"/>
+
+
+
+
+</menu>

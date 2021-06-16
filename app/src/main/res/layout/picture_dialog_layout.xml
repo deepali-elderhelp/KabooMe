@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by KabooMe, Inc.
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  */
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ProgressBar
+        android:id="@+id/picture_dialog_pb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:indeterminateDrawable="@drawable/progress"
+        android:indeterminateDuration="1000"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/fr_gr_cr_4_1_camera_button"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:text="@string/picture_dialog_select_from_camera"
+        />
+
+    <TextView
+        android:id="@+id/fr_gr_cr_4_1_or_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/fr_gr_cr_4_1_camera_button"
+        android:text="@string/picture_dialog_or"
+        android:textColor="@color/colorPrimaryDark"/>
+
+
+    <Button
+        android:id="@+id/fr_gr_cr_4_1_gallery_button"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/fr_gr_cr_4_1_or_text"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:text="@string/picture_dialog_select_from_gallery"/>
+
+</RelativeLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/print_qr_code"
+        android:title=""
+        android:icon="@drawable/print_black"
+        android:visible="true"
+        app:showAsAction="always">
+    </item>
+    <item android:id="@+id/share_qr_code"
+        android:title=""
+        android:icon="@drawable/share_black"
+        android:visible="true"
+        app:showAsAction="always">
+    </item>
+
+</menu>

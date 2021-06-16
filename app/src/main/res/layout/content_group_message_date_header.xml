@@ -1,0 +1,58 @@
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/newMessagesLabel"
+        style="@style/DateHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Messages"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/new_messages_header_back"
+        android:gravity="center"
+        android:elevation="10dp"
+        android:visibility="gone"/>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/messageDateText"
+        app:layout_constraintTop_toTopOf="@id/messageDateText"
+        app:layout_constraintBottom_toBottomOf="@id/messageDateText"
+        android:src="@drawable/line_rectangle"
+        />
+
+    <TextView
+        android:id="@+id/messageDateText"
+        style="@style/DateHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25th July"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newMessagesLabel"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_goneMarginBottom="5dp"
+        app:layout_goneMarginTop="5dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/messageDateText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/messageDateText"
+        app:layout_constraintBottom_toBottomOf="@id/messageDateText"
+        android:src="@drawable/line_rectangle"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

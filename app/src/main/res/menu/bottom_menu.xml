@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--    <item-->
+    <!--        android:id="@id/fragmentOne"-->
+    <!--        android:title="Home"-->
+    <!--        android:icon="@drawable/ic_launcher_background"-->
+    <!--        app:showAsAction="always"-->
+    <!--        />-->
+    <!--    <item-->
+    <!--        android:id="@+id/hamburger"-->
+    <!--        android:title="hamburger"-->
+    <!--        android:icon="@drawable/nav_drawer_icon"-->
+    <!--        app:showAsAction="always"-->
+    <!--        />-->
+
+    <item
+        android:id="@id/invitationsListFragment"
+        android:title="Invitations"
+        android:icon="@drawable/invitations"
+        android:actionLayout="@layout/new_invitation_count"
+        app:showAsAction="always"
+        />
+
+
+    <item
+        android:id="@id/searchGroupFragment"
+        android:title="Settings"
+        android:icon="@drawable/search"
+        app:showAsAction="always"
+        />
+</menu>

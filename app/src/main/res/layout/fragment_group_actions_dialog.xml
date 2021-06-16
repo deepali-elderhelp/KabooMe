@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4"/>
+
+
+
+        <FrameLayout
+        android:id="@+id/group_actions_dialog_image_frame"
+        android:layout_width="@dimen/group_actions_dialog_image_width"
+        android:layout_height="@dimen/group_actions_dialog_image_height"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_hori_middle">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_actions_dialog_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/group_actions_dialog_image_progress"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:indeterminateDrawable="@drawable/custom_progress_bar_small"-->
+<!--            android:indeterminateDuration="1000"-->
+<!--            android:visibility="visible"/>-->
+
+        <ProgressBar
+            android:id="@+id/group_actions_dialog_image_progress"
+            android:layout_width="@dimen/image_big_progress_bar_circle_width"
+            android:layout_height="@dimen/image_big_progress_bar_circle_height"
+            android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/progress"
+            android:indeterminateDuration="1000"
+            android:visibility="visible"
+            />
+
+    </FrameLayout>
+
+
+<!--    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--        android:id="@+id/group_actions_dialog_image"-->
+<!--        android:layout_width="@dimen/group_actions_dialog_image_width"-->
+<!--        android:layout_height="@dimen/group_actions_dialog_image_height"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/guideline_image_details"-->
+
+<!--        />-->
+
+    <ImageView
+        android:id="@+id/group_actions_dialog_group_private"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/group_actions_dialog_name"
+        app:layout_constraintBottom_toBottomOf="@id/group_actions_dialog_name"
+        app:layout_constraintEnd_toStartOf="@id/group_actions_dialog_name"
+        app:layout_constraintRight_toLeftOf="@id/group_actions_dialog_name"
+        android:src="@drawable/private_dark"
+        />
+
+    <TextView
+        android:id="@+id/group_actions_dialog_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_dialog_image_frame"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="Group Name"
+        style="@style/GroupActionsLabels"></TextView>
+
+
+<!--    <TextView-->
+<!--        android:id="@+id/group_actions_dialog_members"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/group_actions_dialog_name"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/guideline_image_details"-->
+<!--        android:layout_marginTop="6dp"-->
+<!--        android:layout_marginLeft="20dp"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="9 regularMembers"-->
+<!--        android:textSize="14sp"-->
+<!--        android:textColor="@color/group_actions_dialog_members"></TextView>-->
+
+
+<!--    <androidx.constraintlayout.widget.Guideline-->
+<!--        android:id="@+id/guideline_dialog_actions_vertical"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layout_constraintGuide_begin="82dp" />-->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_dialog_actions_vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.22"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_mess_attach_vertical_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.82"/>
+
+    <ImageView
+        android:id="@+id/group_actions_messages_icon"
+        android:layout_width="@dimen/group_actions_icon_width"
+        android:layout_height="@dimen/group_actions_icon_height"
+        android:src="@drawable/bs_messages"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/group_actions_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"
+        style="@style/GroupActionsLabelsSmall"
+        android:text="Messages"/>
+
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/group_actions_messages_unread"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        android:layout_marginTop="32dp"
+        android:visibility="gone"
+        >
+        <ImageView
+            android:id="@+id/group_actions_unread_image"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:src="@drawable/inactive_dots"
+            ></ImageView>
+        <TextView
+            android:id="@+id/group_actions_unread_count_number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:text="0"
+            android:textAlignment="center"
+            />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/group_action_divider_line_1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_messages"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/group_actions_invite_icon"
+        android:layout_width="@dimen/group_actions_icon_width"
+        android:layout_height="@dimen/group_actions_icon_height"
+        android:src="@drawable/bs_invite_member"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_messages_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/group_actions_invite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_messages_icon"
+        app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"
+        style="@style/GroupActionsLabelsSmall"
+        android:text="Invite Member"/>
+
+    <ImageView
+        android:id="@+id/group_actions_requests_icon"
+        android:layout_width="@dimen/group_actions_icon_width"
+        android:layout_height="@dimen/group_actions_icon_height"
+        android:src="@drawable/bs_requests"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_invite_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"/>
+
+    <ImageView
+        android:id="@+id/group_action_divider_line_2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_invite"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/group_actions_requests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_invite_icon"
+        app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"
+        style="@style/GroupActionsLabelsSmall"
+        android:text="Requests"/>
+
+<!--    <FrameLayout-->
+<!--        xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_end"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@id/group_action_divider_line_2"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/group_action_divider_line_3"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:id="@+id/group_actions_requests_frame"-->
+<!--        >-->
+<!--        <ImageView-->
+<!--            android:id="@+id/group_actions_requests_image"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:src="@drawable/requests"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            ></ImageView>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/group_actions_requests_count"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:textColor="#fff"-->
+<!--            android:textSize="15sp"-->
+<!--            android:text="0"-->
+<!--            android:textAlignment="center"-->
+<!--            />-->
+
+<!--    </FrameLayout>-->
+
+    <ImageView
+        android:id="@+id/group_action_divider_line_3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_requests"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/group_actions_requests_count_frame"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/group_action_divider_line_2"
+        app:layout_constraintBottom_toBottomOf="@id/group_action_divider_line_3"
+        android:visibility="visible"
+        >
+        <ImageView
+            android:id="@+id/group_actions_requests_count_image"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:src="@drawable/primary_dots"
+            ></ImageView>
+        <TextView
+            android:id="@+id/group_actions_requests_count_number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#fff"
+            android:textSize="15sp"
+            android:text="0"
+            android:textAlignment="center"
+            />
+
+    </FrameLayout>
+
+
+    <ImageView
+        android:id="@+id/group_actions_qr_code_icon"
+        android:layout_width="@dimen/group_actions_icon_width"
+        android:layout_height="@dimen/group_actions_icon_height"
+        android:src="@drawable/bs_qrcode"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_requests_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/group_actions_qr_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_requests_icon"
+        app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"
+        style="@style/GroupActionsLabelsSmall"
+        android:text="QR Code"/>
+
+    <ImageView
+        android:id="@+id/group_action_divider_line_4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_qr_code"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/group_actions_group_info_icon"
+        android:layout_width="@dimen/group_actions_icon_width"
+        android:layout_height="@dimen/group_actions_icon_height"
+        android:src="@drawable/bs_groupinfo"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_qr_code_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"/>
+
+
+    <TextView
+        android:id="@+id/group_actions_group_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_qr_code_icon"
+        app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="32dp"
+        style="@style/GroupActionsLabelsSmall"
+        android:text="Group Info"/>
+
+    <ImageView
+        android:id="@+id/group_action_divider_line_5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintTop_toBottomOf="@id/group_actions_group_info"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_column="0"
+        android:layout_row="10"
+        app:layout_constraintTop_toBottomOf="@id/group_action_divider_line_5"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

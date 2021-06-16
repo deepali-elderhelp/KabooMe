@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_audio_top_start"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_audio_bottom_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_audio_vertical_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_audio_vertical_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+
+
+    <ImageView
+        android:id="@+id/audio_gif"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        app:layout_constraintTop_toTopOf="@id/guideline_audio_top_start"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_audio_bottom_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_audio_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_audio_vertical_end"
+        android:src="@drawable/audio_snapshot"
+        />
+
+    <LinearLayout
+        android:id="@+id/audio_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/audio_seek_bar"
+        android:layout_marginTop="20dp"
+        >
+
+
+<!--        <ImageView-->
+<!--            android:id="@+id/audio_button_alert"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:src="@drawable/alert_circle"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:visibility="gone"-->
+<!--            />-->
+
+        <ImageView
+            android:id="@+id/audio_button_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/audio_play_selector"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/audio_button_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/audio_pause_selector"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+
+        <ImageView
+            android:id="@+id/audio_button_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/audio_stop_selector"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/audio_button_download"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:src="@drawable/download_selector"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:visibility="visible"/>-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/audio_button_upload"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:src="@drawable/upload_selector"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:visibility="visible"/>-->
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/audio_length_played"
+        style="@style/ChatTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0:0"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_audio_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/audio_gif" />
+
+    <TextView
+        android:id="@+id/audio_total_length"
+        style="@style/ChatTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0:0"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="@id/guideline_audio_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/audio_gif" />
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@+id/audio_seek_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:played_color="@color/grey_200"
+        app:scrubber_color="@color/grey_400"
+        app:layout_constraintEnd_toEndOf="@id/audio_total_length"
+        app:layout_constraintStart_toStartOf="@id/audio_length_played"
+        app:layout_constraintTop_toBottomOf="@id/audio_length_played" />
+
+<!--    <ProgressBar-->
+<!--        android:id="@+id/audio_upload_progress"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_audio_vertical_start"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_audio_vertical_end"-->
+<!--        app:layout_constraintTop_toTopOf="@id/guideline_audio_top_start"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/guideline_audio_bottom_end"-->
+<!--        android:min="0"-->
+<!--        android:max="100"-->
+<!--        android:progressDrawable="@drawable/custom_progress_bar"-->
+<!--        android:visibility="gone"/>-->
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.views.features.groupMessages.viewers.ImageViewerFragment"
+    android:id="@+id/image_viewer_frame">
+
+    <ImageView
+        android:id="@+id/image_viewer_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <TextView
+        android:id="@+id/image_viewer_caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        style="@style/MediumText"/>
+
+</FrameLayout>

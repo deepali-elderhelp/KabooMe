@@ -1,0 +1,41 @@
+<!--
+  ~ /**
+  ~  * Created by KabooMe, Inc.
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  */
+  -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <rotate
+            android:fromDegrees="-45"
+            android:pivotX="0%"
+            android:pivotY="0%"
+            android:toDegrees="0" >
+            <shape android:shape="rectangle" >
+                <solid android:color="@color/colorOffWhite" />
+            </shape>
+        </rotate>
+    </item>
+    <item android:left="16dp">
+        <shape android:shape="rectangle" >
+            <solid android:color="@color/colorOffWhite" />
+            <gradient android:angle="45"
+                android:startColor="@color/colorPrimary"
+                android:endColor="@color/colorOffWhite"
+                />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!--<item android:left="16dp">-->
+        <!--<shape android:shape="rectangle" >-->
+            <!--<solid android:color="@color/colorPrimaryOffLight" />-->
+            <!--<gradient android:angle="0"-->
+                <!--android:startColor="@color/colorPrimaryOffLight"-->
+                <!--android:endColor="@color/colorPrimaryLessDark"-->
+                <!--/>-->
+            <!--<corners android:radius="4dp" />-->
+        <!--</shape>-->
+    <!--</item>-->
+</layer-list>

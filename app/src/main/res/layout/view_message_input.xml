@@ -1,0 +1,124 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:parentTag="android.widget.RelativeLayout">
+
+    <ImageButton
+        android:id="@+id/attachmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+
+        />
+
+
+    <androidx.legacy.widget.Space
+        android:id="@+id/attachmentButtonSpace"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_toEndOf="@id/attachmentButton"
+        android:layout_toRightOf="@id/attachmentButton"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_group_name_layout"
+        style="@style/OutlineTextMessageInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/attachmentButtonSpace"
+        android:layout_toRightOf="@id/attachmentButtonSpace"
+        android:layout_toLeftOf="@id/sendButtonSpace"
+        android:layout_toStartOf="@id/sendButtonSpace"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/messageInput"
+            style="@style/OutlineEditMessageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"/>
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <EditText-->
+<!--        android:id="@+id/messageInput"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        style="@style/OutlineEditText"-->
+<!--        android:layout_toEndOf="@id/attachmentButtonSpace"-->
+<!--        android:layout_toLeftOf="@id/sendButtonSpace"-->
+<!--        android:layout_toRightOf="@id/attachmentButtonSpace"-->
+<!--        android:layout_toStartOf="@id/sendButtonSpace"-->
+<!--        android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"/>-->
+
+    <androidx.legacy.widget.Space
+        android:id="@+id/sendButtonSpace"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_toLeftOf="@id/messageSendButton"
+        android:layout_toStartOf="@id/messageSendButton"/>
+
+    <ImageButton
+        android:id="@+id/messageSendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+
+</merge>
+
+
+
+
+<!--<merge-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:orientation="vertical">-->
+
+<!--    <ImageButton-->
+<!--        android:id="@+id/attachmentButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerVertical="true"/>-->
+
+<!--    <androidx.legacy.widget.Space-->
+<!--        android:id="@+id/attachmentButtonSpace"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_toEndOf="@id/attachmentButton"-->
+<!--        android:layout_toRightOf="@id/attachmentButton"/>-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/messageInput"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:layout_toEndOf="@id/attachmentButtonSpace"-->
+<!--        android:layout_toLeftOf="@id/sendButtonSpace"-->
+<!--        android:layout_toRightOf="@id/attachmentButtonSpace"-->
+<!--        android:layout_toStartOf="@id/sendButtonSpace"-->
+<!--        android:inputType="textAutoCorrect|textAutoComplete|textMultiLine|textCapSentences"/>-->
+
+<!--    <androidx.legacy.widget.Space-->
+<!--        android:id="@+id/sendButtonSpace"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_toLeftOf="@id/messageSendButton"-->
+<!--        android:layout_toStartOf="@id/messageSendButton"/>-->
+
+<!--    <ImageButton-->
+<!--        android:id="@+id/messageSendButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_centerVertical="true"/>-->
+
+<!--</merge>-->

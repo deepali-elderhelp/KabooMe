@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_group_name_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingBottom="20dp"
+        >
+
+<!--        <com.google.android.material.appbar.AppBarLayout-->
+<!--            android:id="@+id/groupEditExpiryAppBarLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
+
+<!--            <androidx.appcompat.widget.Toolbar-->
+<!--                android:id="@+id/groupEditExpiryToolbar"-->
+<!--                style="@style/Toolbar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:title="@string/group_edit_label" />-->
+
+<!--        </com.google.android.material.appbar.AppBarLayout>-->
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupExpiryGuidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/editGroupExpiryGuidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <ImageView
+            android:id="@+id/edit_group_expiry_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/content_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/close" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_group_expiry_layout"
+            style="@style/OutlineTextInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupExpiryGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupExpiryGuidelineStart"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editGroupExpiry"
+                style="@style/OutlineEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:hint="@string/enter_group_expiry_hint"
+                android:inputType="text|date"
+                android:drawableEnd="@drawable/calendar"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/editGroupExpiryDetailsLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupExpiryGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupExpiryGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/edit_group_expiry_layout"
+            android:layout_marginTop="5dp"
+            android:text="On this day group will be automatically deleted"
+            android:gravity="center"
+            style="@style/GroupInfoLabelsSmall"
+            />
+
+        <TextView
+            android:id="@+id/resetExpiryToManual"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:linksClickable="true"
+            android:textColor="@color/greyDark"
+            android:textColorLink="@color/colorAccent"
+            android:textSize="14sp"
+            android:text="Reset to Manual"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupExpiryGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupExpiryGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/editGroupExpiryDetailsLabel" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save_group_expiry"
+            style="@style/GradientButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="@+id/editGroupExpiryGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@+id/editGroupExpiryGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/edit_group_expiry_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:enabled="false"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

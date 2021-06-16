@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/group_message_clear"
+        android:title="Clear Chat"
+        android:orderInCategory="200"
+        app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/group_media_clear"
+        android:title="Clear Media"
+        android:orderInCategory="200"
+        app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/group_message_invite"
+        android:title="Invite Members"
+        android:orderInCategory="300"
+        android:icon="@drawable/account_plus"
+        app:showAsAction="never">
+    </item>
+
+    <item android:id="@+id/group_admin_chat"
+        android:title="Admins Chat"
+        android:orderInCategory="300"
+        android:icon="@drawable/admin_hat"
+        app:showAsAction="always">
+    </item>
+
+    <item android:id="@+id/group_admin_chat_lit"
+        android:title="Admins Chat"
+        android:orderInCategory="300"
+        android:icon="@drawable/admin_hat_lit"
+        android:actionLayout="@layout/new_private_message_count"
+        app:showAsAction="always">
+    </item>
+
+
+    <item android:id="@+id/group_chat"
+        android:title="Group Chat"
+        android:orderInCategory="300"
+        android:icon="@drawable/bs_messages"
+        app:showAsAction="always">
+    </item>
+
+    <item android:id="@+id/group_chat_lit"
+        android:title="Group Chat"
+        android:orderInCategory="300"
+        android:icon="@drawable/bs_messages_lite"
+        android:actionLayout="@layout/new_message_count"
+        app:showAsAction="always">
+    </item>
+
+
+</menu>

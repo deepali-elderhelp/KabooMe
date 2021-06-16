@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by KabooMe, Inc.
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  */
+  -->
+
+<paths>
+    <external-path name="kaboome_images" fullpath="." />
+    <cache-path name="shared_images" fullpath="." />
+<!--    <cache-path name="shared_images" path="images/"/>-->
+</paths>

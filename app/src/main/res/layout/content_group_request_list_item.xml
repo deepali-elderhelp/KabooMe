@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /**
+  ~  * Created by KabooMe, Inc.
+  ~  * Copyright (c) 2019 . All rights reserved.
+  ~  */
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/group_requests_list_item_parent_layout">
+
+    <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_group_requests_list_item_vertical_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_group_requests_list_item_vertical_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_requests_list_item_horizontal_start"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_requests_list_item_horizontal_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.65"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_requests_list_item_horizontal_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95"/>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.22"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_conv_name_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_reject_button_start"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_unread_details"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.82"/>
+
+    <FrameLayout
+        android:id="@+id/group_requests_list_item_user_image_frame"
+        android:layout_width="@dimen/user_group_list_image_width"
+        android:layout_height="@dimen/user_group_list_image_height"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_requests_list_item_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toTopOf="@id/guideline_group_requests_list_item_horizontal_start"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_group_requests_list_item_horizontal_middle">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_requests_list_item_user_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+             />
+
+        <ProgressBar
+            android:id="@+id/group_requests_list_item_user_image_progress"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:indeterminateDrawable="@drawable/custom_progress_bar_small"
+            android:indeterminateDuration="1000"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+
+    <TextView
+                android:id="@+id/group_requests_list_item_user_name"
+                style="@style/group_list_group_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintEnd_toEndOf="@id/guideline_conv_name_end"
+                app:layout_constraintTop_toTopOf="@id/group_requests_list_item_user_image_frame"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                android:text="Sample Group Name" />
+
+    <TextView
+        android:id="@+id/group_requests_list_item_alias_role"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_unread_details"
+        app:layout_constraintTop_toBottomOf="@id/group_requests_list_item_user_name"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="6dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        style="@style/group_list_last_message"
+        android:gravity="left"
+
+        />
+
+
+            <TextView
+                android:id="@+id/group_requests_list_item_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintEnd_toEndOf="@id/guideline_group_requests_list_item_vertical_end"
+                app:layout_constraintTop_toBottomOf="@id/group_requests_list_item_alias_role"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="6dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                style="@style/group_list_last_message"
+                android:gravity="left"
+                />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/group_requests_list_item_confirm_button"
+        style="@style/SmallGradientButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:text="@string/confirm_group"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_reject_button_start"
+        app:layout_constraintStart_toStartOf="@+id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toBottomOf="@+id/group_requests_list_item_message"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_group_requests_list_item_horizontal_end"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/group_requests_list_item_reject_button"
+        style="@style/SmallLighterButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/reject"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_group_requests_list_item_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_reject_button_start"
+        app:layout_constraintTop_toBottomOf="@+id/group_requests_list_item_message"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_group_requests_list_item_horizontal_end"
+
+        />
+
+
+
+    <ImageView
+        android:id="@+id/group_requests_list_item_divider_line"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintStart_toStartOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_group_requests_list_item_horizontal_end"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

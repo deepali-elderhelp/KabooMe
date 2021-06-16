@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/joinGroupScrollView"
+    android:fillViewport="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/group_join_invited_private_progress_bar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminateDrawable="@drawable/custom_progress_bar"
+        android:indeterminateDuration="1000"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:elevation="10dp"
+        android:visibility="gone"
+        />
+
+    <ImageView
+        android:id="@+id/group_join_invited_private_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/close" />
+
+    <TextView
+        android:id="@+id/group_join_invited_private_dialog_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:text="Group Name"
+        style="@style/JoinGroupsLabels"
+        app:layout_constraintLeft_toLeftOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintRight_toRightOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_dialog_image_frame"></TextView>
+
+
+    <TextView
+        android:id="@+id/group_join_invited_private_by_label"
+        style="@style/JoinGroupLabelsSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Invited By"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle" />
+
+
+    <TextView
+        android:id="@+id/group_join_invited_private_by"
+        style="@style/JoinGroupNormal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_by_label" />
+
+    <TextView
+        android:id="@+id/group_join_invited_private_message_label"
+        style="@style/JoinGroupLabelsSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Message By Invitee"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_divider_line" />
+
+
+    <TextView
+        android:id="@+id/group_join_invited_private_message"
+        style="@style/JoinGroupNormal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_message_label" />
+
+    <TextView
+        android:id="@+id/group_join_invited_private_fill_ino_label"
+        style="@style/JoinGroupsLabels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="@string/fill_info_to_join"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@+id/group_join_invited_private_divider_line_2" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/group_join_invited_private_user_image"
+        android:layout_width="@dimen/group_actions_dialog_image_width"
+        android:layout_height="@dimen/group_actions_dialog_image_height"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_fill_ino_label">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+    <TextView
+        android:id="@+id/group_join_invited_private_change_picture_label"
+        style="@style/JoinGroupLabelsHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/change_your_group_picture"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@+id/group_join_invited_private_user_image" />
+
+
+    <ImageView
+        android:id="@+id/group_join_invited_private_divider_line"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_by"/>
+
+    <ImageView
+        android:id="@+id/group_join_invited_private_divider_line_2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_message"/>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_join_invited_private_vertical_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_group_join_invited_private_vertical_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
+
+
+    <FrameLayout
+        android:id="@+id/group_join_invited_private_dialog_image_frame"
+        android:layout_width="@dimen/group_actions_dialog_image_width"
+        android:layout_height="@dimen/group_actions_dialog_image_height"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_join_invited_private_dialog_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <ProgressBar
+            android:id="@+id/group_join_invited_private_dialog_image_progress"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:indeterminateDrawable="@drawable/custom_progress_bar_small"
+            android:indeterminateDuration="1000"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/group_join_invited_private_alias_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/OutlineTextInput"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_change_picture_label">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/group_join_invited_private_alias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/OutlineEditText"
+            android:hint="@string/group_join_alias"
+            android:maxLines="1"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/group_join_invited_private_role_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/OutlineTextInput"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_alias_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/group_join_invited_private_role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/OutlineEditText"
+            android:hint="@string/group_role_message"
+            android:maxLines="1"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:id="@+id/group_join_invited_private_role_hint_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_role_layout"
+        style="@style/GroupInfoSmallDetailsInGrey"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="left"
+        android:text="Add the Role that you will play in the organization. Role shows up next to your Alias in the group messages. For example, Alias 'John's Mom' with role 'Room Rep'."
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/group_join_invited_private_message_to_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/OutlineTextInput"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/group_join_invited_private_role_hint_text">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/group_join_invited_private_message_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/OutlineEditText"
+            android:hint="@string/group_request_admin_message"
+            android:maxLines="2"
+            android:maxLength="300"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/private_join_invited_label"
+        style="@style/JoinGroupLabelsHint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@+id/group_join_invited_private_message_to_layout"
+        android:text="@string/send_request_message"/>
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/sendRequestButtonFromInvited"
+        style="@style/GradientButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/send_request_button"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_group_join_invited_private_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_group_join_invited_private_vertical_start"
+        app:layout_constraintTop_toBottomOf="@+id/private_join_invited_label"
+        android:enabled="false"/>
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

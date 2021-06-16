@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/fr_cr_gr_3_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/add_picture"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fr_cr_gr_3_pic_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/edit"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/fr_cr_gr_3_pic"
+        app:layout_constraintEnd_toEndOf="@id/fr_cr_gr_3_pic"
+        app:fabSize="mini"
+        app:elevation="5dp"
+        android:visibility="invisible"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fr_cr_gr_2_expiry_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fr_cr_gr_3_pic"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/enter_group_expiry_hint"
+        android:background="@drawable/edit_box_selector"
+        >
+
+        <EditText
+            android:id="@+id/fr_cr_gr_3_expiry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:background="@null"
+            android:clickable="true"
+            android:editable="false"
+            android:drawableRight="@drawable/calendar"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/fr_cr_gr_3_expiry_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fr_cr_gr_2_expiry_layout"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:text="On this day Group will be automatically deleted"
+        android:textSize="11sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/fr_cr_gr_3_expiry_text"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+
+        <TextView
+            android:id="@+id/fr_cr_gr_2_pu_pr_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/new_group_privacy_label"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+
+
+            />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/fr_cr_gr_3_pu_pr_sw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="bottom"
+            />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

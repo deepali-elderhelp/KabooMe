@@ -1,0 +1,139 @@
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <TextView-->
+<!--        android:id="@+id/newMessagesLabel"-->
+<!--        style="@style/DateHeader"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="New Messages"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:background="@drawable/new_messages_header_back"-->
+<!--        android:gravity="center"-->
+<!--        android:visibility="visible"-->
+<!--        android:elevation="10dp"/>-->
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_user_profile"
+        android:layout_width="@dimen/message_recvd_sender_image_width"
+        android:layout_height="@dimen/message_recvd_sender_image_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/account_group_grey"
+        />
+
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/text_bubble"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/image_user_profile"-->
+<!--        app:layout_constraintStart_toEndOf="@id/image_user_profile"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/newMessagesLabel"-->
+<!--        app:layout_goneMarginBottom="10dp"-->
+<!--        app:layout_goneMarginTop="10dp">-->
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/image_user_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="20dp"
+        app:layout_constrainedWidth="true">
+
+        <TextView
+            android:id="@+id/text_user_alias"
+            style="@style/ChatLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Alias"
+            android:textStyle="bold"
+             />
+
+        <TextView
+            android:id="@+id/text_user_role"
+            style="@style/ChatNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="- Role"
+            android:textStyle="bold"
+            android:layout_toRightOf="@id/text_user_alias"
+             />
+
+        <TextView
+            android:id="@+id/text_message"
+            style="@style/ChatNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing stuff not showing initially but then it started to roll into something bigger and bigger and bigger"
+            android:layout_below="@id/text_user_alias"
+            android:layout_alignLeft="@id/text_user_alias"
+             />
+
+    </RelativeLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/text_user_alias"-->
+<!--            style="@style/ChatLabels"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="User Alias"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/text_user_role"-->
+<!--            style="@style/ChatNormal"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="- Role"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toEndOf="@id/text_user_alias"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/text_message"-->
+<!--            style="@style/ChatNormal"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Testing stuff not showing initially but then it started to roll into something bigger and bigger and bigger"-->
+<!--            app:layout_constrainedWidth="true"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@id/image_user_profile"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/text_time"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="3:45 pm"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/text_message"-->
+<!--                    style="@style/ChatTime"/>-->
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+<!--    <ImageView-->
+<!--        android:id="@+id/urgent_image_recvd"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toTopOf="@id/text_bubble"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/text_bubble"-->
+<!--        app:layout_constraintStart_toEndOf="@id/text_bubble"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/text_bubble"-->
+<!--        android:src="@drawable/urgent_message_small"-->
+<!--        android:visibility="visible"/>-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

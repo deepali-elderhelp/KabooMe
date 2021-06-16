@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/group_info_group_users_parent_layout"
+    android:layout_marginTop="13dp"
+    >
+
+    <FrameLayout
+        android:id="@+id/group_info_group_users_image_frame"
+        android:layout_width="@dimen/group_user_list_image_width"
+        android:layout_height="@dimen/group_user_list_image_height"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_info_group_users_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <ProgressBar
+            android:id="@+id/group_info_group_users_image_progress"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:indeterminateDrawable="@drawable/custom_progress_bar_small"
+            android:indeterminateDuration="1000"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+<!--    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--        android:id="@+id/group_info_group_users_image"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="36dp"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:src="@drawable/bs_profile"-->
+<!--        />-->
+
+    <TextView
+        android:id="@+id/group_info_group_users_alias"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toRightOf="@id/group_info_group_users_image_frame"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="10dp"
+        style="@style/GroupInfoLabelsSmall"
+        android:text="Kate Business"/>
+
+    <TextView
+        android:id="@+id/group_info_group_users_role"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toRightOf="@id/group_info_group_users_alias"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="10dp"
+        style="@style/GroupInfoLabelsSmall"
+        android:text="Manager"/>
+
+    <ImageView
+        android:id="@+id/group_info_group_users_admin_image"
+        android:layout_width="@dimen/group_info_add_admin_width"
+        android:layout_height="@dimen/group_info_add_admin_height"
+        android:src="@drawable/admin_big"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toRightOf="@id/group_info_group_users_role"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/group_info_group_users_role_alias_edit"
+        android:layout_width="@dimen/group_info_edit_arrow_width"
+        android:layout_height="@dimen/group_info_edit_arrow_height"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/more_arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"/>
+
+
+
+    <ImageView
+        android:id="@+id/group_info_group_users_divider_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/group_info_line_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/group_info_group_users_image_frame"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

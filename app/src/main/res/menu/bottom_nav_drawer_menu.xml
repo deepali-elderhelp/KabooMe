@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/profileFragment"
+            android:icon="@drawable/bs_profile"
+            android:title="@string/drawer_profile"
+            />
+        <item
+            android:id="@+id/drawer_settings"
+            android:icon="@drawable/bs_settings"
+            android:title="@string/drawer_settings" />
+        <item
+            android:id="@+id/drawer_help"
+            android:icon="@drawable/bs_help"
+            android:title="@string/drawer_help" />
+    </group>
+</menu>
