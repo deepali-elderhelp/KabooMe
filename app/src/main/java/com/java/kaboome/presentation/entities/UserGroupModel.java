@@ -58,6 +58,8 @@ public class UserGroupModel implements Serializable {
 
     Boolean isPrivate;
 
+    Boolean unicastGroup;
+
     int numberOfRequests;
 
     Long lastRequestSentAt;
@@ -184,6 +186,14 @@ public class UserGroupModel implements Serializable {
 
     public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public Long getImageUpdateTimestamp() {

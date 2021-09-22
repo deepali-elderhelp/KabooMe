@@ -28,7 +28,8 @@
             android:layout_gravity="center"
             android:layout_height="match_parent"
             android:indeterminateDrawable="@drawable/custom_progress_bar_small"
-            android:indeterminateDuration="1000"/>
+            android:indeterminateDuration="1000"
+            android:visibility="gone"/>
     </FrameLayout>
 
 

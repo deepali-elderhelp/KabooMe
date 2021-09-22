@@ -35,7 +35,7 @@ public interface MessagesListRepository {
 
     void addNewMessage(DomainMessage message);
 
-    void deleteMessage(DomainMessage message);
+//    void deleteMessage(DomainMessage message);
 
     void clearMessagesOfGroup(String groupId);
 
@@ -70,9 +70,9 @@ public interface MessagesListRepository {
     LiveData<DomainMessage> getLastMessageForConvFromCacheLiveData(String groupId, String userId);
 
     //last message from cache single
-    DomainMessage getLastMessageForWholeGroupFromCacheSingle(String groupId);
-    DomainMessage getLastMessageForOnlyGroupFromCacheSingle(String groupId);
-    DomainMessage getLastMessageForConvFromCacheSingle(String groupId, String userId);
+    DomainMessage getLastMessageForWholeGroupFromCacheSingle(String groupId, boolean includeDeleted);
+    DomainMessage getLastMessageForOnlyGroupFromCacheSingle(String groupId, boolean includeDeleted);
+    DomainMessage getLastMessageForConvFromCacheSingle(String groupId, String userId, boolean includeDeleted);
 
     //unread messages since last access from cache as LiveData
     LiveData<List<DomainMessage>> getUnreadMessagesForWholeGroupFromCacheLiveData(String groupId);

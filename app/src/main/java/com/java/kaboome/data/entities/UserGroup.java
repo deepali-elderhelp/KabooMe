@@ -90,6 +90,10 @@ public class UserGroup implements Serializable {
     @SerializedName("privateGroup")
     private Boolean privateGroup;
 
+    @ColumnInfo(name = "unicastGroup")
+    @SerializedName("unicastGroup")
+    private Boolean unicastGroup;
+
     @ColumnInfo(name = "isDeleted")
     @SerializedName("isDeleted")
     private Boolean isDeleted = false;
@@ -264,6 +268,14 @@ public class UserGroup implements Serializable {
 
     public void setPrivateGroup(Boolean privateGroup) {
         this.privateGroup = privateGroup;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public String getIsCreator() { return isCreator; }

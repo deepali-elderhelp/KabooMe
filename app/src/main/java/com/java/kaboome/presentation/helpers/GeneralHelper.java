@@ -24,7 +24,7 @@ public class GeneralHelper {
      */
     public static boolean validateString(String text){
         if(text != null){
-            return text.matches("[A-Za-z0-9() ]+");
+            return text.matches("[A-Za-z0-9() \\-]+");
         }
         return false;
     }

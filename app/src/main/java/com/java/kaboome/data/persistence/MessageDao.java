@@ -52,23 +52,36 @@ public interface MessageDao {
 //    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = :userId ORDER BY sentAt DESC LIMIT 1")
 //    Message getLastUserAdminMessageForGroup(String group_id, String userId);
 
-    @Query("SELECT * FROM messages where groupId = :group_id ORDER BY sentAt DESC LIMIT 1")
+//    @Query("SELECT * FROM messages where groupId = :group_id AND (NOT coalesce(isDeletedLocally, 0) OR NOT coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
+@Query("SELECT * FROM messages where groupId = :group_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     LiveData<Message> getLastMessageForWholeGroupAsLiveData(String group_id);
 
-    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' ORDER BY sentAt DESC LIMIT 1")
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     LiveData<Message> getLastMessageForOnlyGroupAsLiveData(String group_id);
 
-    @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id ORDER BY sentAt DESC LIMIT 1")
+    @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     LiveData<Message> getLastMessageForConvAsLiveData(String group_id, String user_id);
 
-    @Query("SELECT * FROM messages where groupId = :group_id ORDER BY sentAt DESC LIMIT 1")
+//    @Query("SELECT * FROM messages where groupId = :group_id ORDER BY sentAt DESC LIMIT 1")
+//    Message getLastMessageForWholeGroup(String group_id);
+
+    @Query("SELECT * FROM messages where groupId = :group_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForWholeGroup(String group_id);
 
-    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' ORDER BY sentAt DESC LIMIT 1")
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0))ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForOnlyGroup(String group_id);
 
-    @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id ORDER BY sentAt DESC LIMIT 1")
+    @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForConv(String group_id, String user_id);
+
+    @Query("SELECT * FROM messages where groupId = :group_id ORDER BY sentAt DESC LIMIT 1")
+    Message getLastMessageForWholeGroupIncludingDeleted(String group_id);
+
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' ORDER BY sentAt DESC LIMIT 1")
+    Message getLastMessageForOnlyGroupIncludingDeleted(String group_id);
+
+    @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id ORDER BY sentAt DESC LIMIT 1")
+    Message getLastMessageForConvIncludingDeleted(String group_id, String user_id);
 
 
 
@@ -138,6 +151,12 @@ public interface MessageDao {
 
     @Query("UPDATE messages SET unread = 1 where groupId = :group_id and sentTo = :sent_to")
     void updateMessagesToRead(String group_id, String sent_to);
+
+//    @Query("UPDATE messages SET isDeleted = 1, messageText = :message_text where groupId = :group_id and sentTo = :sent_to and messageId = :message_id")
+//    void setLocalMessageToDelete(String message_text, String group_id, String sent_to, String message_id);
+
+    @Query("UPDATE messages SET isDeletedLocally = 1, messageText = :message_text where groupId = :group_id and sentTo = :sent_to and messageId = :message_id")
+    void setLocalMessageToDelete(String message_text, String group_id, String sent_to, String message_id);
 
 
     //UPDATE recipes SET title = :title, publisher = :publisher, image_url = :image_url, social_rank = :social_rank " +
@@ -285,14 +304,28 @@ public interface MessageDao {
 //    )
 //    DataSource.Factory<Integer, Message> getGroupMessagesForGroup(String group_id);
 
+//    @Query(
+//
+//            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread " +
+//                    "FROM messages where groupId = :group_id and sentTo = 'Group'"+
+//                    "  group by substr(CAST(date(sentAt/1000, 'unixepoch', 'localtime') as text), 1, 10)" +
+//                    "  UNION " +
+//                    "  select groupId, messageId, sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread "+
+//                    "  FROM messages where groupId = :group_id and sentTo = 'Group'"+
+//                    "  ORDER BY sentAt DESC"
+//
+//    )
+//    DataSource.Factory<Integer, Message> getGroupMessagesForGroup(String group_id);
+
+
     @Query(
 
-            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread " +
-                    "FROM messages where groupId = :group_id and sentTo = 'Group'"+
+            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread, sentToImageTS, sentToUserName, sentToUserRole " +
+                    "FROM messages where groupId = :group_id and sentTo = 'Group' AND NOT coalesce(isDeletedLocally, 0)"+
                     "  group by substr(CAST(date(sentAt/1000, 'unixepoch', 'localtime') as text), 1, 10)" +
                     "  UNION " +
-                    "  select groupId, messageId, sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread "+
-                    "  FROM messages where groupId = :group_id and sentTo = 'Group'"+
+                    "  select groupId, messageId, sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread, sentToImageTS, sentToUserName, sentToUserRole "+
+                    "  FROM messages where groupId = :group_id and sentTo = 'Group'AND NOT coalesce(isDeletedLocally, 0)"+
                     "  ORDER BY sentAt DESC"
 
     )
@@ -301,12 +334,12 @@ public interface MessageDao {
 
     @Query(
 
-            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob " +
-                    "FROM messages where groupId = :group_id  and sentTo = 'InterAdmin'"+
+            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread, sentToImageTS, sentToUserName, sentToUserRole " +
+                    "FROM messages where groupId = :group_id  and sentTo = 'InterAdmin' AND NOT coalesce(isDeletedLocally, 0)"+
                     "  group by substr(CAST(date(sentAt/1000, 'unixepoch', 'localtime') as text), 1, 10)" +
                     "  UNION " +
-                    "  select groupId, messageId, sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob "+
-                    "  FROM messages where groupId = :group_id and sentTo = 'InterAdmin'"+
+                    "  select groupId, messageId, sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, unread, sentToImageTS, sentToUserName, sentToUserRole "+
+                    "  FROM messages where groupId = :group_id and sentTo = 'InterAdmin' AND NOT coalesce(isDeletedLocally, 0)"+
                     "  ORDER BY sentAt DESC"
 
     )
@@ -314,12 +347,12 @@ public interface MessageDao {
 
     @Query(
 
-            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob " +
-                    "FROM messages where groupId = :group_id  and sentTo = :user_id"+
+            "select  'DateHeaderGroup' as groupId, messageId, (min(sentAt)-1) as sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, sentToImageTS, sentToUserName, sentToUserRole " +
+                    "FROM messages where groupId = :group_id  and sentTo = :user_id AND NOT coalesce(isDeletedLocally, 0)"+
                     "  group by substr(CAST(date(sentAt/1000, 'unixepoch', 'localtime') as text), 1, 10)" +
                     "  UNION " +
-                    "  select groupId, messageId, sentAt, sentBy, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob "+
-                    "  FROM messages where groupId = :group_id and sentTo = :user_id"+
+                    "  select groupId, messageId, sentAt, sentBy, sentTo, sentByImageTS, alias, isAdmin, role, notify, messageText, waitingToBeDeleted, unread, isDeleted, uploadedToServer, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, loadingProgress, attachmentExtension, attachmentMime, attachmentUri, tnBlob, sentToImageTS, sentToUserName, sentToUserRole "+
+                    "  FROM messages where groupId = :group_id and sentTo = :user_id AND NOT coalesce(isDeletedLocally, 0)"+
                     "  ORDER BY sentAt DESC"
 
     )

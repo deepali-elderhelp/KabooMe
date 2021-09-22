@@ -84,19 +84,20 @@
                 android:id="@+id/image_bubble_image_rcvd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:src="@drawable/attachment_default" />
 
-            <ImageView
-                android:id="@+id/alert_image_rcvd"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/alert_circle"
-                android:visibility="gone"
-                android:tint="@color/white"
-                />
+<!--            <ImageView-->
+<!--                android:id="@+id/alert_image_rcvd"-->
+<!--                android:layout_width="45dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:scaleType="fitXY"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:src="@drawable/alert_circle"-->
+<!--                android:visibility="visible"-->
+<!--                app:tint="@color/white"-->
+<!--                />-->
 
             <ImageView
                 android:id="@+id/image_bubble_download_rcvd"

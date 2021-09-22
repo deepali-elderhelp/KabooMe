@@ -507,7 +507,7 @@ public class ImageHelper {
 
     public void downloadImage(final String imageName) {
 
-
+        Log.d("TestTAG", "downloadImage:  = "+imageName);
         final String sourceUrl = S3LoadingHelper.getBaseUrlOfImage(imageName);
         final int signatureKey = AppConfigHelper.getImageSignature(imageName, (new Date()).getTime());
 
@@ -532,8 +532,10 @@ public class ImageHelper {
 //                                        .submit(608, 608);
                                         .submit();
 
+
                         try {
                             Bitmap bitmap = futureTarget.get();
+                            Log.d("TestTAG", "Image has been gotten by Glide = "+imageName);
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {

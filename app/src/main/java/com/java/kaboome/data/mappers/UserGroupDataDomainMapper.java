@@ -27,6 +27,7 @@ public class UserGroupDataDomainMapper {
         domainUserGroup.setGroupName(userGroup.getGroupName());
         domainUserGroup.setGroupAdminRole(userGroup.getGroupAdminRole());
         domainUserGroup.setPrivateGroup(userGroup.isPrivateGroup());
+        domainUserGroup.setUnicastGroup(userGroup.getUnicastGroup());
         domainUserGroup.setAlias(userGroup.getAlias());
         domainUserGroup.setIsAdmin(userGroup.getIsAdmin());
         domainUserGroup.setIsCreator(userGroup.getIsCreator());
@@ -59,6 +60,7 @@ public class UserGroupDataDomainMapper {
         userGroup.setGroupName(domainUserGroup.getGroupName());
         userGroup.setGroupAdminRole(domainUserGroup.getGroupAdminRole());
         userGroup.setPrivateGroup(domainUserGroup.getPrivateGroup());
+        userGroup.setUnicastGroup(domainUserGroup.getUnicastGroup());
         userGroup.setAlias(domainUserGroup.getAlias());
         userGroup.setIsAdmin(domainUserGroup.getIsAdmin());
         userGroup.setIsCreator(domainUserGroup.getIsCreator());

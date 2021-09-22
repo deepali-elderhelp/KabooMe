@@ -61,6 +61,7 @@ public class IoTHelper {
 
 
     public void connectToIoT(final String topicName, final boolean recreateClient) {
+        Log.d(TAG, "connectToIoT: Topic Name - "+topicName);
         try {
             CognitoHelper.getCredentialsProvider(new CredentialsHandler() {
                 @Override
@@ -140,14 +141,25 @@ public class IoTHelper {
 //            }
             //do not need to create again if it is already connected
             //My current thoughts are that the client id should be the user id
-            //reason being at any point, a clientid can have only one session
+            //reason being at any point, a client id can have only one session
             //if another broker connection is being formed for the same client id, then the old one
             //is disconnected and this one is started - that's what we really want.
             //at any one point of time, one client/device/user can only connect to one session/chat group
+
+            //coming back in Aug 2021 -  verifying this that keeping the client id as the user id
+            //is a good idea -  it is unique for each user - no multiple devices allowed anyways
 //            String unique_clientId = UUID.randomUUID().toString();
 //            String unique_clientId = AppConfigHelper.getUserId()+groupId;
 //            String unique_clientId = AppConfigHelper.getUserId()+groupId+System.nanoTime();
-            String unique_clientId = AppConfigHelper.getUserId()+topicName+System.nanoTime();
+            //just for testing since I am getting error messages related to the mqtt client connection
+            //based upon the client id, I am testing by keeping the client id as just the user id
+            //so it is same wherever this user creates the mqtt connection from
+            //and if it tries to create again, the old one is dropped and the new one is kept
+
+//            String unique_clientId = AppConfigHelper.getUserId()+topicName+System.nanoTime();
+            //coming back in Aug 2021 -  verifying this that keeping the client id as the user id
+            //is a good idea -  it is unique for each user - no multiple devices allowed anyways
+            String unique_clientId = AppConfigHelper.getUserId();
             Log.d(TAG, "clientId - "+unique_clientId);
 //            mqttManager = new AWSIotMqttManager(unique_clientId, AWSConstants.IOT_ENDPOINT.toString());
             mqttManager = AWSIotMqttManager.from(Region.getRegion(Regions.US_WEST_2), AWSIotMqttManager.ClientId.fromString(unique_clientId), AWSIotMqttManager.Endpoint.fromString(AWSConstants.IOT_ENDPOINT.toString()));

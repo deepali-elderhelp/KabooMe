@@ -105,7 +105,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
         userGroupsData.addSource(repositorySource, new Observer<DomainResource<List<DomainUserGroup>>>() {
             @Override
             public void onChanged(@Nullable final DomainResource<List<DomainUserGroup>> listDomainResource) {
-                Log.d(TAG, "UserGroupsData - add source");
+//                Log.d(TAG, "UserGroupsData - add source");
                 if (listDomainResource != null) {
 
 
@@ -168,7 +168,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId(), "Group"));
 
                                             GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId()));
+                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
                                             if(lastMessage != null){
                                                 userGroupModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupModel.setLastMessageText(lastMessage.getMessageText());
@@ -257,7 +257,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                                 continue;
                                             }
                                             GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId()));
+                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
 
 //                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId()));
@@ -372,7 +372,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                 eachGroupLiveData.addSource(userGroupReturnedLiveData, new Observer<UserGroupModel>() {
                     @Override
                     public void onChanged(UserGroupModel userGroupModel) {
-//                        Log.d(TAG, "onChanged: eachGroupLiveData source changed for Group "+userGroupModel.getGroupId());
+                        Log.d(TAG, "onChanged: eachGroupLiveData source changed for Group "+userGroupModel.getGroupId());
                         eachGroupLiveData.setValue(userGroupModel);
                     }
                 });
@@ -406,13 +406,13 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                             @Override
                             public void onChanged(List<DomainMessage> domainMessages) {
 
-                                Log.d(TAG, "onChanged: for getGroupMessagesAfterLastAccessUseCase");
+//                                Log.d(TAG, "onChanged: for getGroupMessagesAfterLastAccessUseCase");
                                 if(domainMessages == null || domainMessages.size() <= 0){
-                                    Log.d(TAG, "domain message is null, setting to 0");
+//                                    Log.d(TAG, "domain message is null, setting to 0");
                                     input.setUnreadCount(0);
                                 }
                                 else{
-                                    Log.d(TAG, "domain messages unread are - "+domainMessages.size());
+//                                    Log.d(TAG, "domain messages unread are - "+domainMessages.size());
                                     input.setUnreadCount(domainMessages.size());
                                 }
                                 input.setReceivedGroupDataType(ReceivedGroupDataTypeConstants.UNREAD_COUNT);
@@ -472,9 +472,9 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                         multipleFunctions.addSource(getLastWholeGroupMessagesInCacheLiveDataUseCase.execute(GetLastWholeGroupMessagesInCacheLiveDataUseCase.Params.forGroup(input.getGroupId())), new Observer<DomainMessage>() {
                             @Override
                             public void onChanged(DomainMessage domainMessage) {
-                                Log.d(TAG, "onChanged: for getLastGroupMessagesInCacheUseCase");
+//                                Log.d(TAG, "onChanged: for getLastGroupMessagesInCacheUseCase");
                                 if(domainMessage == null){
-                                    Log.d(TAG, "domain message is null, setting to 0");
+//                                    Log.d(TAG, "domain message is null, setting to 0");
                                     input.setLastMessageText("");
                                     input.setLastMessageSentBy("");
                                     input.setLastMessageSentAt(0L);

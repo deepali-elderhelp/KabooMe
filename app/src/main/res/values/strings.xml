@@ -54,7 +54,7 @@
     <string name="new_group_privacy_label">Private group</string>
     <string name="enter_group_expiry_hint">Expiry date(Leave empty for no expiry)</string>
     <string name="enter_group_role_hint">Your role in the Group - Admin by default</string>
-    <string name="enter_group_role_text">"Add the role that you will play in the group. Role shows up next to your Alias in the Group Messages. For example - \'Alias John's Mom\' with Role \'Room Rep\'"</string>
+    <string name="enter_group_role_text">"Add the role that you will play in the group. Role shows up next to your Alias in the Group Messages. For example - \'Alias - John's Mom\' with Role - \'Room Rep\'"</string>
     <string name="picture_dialog_select_from_camera">From Camera</string>
     <string name="picture_dialog_or">OR</string>
     <string name="picture_dialog_select_from_gallery">From Gallery</string>
@@ -126,6 +126,7 @@
     <string name="go_back">Go Back</string>
     <string name="no_members_regular">All members are Admin already</string>
     <string name="group_private_alert">This group is private, no one can join it without your permission. You will get a request from them which you can then approve or reject.</string>
+    <string name="group_private_message">This group is private, no one can join it without admins permission. Admin will get a request which they can then approve or reject.</string>
     <string name="group_public_alert">This group is open, anybody who is interested can join it.</string>
     <string name="group_requests_close">This group will be closed to  public. No one will be able to send any requests to join the group.</string>
     <string name="group_requests_open">This group will be open to accepting new requests.</string>
@@ -147,7 +148,7 @@
     <string name="rewind"><![CDATA[<<]]></string>
     <string name="forward"><![CDATA[>>]]></string>
     <string name="pause">||</string>
-    <string name="change_your_group_picture">Change your group picture</string>
+    <string name="change_your_group_picture">Change your profile pic for group</string>
     <string name="reset_your_group_picture">Reset to default</string>
     <string name="verification_check_email_message">If you still do not receive text, please check your email. We send the code there too.</string>
     <string name="missing_alias_message">Please enter an Alias for the group. This is how the group will know you</string>
@@ -178,5 +179,12 @@
     <string name="record">Record</string>
     <string name="record_video">Video</string>
     <string name="record_audio">Audio</string>
+    <string name="enter_group_alias_text">Alias is name this Group will know you by. For example - \'Alias - John\'s Mom\'</string>
+    <string name="new_group_uni_switch_label">Unicast&#160;&#160;&#160;</string>
+    <string name="new_group_only_admin_switch_label">Announcements Only&#160;&#160;&#160;</string>
+    <string name="announcement_only_alert">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed.</string>
+    <string name="everyone_posts_alert">This Group allows everyone to post in the Group Message Board. Members can also send private messages to Admin if needed.</string>
+    <string name="announcements_only_help">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed.</string>
+    <string name="send_private_message">Send a private message to the Admins</string>
 
 </resources>

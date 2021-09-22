@@ -134,16 +134,16 @@
                     android:visibility="visible"
                     />
 
-                <ImageView
-                    android:id="@+id/video_alert_rcvd"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:scaleType="fitXY"
-                    android:layout_gravity="center"
-                    android:src="@drawable/alert_circle"
-                    android:visibility="gone"
-                    android:tint="@color/white"
-                    />
+<!--                <ImageView-->
+<!--                    android:id="@+id/video_alert_rcvd"-->
+<!--                    android:layout_width="45dp"-->
+<!--                    android:layout_height="45dp"-->
+<!--                    android:scaleType="fitXY"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:src="@drawable/alert_circle"-->
+<!--                    android:visibility="gone"-->
+<!--                    app:tint="@color/white"-->
+<!--                    />-->
 
             </FrameLayout>
 

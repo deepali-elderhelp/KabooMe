@@ -150,29 +150,29 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
 
     }
 
-    @Override
-    public void deleteMessage(DomainMessage domainMessage) {
-
-        final Message message = MessageDataDomainMapper.transformFromDomain(domainMessage);
-
-        if(message.isUploadedToServer()){
-            deleteMessage(message);
-        }
-        else{
-            //the message was not yet uploaded to the server
-            //just delete it from local cache
-            //needs to be done in a background thread
-            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messageDao.delete(message);
-                    Log.d(TAG, "run: Message deleted from cache "+message.getMessageId());
-                }
-            });
-
-        }
-
-    }
+//    @Override
+//    public void deleteMessage(DomainMessage domainMessage) {
+//
+//        final Message message = MessageDataDomainMapper.transformFromDomain(domainMessage);
+//
+//        if(message.isUploadedToServer()){
+//            deleteMessage(message);
+//        }
+//        else{
+//            //the message was not yet uploaded to the server
+//            //just delete it from local cache
+//            //needs to be done in a background thread
+//            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    messageDao.delete(message);
+//                    Log.d(TAG, "run: Message deleted from cache "+message.getMessageId());
+//                }
+//            });
+//
+//        }
+//
+//    }
 
     @Override
     public void clearMessagesOfGroup(final String groupId) {
@@ -338,11 +338,18 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
 
     @Override
     public void deleteLocalMessage(final DomainMessage domainMessage) {
+//        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                messageDao.delete(MessageDataDomainMapper.transformFromDomain(domainMessage));
+//                Log.d(TAG, "run: message deleted from cache");
+//            }
+//        });
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.delete(MessageDataDomainMapper.transformFromDomain(domainMessage));
-                Log.d(TAG, "run: message deleted from cache");
+                messageDao.setLocalMessageToDelete("Message deleted for you", domainMessage.getGroupId(), domainMessage.getSentTo(), domainMessage.getMessageId());
+                Log.d(TAG, "run: set local message to deleted");
             }
         });
     }
@@ -394,6 +401,12 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
                         message.setUploadedToServer(true);
                         Message messageFromCache = messageDao.getMessage(message.getMessageId());
                         if(messageFromCache != null){
+//                            if(messageFromCache.getDeleted()){
+//                                message.setDeleted(true);
+//                            }
+                            if(messageFromCache.getDeletedLocally() != null && messageFromCache.getDeletedLocally()){
+                                message.setDeletedLocally(true);
+                            }
                             message.setUnread(messageFromCache.getUnread());
                             message.setAttachmentUri(messageFromCache.getAttachmentUri());
                         }
@@ -442,54 +455,54 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
     }
 
 
-    public void deleteMessage(final Message message) {
-        //delete from cache and server both by doing the following
-        //set waitingToBeDeleted true on the cached entry of this message
-        //call backend api to delete the message from server
-        //if it is successful -update the cache with the updated message, set waiting to be deleted false
-        //if it is errored, display error toast to the user, set waiting to be deleted false
-
-        message.setWaitingToBeDeleted(true);
-
-        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                messageDao.updateMessageWaitingToBeDeletedStatus(message.getMessageId(), true);
-                Log.d(TAG, "run: Message deleted from cache "+message.getMessageId());
-            }
-        });
-        //backend call to delete the message
-        AppConfigHelper.getBackendApiServiceProvider().deleteMessage(AppConfigHelper.getUserId(), message.getGroupId(), message.getMessageId()).enqueue(new Callback<DeleteMessageResponse>() {
-            @Override
-            public void onResponse(Call<DeleteMessageResponse> call, Response<DeleteMessageResponse> response) {
-                //update the local cache as well
-                final Message newMessage = response.body().getMessage();
-                newMessage.setWaitingToBeDeleted(false);
-                AppExecutors2.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        messageDao.insertMessage(newMessage);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(Call<DeleteMessageResponse> call, final Throwable t) {
-                //set waiting to be deleted false
-                message.setWaitingToBeDeleted(false);
-                AppExecutors2.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        messageDao.insertMessage(message);
-                        Log.d(TAG, "Could not delete message due to - "+t.getMessage());
-                        //deal with broadcasting error later
-                    }
-                });
-
-            }
-        });
-    }
+//    public void deleteMessage(final Message message) {
+//        //delete from cache and server both by doing the following
+//        //set waitingToBeDeleted true on the cached entry of this message
+//        //call backend api to delete the message from server
+//        //if it is successful -update the cache with the updated message, set waiting to be deleted false
+//        //if it is errored, display error toast to the user, set waiting to be deleted false
+//
+//        message.setWaitingToBeDeleted(true);
+//
+//        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                messageDao.updateMessageWaitingToBeDeletedStatus(message.getMessageId(), true);
+//                Log.d(TAG, "run: Message deleted from cache "+message.getMessageId());
+//            }
+//        });
+//        //backend call to delete the message
+//        AppConfigHelper.getBackendApiServiceProvider().deleteMessage(AppConfigHelper.getUserId(), message.getGroupId(), message.getMessageId()).enqueue(new Callback<DeleteMessageResponse>() {
+//            @Override
+//            public void onResponse(Call<DeleteMessageResponse> call, Response<DeleteMessageResponse> response) {
+//                //update the local cache as well
+//                final Message newMessage = response.body().getMessage();
+//                newMessage.setWaitingToBeDeleted(false);
+//                AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        messageDao.insertMessage(newMessage);
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DeleteMessageResponse> call, final Throwable t) {
+//                //set waiting to be deleted false
+//                message.setWaitingToBeDeleted(false);
+//                AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        messageDao.insertMessage(message);
+//                        Log.d(TAG, "Could not delete message due to - "+t.getMessage());
+//                        //deal with broadcasting error later
+//                    }
+//                });
+//
+//            }
+//        });
+//    }
 
     @Override
     public void updateMessagesToRead(final String groupId, final String sentTo) {
@@ -610,11 +623,19 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
      * @return
      */
     @Override
-    public DomainMessage getLastMessageForWholeGroupFromCacheSingle(String groupId) {
-        Message lastMessage = messageDao.getLastMessageForWholeGroup(groupId);
-        if(lastMessage == null) //there are no messages in the group at all
-            return null;
-        return MessageDataDomainMapper.transformFromMessage(lastMessage);
+    public DomainMessage getLastMessageForWholeGroupFromCacheSingle(String groupId, boolean includeDeleted) {
+        if(includeDeleted){
+            Message lastMessage = messageDao.getLastMessageForWholeGroupIncludingDeleted(groupId);
+            if(lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
+        else {
+            Message lastMessage = messageDao.getLastMessageForWholeGroup(groupId);
+            if (lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
     }
 
     /**
@@ -624,11 +645,19 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
      * @return
      */
     @Override
-    public DomainMessage getLastMessageForOnlyGroupFromCacheSingle(String groupId) {
-        Message lastMessage = messageDao.getLastMessageForOnlyGroup(groupId);
-        if(lastMessage == null) //there are no messages in the group at all
-            return null;
-        return MessageDataDomainMapper.transformFromMessage(lastMessage);
+    public DomainMessage getLastMessageForOnlyGroupFromCacheSingle(String groupId, boolean includeDeleted) {
+        if(includeDeleted){
+            Message lastMessage = messageDao.getLastMessageForOnlyGroupIncludingDeleted(groupId);
+            if(lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
+        else {
+            Message lastMessage = messageDao.getLastMessageForOnlyGroup(groupId);
+            if (lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
     }
 
     /**
@@ -638,11 +667,19 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
      * @return
      */
     @Override
-    public DomainMessage getLastMessageForConvFromCacheSingle(String groupId, String userId) {
-        Message lastMessage = messageDao.getLastMessageForConv(groupId, userId);
-        if(lastMessage == null) //there are no messages in the group at all
-            return null;
-        return MessageDataDomainMapper.transformFromMessage(lastMessage);
+    public DomainMessage getLastMessageForConvFromCacheSingle(String groupId, String userId, boolean includeDeleted) {
+        if(includeDeleted){
+            Message lastMessage = messageDao.getLastMessageForConvIncludingDeleted(groupId, userId);
+            if (lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
+        else {
+            Message lastMessage = messageDao.getLastMessageForConv(groupId, userId);
+            if (lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
     }
 
     @Override

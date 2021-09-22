@@ -40,10 +40,12 @@ import com.java.kaboome.presentation.helpers.FileUtils;
 import com.java.kaboome.presentation.helpers.MediaHelper;
 import com.java.kaboome.presentation.views.features.CameraActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -290,14 +292,15 @@ public class MessageAttachmentsDialog extends BottomSheetDialogFragment implemen
 
         String[] perms = {Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(getContext(), perms)) {
-            Intent intent = new Intent(
-                    MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                startActivityForResult(intent, REQUEST_AUDIO_CAPTURE);
-            } else {
-                Toast.makeText(getContext(), "No sound record application found", Toast.LENGTH_SHORT).show();
+            //let's just keep app recording stuff right now
+//            Intent intent = new Intent(
+//                    MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+//            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+//                startActivityForResult(intent, REQUEST_AUDIO_CAPTURE);
+//            } else {
+//                Toast.makeText(getContext(), "No sound record application found", Toast.LENGTH_SHORT).show();
                 startRecording();
-            }
+//            }
         }
         else{
             EasyPermissions.requestPermissions(this, "This permission is needed to record audio", AUDIO_CAPTURE_REQUESTS, perms);
@@ -902,18 +905,48 @@ public class MessageAttachmentsDialog extends BottomSheetDialogFragment implemen
         else if(requestCode == REQUEST_SELECT_CONTACT && resultCode == RESULT_OK){
 
             selectedUri = data.getData();
+            String lookupKey =null;
+
             List<String> items = selectedUri.getPathSegments();
+            Cursor cursor = getContext().getContentResolver().query(selectedUri, new String[] {
+                    ContactsContract.Contacts.LOOKUP_KEY
+            }, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                lookupKey = cursor.getString(0);
+            }
+            cursor.close();
+
+            if(lookupKey == null){
+                lookupKey = items.get(2);
+            }
+
+//            commenting this since I think that getting the lookup key from the cursor is a better move
+//            also, the difference is that only items.get(2) is needed, so it should look like -
+//            Uri uri1 = Uri.withAppendedPath(
+//                    ContactsContract.Contacts.CONTENT_VCARD_URI,items.get(2));
+//
+//            Uri uri1 = Uri.withAppendedPath(
+//                    ContactsContract.Contacts.CONTENT_VCARD_URI,items.get(2)+File.separator+items.get(3) );
 
             Uri uri = Uri.withAppendedPath(
-                    ContactsContract.Contacts.CONTENT_VCARD_URI,items.get(2)+File.separator+items.get(3) );
+                    ContactsContract.Contacts.CONTENT_VCARD_URI,lookupKey);
+
 
             AssetFileDescriptor fd;
             try {
+                byte[] b;
                 fd = getContext().getContentResolver()
                         .openAssetFileDescriptor(uri, "r");
                 FileInputStream fis = fd.createInputStream();
-                byte[] b = new byte[(int) fd.getDeclaredLength()];
-                fis.read(b);
+                if(fd.getDeclaredLength() != -1) {
+                    b = new byte[(int) fd.getDeclaredLength()];
+                    fis.read(b);
+                }
+                else{
+                    b = readBytes(fis);
+                }
+
                 String str = new String(b);
                 fis.close();
 
@@ -977,6 +1010,7 @@ public class MessageAttachmentsDialog extends BottomSheetDialogFragment implemen
                 e.printStackTrace();
                 Toast.makeText(getContext(), "Sorry, this contact does not allow to be shared", Toast.LENGTH_SHORT).show();
             }
+
 //            pathToPic = FileUtils.getPath(getContext(), selectedUri);
 
             //Data.CONTACT_ID + "=?",
@@ -1162,5 +1196,23 @@ public class MessageAttachmentsDialog extends BottomSheetDialogFragment implemen
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).build().show();
         }
+    }
+
+    private byte[] readBytes(InputStream inputStream) throws IOException {
+        // this dynamically extends to take the bytes you read
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+        // this is storage overwritten on each iteration with bytes
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        // we need to know how may bytes were read to write them to the byteBuffer
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+
+        // and then we can return your byte array.
+        return byteBuffer.toByteArray();
     }
 }

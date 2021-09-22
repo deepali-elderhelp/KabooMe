@@ -37,8 +37,8 @@ public class IoTDomainMessageMapper {
         domainMessage.setAttachmentLoadingGoingOn(ioTMessage.isAttachmentLoadingGoingOn());
         domainMessage.setLoadingProgress(ioTMessage.getLoadingProgress());
         domainMessage.setDeleted(ioTMessage.getDeleted());
+        domainMessage.setDeletedLocally(ioTMessage.getDeletedLocally());
         domainMessage.setTnBlob(ioTMessage.getTnBlob());
-
         domainMessage.setSentToUserName(ioTMessage.getSentToUserName());
         domainMessage.setSentToUserRole(ioTMessage.getSentToUserRole());
         domainMessage.setSentToImageTS(ioTMessage.getSentToImageTS());
@@ -75,8 +75,8 @@ public class IoTDomainMessageMapper {
         ioTMessage.setAttachmentLoadingGoingOn(domainMessage.isAttachmentLoadingGoingOn());
         ioTMessage.setLoadingProgress(domainMessage.getLoadingProgress());
         ioTMessage.setDeleted(domainMessage.getDeleted());
+        ioTMessage.setDeletedLocally(domainMessage.getDeletedLocally());
         ioTMessage.setTnBlob(domainMessage.getTnBlob());
-
         ioTMessage.setSentToUserName(domainMessage.getSentToUserName());
         ioTMessage.setSentToUserRole(domainMessage.getSentToUserRole());
         ioTMessage.setSentToImageTS(domainMessage.getSentToImageTS());

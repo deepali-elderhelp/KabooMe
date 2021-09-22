@@ -887,31 +887,41 @@ public class FileUtils {
         return image.getAbsolutePath();
     }
 
-    public static File getAttachmentFileForMessage(String messageId, String sentTo, String groupId, String extension, String attachmentMime) {
-        if(attachmentMime.contains("image")){
-            File appDir = getAppDirForMime(attachmentMime, false);
-            if(appDir != null) {
-//                File attachmentFile = new File(appDir, groupId+"_"+messageId + extension);
-                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
-                return attachmentFile;
-            }
+    //this is for below Q
+    //you should have another method for Q and above
+    public static File getAttachmentFileForMessage(String messageId, String sentTo, String groupName, String extension, String attachmentMime) {
+        File appDir = getAppDirForMime(attachmentMime, groupName, sentTo, false);
+        if(appDir == null){
+            return null;
         }
-        if(attachmentMime.contains("video")){
-            File appDir = getAppDirForMime(attachmentMime, false);
-            if(appDir != null) {
-                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
-                return attachmentFile;
-            }
-        }
-        if(attachmentMime.contains("audio")){
-            File appDir = getAppDirForMime(attachmentMime, false);
-            if(appDir != null) {
-                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
-                return attachmentFile;
-            }
-        }
+        File attachmentFile = new File(appDir, messageId + extension);
+        return attachmentFile;
 
-        return null;
+//        if(attachmentMime.contains("image")){
+//            File appDir = getAppDirForMime(attachmentMime, false);
+//
+//            if(appDir != null) {
+////                File attachmentFile = new File(appDir, groupId+"_"+messageId + extension);
+//                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
+//                return attachmentFile;
+//            }
+//        }
+//        if(attachmentMime.contains("video")){
+//            File appDir = getAppDirForMime(attachmentMime, false);
+//            if(appDir != null) {
+//                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
+//                return attachmentFile;
+//            }
+//        }
+//        if(attachmentMime.contains("audio")){
+//            File appDir = getAppDirForMime(attachmentMime, false);
+//            if(appDir != null) {
+//                File attachmentFile = new File(appDir, groupId+"_"+sentTo+"_"+messageId + extension);
+//                return attachmentFile;
+//            }
+//        }
+
+//        return null;
     }
 
     public static File getAppDirForMime(String attachmentMime, boolean makeOneIfDoesNotExist) {
@@ -966,7 +976,9 @@ public class FileUtils {
 
 //        File appDir = AppConfigHelper.getContext().getExternalFilesDir(null);
 //        File appDir = new File(Environment.getExternalStorageDirectory(), folder_main);
-        File appDir = new File(AppConfigHelper.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),folder_main);
+//        File appDir = new File(AppConfigHelper.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),folder_main);
+        File appDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),folder_main);
+
         if (!appDir.exists() && makeOneIfDoesNotExist) {
             appDir.mkdirs();
         }

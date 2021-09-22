@@ -3,17 +3,16 @@ package com.java.kaboome.presentation.views.features.groupMessages;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -32,7 +31,6 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -41,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +50,6 @@ import com.java.kaboome.constants.MessageGroupsConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
-import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.domain.entities.DomainUserGroup;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
@@ -76,7 +74,6 @@ import com.java.kaboome.presentation.views.features.groupMessages.adapter.MediaP
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.MessageListViewAdapter;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.UploadClickListener;
-import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.MessageTempDataHolder;
 import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.MessagesViewModel;
 import com.java.kaboome.presentation.views.widgets.MessageInput;
 import com.java.kaboome.presentation.views.widgets.MessagesList;
@@ -84,7 +81,6 @@ import com.paginate.Paginate;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -111,6 +107,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     private UserGroupModel group;
     private MessageListViewAdapter adapter;
     private MessagesList recyclerView;
+    private LinearLayout messagePrivacyLL;
+    private TextView sendPrivateMessage;
     private MessageInput messageInput;
     private AppCompatButton urgentButton;
     private AppCompatButton normalButton;
@@ -300,6 +298,19 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         normalButton = rootView.findViewById(R.id.normal_button);
         normalButton.setOnClickListener(normalButtonClicked);
         messageInput = rootView.findViewById(R.id.fr_gr_me_layout_chatbox);
+        messagePrivacyLL = rootView.findViewById(R.id.messages_priority_ll);
+        sendPrivateMessage = rootView.findViewById(R.id.sendPrivateMessage);
+        sendPrivateMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putSerializable("group", group);
+                //if the current user is not an admin of the group
+                if(group.getIsAdmin().equalsIgnoreCase("false")){
+                    navController.navigate(R.id.action_groupMessagesFragment_to_groupUserAdminMessagesFragment, args);
+                }
+            }
+        });
         sendButton = messageInput.getButton();
         attachmentButton = messageInput.getAttachmentButton();
 
@@ -307,7 +318,38 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         messageInput.setTypingListener(this);
         messageInput.setAttachmentsListener(this);
 
+        if((group.getIsAdmin().equalsIgnoreCase("false")) && group.getUnicastGroup() != null && group.getUnicastGroup()){
+            messagePrivacyLL.setVisibility(View.GONE);
+            messageInput.setVisibility(View.GONE);
+            sendPrivateMessage.setVisibility(View.VISIBLE);
+        }
+        else{
+            messagePrivacyLL.setVisibility(View.VISIBLE);
+            messageInput.setVisibility(View.VISIBLE);
+            sendPrivateMessage.setVisibility(View.GONE);
+        }
+
         navController = NavHostFragment.findNavController(GroupMessagesFragment.this);
+
+        //for system back button
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                messagesViewModel.onBackPressed();
+                navController.popBackStack(R.id.groupsListFragment, false);
+            }
+        });
+
+        //for toolbar back button
+        mainToolbar = act.findViewById(R.id.mainToolbar);
+        mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messagesViewModel.onBackPressed();
+                navController.popBackStack(R.id.groupsListFragment, false);
+            }
+        });
+
 
         return rootView;
     }
@@ -389,18 +431,52 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
                         } else {
                             Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
+                            Bitmap exifedBitmap = thumbnail;
                             if(thumbnail == null){
                                 //somehow bitmap is null, put default
                                 Drawable d = getResources().getDrawable(R.drawable.attachment_default);
                                 thumbnail = ImagesUtilHelper.drawableToBitmap(d);
                             }
-                            Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(thumbnail, 20, 20, true);
+                            try {
+                                //sometimes for the older versions, the exif is coming off by 90 degrees
+                                //hence rotating it
+                                int angle = 0;
+                                ExifInterface oldExif = new ExifInterface(attachmentPath);
+                                int orientation = oldExif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                        ExifInterface.ORIENTATION_UNDEFINED);
+                                switch(orientation) {
+                                    case ExifInterface.ORIENTATION_ROTATE_90:
+                                        angle = 90;
+                                        break;
+
+                                    case ExifInterface.ORIENTATION_ROTATE_180:
+                                        angle = 180;
+                                        break;
+
+                                    case ExifInterface.ORIENTATION_ROTATE_270:
+                                        angle = 270;
+                                        break;
+
+                                    case ExifInterface.ORIENTATION_NORMAL:
+                                    default:
+                                        angle=0;
+                                }
+
+                                Matrix matrix = new Matrix();
+                                matrix.postRotate(angle);
+                                exifedBitmap = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(),
+                                        matrix, true);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(exifedBitmap, 20, 20, true);
                             thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                         }
                     }
 
 //                    messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, galleryImageUri, new PublishMessageCallback() {
-                    messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, new PublishMessageCallback() {
+                    messagesViewModel.publishIoTMessage(messageId, group.getGroupId(), AppConfigHelper.getUserId(), group.getUserImageUpdateTimestamp(), group.getAlias(), group.getRole(),group.getIsAdmin(), String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, new PublishMessageCallback() {
 
                         @Override
                         public void publishSuccessful() {
@@ -422,7 +498,6 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                             message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
                             message.setMessageText(String.valueOf(caption));
                             message.setTnBlob(thumbnailString);
-//                            message.setAttachmentUri(galleryImageUri);
                             message.setAttachmentUri(attachmentURI);
                             message.setAttachmentLoadingGoingOn(true);
                             message.setDeleted(false);
@@ -521,8 +596,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         super.onPause();
         Log.d(TAG, "onPause: ");
         //this is to take care that the GroupLastSeenTS gets updated on pause
-        messagesViewModel.onBackPressed();
-
+        messagesViewModel.onPausePressed();
 
     }
 
@@ -555,15 +629,25 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
                 for(int i=(messages.size()-1);i>= 0;i--){
                     Message message = messages.get(i);
-                    if((message.getUnread() == 0)){
+                    if((message.getUnread() == 0 && message.getSentAt() > group.getLastAccessed())){
                         indexToInsertNewMessageHeader = i; //first message which is new
+                        Log.d(TAG, "indexToInsertNewMessageHeader now is - "+indexToInsertNewMessageHeader);
                         break;
                     }
                 }
 
                 adapter.submitList(messages, indexToInsertNewMessageHeader);
                 if(indexToInsertNewMessageHeader != -1) {
-                    recyclerView.scrollToPosition(indexToInsertNewMessageHeader);
+                    Log.d(TAG, "indexToInsertNewMessageHeader now is - "+indexToInsertNewMessageHeader);
+                    //adding - 1 here so that the scroll position is not the label itself, but the first message
+                    if(!userScrolled) {
+                        if(indexToInsertNewMessageHeader > 0){
+                            recyclerView.scrollToPosition(indexToInsertNewMessageHeader - 1);
+                        }
+                        else {
+                            recyclerView.scrollToPosition(indexToInsertNewMessageHeader);
+                        }
+                    }
                 }
 
 
@@ -611,14 +695,15 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             public void onChanged(@Nullable IoTMessage message) {
                 if(message != null){
                     Log.d(TAG, "New message received - "+message);
-                    firstLoad = false;
-                    newMessagesCount++;
-                    scrollDownArrowImage.setVisibility(View.GONE);
-                    newMessagesCountTextView.setVisibility(View.VISIBLE);
-                    newMessagesCountTextView.setText(String.valueOf(newMessagesCount));
+                    if(!message.getDeleted()) {
+                        firstLoad = false;
+                        newMessagesCount++;
+                        scrollDownArrowImage.setVisibility(View.GONE);
+                        newMessagesCountTextView.setVisibility(View.VISIBLE);
+                        newMessagesCountTextView.setText(String.valueOf(newMessagesCount));
+                    }
                     //also add to the internal cache
                     messagesViewModel.handleMessageArrival(message);
-
                 }
 
             }
@@ -691,7 +776,10 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
 //                    super.onItemRangeInserted(positionStart, itemCount);
+
+//                recyclerView.smoothScrollToPosition(0);
                 if(!userScrolled){
+                    Log.d(TAG, "Going to move recycler view to position 0");
                     recyclerView.smoothScrollToPosition(0);
                 }
             }
@@ -800,8 +888,12 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     private View.OnClickListener scrollDownClicked = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+//            newMessagesCount = 0;
+            if(newMessagesCount > 1)
+                recyclerView.smoothScrollToPosition(0+newMessagesCount-1);
+            else
+                recyclerView.smoothScrollToPosition(0);
             newMessagesCount = 0;
-            recyclerView.smoothScrollToPosition(0);
         }
     };
 
@@ -868,47 +960,54 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     };
 
     private void getMessageCopyDeleteDialog(final Message message){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setMessage("What do you want to do?");
-        alertDialogBuilder.setPositiveButton("Copy text",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-//                        Toast.makeText(MessagesActivity.this,"Yes, copy text",Toast.LENGTH_LONG).show();
-                        GroupMessagesFragment.this.adapter.copyToClipboard(getContext(), message.getMessageText());
-                    }
-                });
-
-        alertDialogBuilder.setNegativeButton("Delete the Message",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(!NetworkHelper.isOnline()){
-                    Toast.makeText(getContext(), "No Network: Delete message needs network connection", Toast.LENGTH_SHORT).show();
-                    return;
+        if(!message.getDeleted()) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setMessage("What do you want to do?");
+            alertDialogBuilder.setNeutralButton("Delete Only for Me", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    messagesViewModel.deleteLocalMessage(message);
                 }
-                if(MessageDeleteCheckHelper.canDeleteMessage(message)){
-                    messagesViewModel.deleteMessage(message, new PublishMessageCallback() {
+            });
+            alertDialogBuilder.setPositiveButton("Copy text",
+                    new DialogInterface.OnClickListener() {
                         @Override
-                        public void publishSuccessful() {
-                            Toast.makeText(getContext(), "Message is marked deleted", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void publishFailed() {
-                            //show alert - could not do it - could be server connection issue
-                            Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                        public void onClick(DialogInterface arg0, int arg1) {
+//                        Toast.makeText(MessagesActivity.this,"Yes, copy text",Toast.LENGTH_LONG).show();
+                            GroupMessagesFragment.this.adapter.copyToClipboard(getContext(), message.getMessageText());
                         }
                     });
+
+            alertDialogBuilder.setNegativeButton("Delete the Message for all", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!NetworkHelper.isOnline()) {
+                        Toast.makeText(getContext(), "No Network: Delete message needs network connection", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (MessageDeleteCheckHelper.canDeleteMessage(message, group.getIsAdmin())) {
+                        messagesViewModel.deleteMessage(message, new PublishMessageCallback() {
+                            @Override
+                            public void publishSuccessful() {
+                                Toast.makeText(getContext(), "Message is marked deleted", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void publishFailed() {
+                                //show alert - could not do it - could be server connection issue
+                                Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "Sorry, not authorized to delete the message", Toast.LENGTH_LONG).show();
+                    }
                 }
-                else{
-                    Toast.makeText(getContext(),"Sorry, not authorized to delete the message",Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+            });
 
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
     }
 
     @Override
@@ -953,27 +1052,55 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     }
 
     private void openAudio(Message message, Uri uri) {
-        Bundle args = new Bundle();
-        args.putSerializable("message", message);
-        args.putString("audioUri", String.valueOf(uri));
-        navController.navigate(R.id.action_groupMessagesFragment_to_audioViewerFragment, args);
+        //if the message is not uploaded yet, there is no use of trying to download or play it
+        if(message.getAttachmentUploaded()) {
+            Bundle args = new Bundle();
+            args.putSerializable("message", message);
+            args.putString("audioUri", String.valueOf(uri));
+            navController.navigate(R.id.action_groupMessagesFragment_to_audioViewerFragment, args);
+        }
+        else{
+            Toast.makeText(getContext(), "Audio not on found on server. If the message is too new, please wait for the audio to be uploaded completely to the server", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void openImage(Message message) {
         Log.d(TAG, "openImage: ");
-        Bundle args = new Bundle();
-        args.putSerializable("message", message);
-//        args.putString("caption", caption);
-        navController.navigate(R.id.action_groupMessagesFragment_to_imageViewerFragment, args);
+
+        //for image we need to check if it is downloaded
+        //if not, start downloading it
+        if(message.getAttachmentUri() != null && MediaHelper.doesUriFileExists(getContext().getContentResolver(), Uri.parse(message.getAttachmentUri()))){
+            Bundle args = new Bundle();
+            args.putSerializable("message", message);
+            navController.navigate(R.id.action_groupMessagesFragment_to_imageViewerFragment, args);
+        }
+        else{
+            //if the message is not uploaded yet, there is no use of trying it to download
+            if(message.getAttachmentUploaded()){
+                handleDownloadAttachment(message);
+            }
+            else{
+                Toast.makeText(getContext(), "Image not on found on server. If the message is too new, please wait for the image to be uploaded completely to the server", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
     }
 
     private void openVideo(Message message, Uri uri) {
-        Bundle args = new Bundle();
-        args.putSerializable("message", message);
-        args.putString("videoUri", String.valueOf(uri));
+        //if the message is not uploaded yet, there is no use of trying to download or play it
+        if(message.getAttachmentUploaded()){
+            Bundle args = new Bundle();
+            args.putSerializable("message", message);
+            args.putString("videoUri", String.valueOf(uri));
 //        args.putString("imagePath", imagePath);
 //        args.putString("caption", caption);
-        navController.navigate(R.id.action_groupMessagesFragment_to_videoViewerFragment, args);
+            navController.navigate(R.id.action_groupMessagesFragment_to_videoViewerFragment, args);
+        }
+        else{
+            Toast.makeText(getContext(), "Video not on found on server. If the message is too new, please wait for the video to be uploaded completely to the server", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 
@@ -1024,9 +1151,6 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
         File attachment = null;
 
-        //first set downloading to true
-
-
 //        messagesViewModel.getDownloadedMessageAttachment().observe(this, new Observer<DomainUpdateResource>() {
 //            @Override
 //            public void onChanged(DomainUpdateResource domainUpdateResource) {
@@ -1069,6 +1193,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         //check permission first
 //                    if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            //first set downloading to true
             messagesViewModel.updateMessageForAttachment(message.getMessageId(), true, true, true, message.getAttachmentMime(), null);
             try {
                 attachment = FileUtils.createAttachmentFileForMessageAttachment(getContext(), message.getGroupId(), "Group", message.getMessageId(),message.getAttachmentExtension(), message.getAttachmentMime());
@@ -1086,6 +1211,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         else{
             String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
             if(EasyPermissions.hasPermissions(getContext(), perms)){
+                //first set downloading to true
                 messagesViewModel.updateMessageForAttachment(message.getMessageId(), true, true, true, message.getAttachmentMime(), null);
                 try {
                     attachment = FileUtils.createAttachmentFileForMessage(message.getMessageId(), group.getGroupName(),"Group", message.getAttachmentExtension(), message.getAttachmentMime());
@@ -1295,6 +1421,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     @Override
     public void onCloseWelcomeMessageClicked(Message message) {
         //remove the message from the cache
+        Log.d(TAG, "onCloseWelcomeMessageClicked: ");
         messagesViewModel.deleteLocalMessage(message);
     }
 

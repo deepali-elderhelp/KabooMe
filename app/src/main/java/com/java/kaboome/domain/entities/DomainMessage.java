@@ -38,6 +38,8 @@ public class DomainMessage {
 
     private Boolean isDeleted;
 
+    private Boolean isDeletedLocally;
+
     private String tnBlob;
 
 //    private Boolean attachmentDownloaded;
@@ -263,6 +265,14 @@ public class DomainMessage {
 
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Boolean getDeletedLocally() {
+        return isDeletedLocally;
+    }
+
+    public void setDeletedLocally(Boolean deletedLocally) {
+        isDeletedLocally = deletedLocally;
     }
 
     public Long getSentByImageTS() {

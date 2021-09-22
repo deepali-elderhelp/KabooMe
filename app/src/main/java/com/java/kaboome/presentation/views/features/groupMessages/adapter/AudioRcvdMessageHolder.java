@@ -51,7 +51,8 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "KMAudioRcvdMsgHolder";
 
-    private ImageView download, alert, videoPlay;
+//    private ImageView download, alert, videoPlay;
+    private ImageView download, videoPlay;
     private TextView messageText, timeText, aliasText, roleText, newMessageHeader;
     private CircleImageView profileImage;
     private ImageView urgentImage;
@@ -85,7 +86,7 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
         playAudioFrame = itemView.findViewById(R.id.audio_play_frame);
 
         download = itemView.findViewById(R.id.audio_download);
-        alert = itemView.findViewById(R.id.audio_alert);
+//        alert = itemView.findViewById(R.id.audio_alert);
 
         videoPlay = itemView.findViewById(R.id.video_play);
 
@@ -126,19 +127,7 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
-        if (message.getDeleted()) {
-            messageText.setText("Message Deleted");
-            download.setVisibility(View.GONE);
-            errorMessage = "Message has been deleted";
-            alert.setVisibility(View.VISIBLE);
 
-        } else {
-
-            alert.setVisibility(View.GONE);
-            messageText.setText(message.getMessageText());
-
-
-        }
         aliasText.setText(message.getAlias());
         if (message.getRole() != null && !(message.getRole().trim().isEmpty())) {
             roleText.setText(" - " + message.getRole());
@@ -162,47 +151,67 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        //first thing first, if any upload or download happening, show progress bar
-        if (message.isAttachmentLoadingGoingOn()) {
-            attachmentLoadProgess.setVisibility(View.VISIBLE);
-            int progress = message.getLoadingProgress();
-            attachmentLoadProgess.setProgress(progress);
+        if (message.getDeleted()) {
+            urgentImage.setVisibility(View.INVISIBLE);
+            playAudioFrame.setVisibility(View.GONE);
+            messageText.setText("Message Deleted");
+            download.setVisibility(View.GONE);
+            errorMessage = "Message has been deleted";
+//            alert.setVisibility(View.GONE);
+//            alert.setVisibility(View.VISIBLE);
+
         } else {
-            attachmentLoadProgess.setVisibility(View.GONE);
-            String attachmentUriString = message.getAttachmentUri();
-            Uri attachmentUri = null;
-            if(attachmentUriString != null) {
-                attachmentUri = Uri.parse(attachmentUriString);
-            }
+            playAudioFrame.setVisibility(View.VISIBLE);
+//            alert.setVisibility(View.GONE);
+            messageText.setText(message.getMessageText());
 
-            Log.d(TAG, "Uri returned "+attachmentUri);
+            //first thing first, if any upload or download happening, show progress bar
 
-            if(attachmentUri != null && MediaHelper.doesUriFileExists(context.getContentResolver(), attachmentUri)){
-
-                //audio is uploaded and file exists
-                download.setVisibility(View.GONE);
-                alert.setVisibility(View.GONE);
-                playAudioFrame.setVisibility(View.VISIBLE);
-                playAudioFrame.setBackground(context.getResources().getDrawable(R.drawable.audio_background));
-                videoPlay.setVisibility(View.VISIBLE);
-
-            }
-            else{
-                if (message.getAttachmentUploaded()) {
-                    //not available locally, but uploaded
-                    alert.setVisibility(View.GONE);
-                    download.setVisibility(View.VISIBLE);
-                    getS3Url(message.getMessageId(), message.getGroupId());
-                    videoPlay.setVisibility(View.VISIBLE);
-                } else { //file is not uploaded and also does not exist
-                    download.setVisibility(View.GONE);
-                    alert.setVisibility(View.VISIBLE);
-                    errorMessage = "File does not exist either on server or local anymore";
-                    videoPlay.setVisibility(View.GONE);
+            if (message.isAttachmentLoadingGoingOn()) {
+                attachmentLoadProgess.setVisibility(View.VISIBLE);
+                int progress = message.getLoadingProgress();
+                attachmentLoadProgess.setProgress(progress);
+            } else {
+                attachmentLoadProgess.setVisibility(View.GONE);
+                String attachmentUriString = message.getAttachmentUri();
+                Uri attachmentUri = null;
+                if (attachmentUriString != null) {
+                    attachmentUri = Uri.parse(attachmentUriString);
                 }
+
+                Log.d(TAG, "Uri returned " + attachmentUri);
+
+                if (attachmentUri != null && MediaHelper.doesUriFileExists(context.getContentResolver(), attachmentUri)) {
+
+                    //audio is uploaded and file exists
+                    download.setVisibility(View.GONE);
+//                    alert.setVisibility(View.GONE);
+                    playAudioFrame.setVisibility(View.VISIBLE);
+                    playAudioFrame.setBackground(context.getResources().getDrawable(R.drawable.audio_background));
+                    videoPlay.setVisibility(View.VISIBLE);
+
+                } else {
+                    if (message.getAttachmentUploaded()) {
+                        //not available locally, but uploaded
+//                        alert.setVisibility(View.GONE);
+                        download.setVisibility(View.VISIBLE);
+                        getS3Url(message.getMessageId(), message.getGroupId());
+                        videoPlay.setVisibility(View.VISIBLE);
+                    } else { //file is not uploaded and also does not exist
+                        download.setVisibility(View.GONE);
+//                        alert.setVisibility(View.VISIBLE);
+                        errorMessage = "File does not exist either on server or local anymore";
+                        videoPlay.setVisibility(View.GONE);
+                    }
+                }
+
             }
+
 
         }
+
+
+
 
 //        String attachmentMime = message.getAttachmentMime();
 //
@@ -282,12 +291,12 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
         });
 
 
-        alert.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, errorMessage == null ? "Error accessing file":errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        alert.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(context, errorMessage == null ? "Error accessing file":errorMessage, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         playAudioFrame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -576,7 +585,7 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
                 audioUri = Uri.parse(url.toString());
                 if(audioUri != null){
                     download.setVisibility(View.VISIBLE);
-                    alert.setVisibility(View.GONE);
+//                    alert.setVisibility(View.GONE);
                     playAudioFrame.setVisibility(View.VISIBLE);
                     playAudioFrame.setBackground(context.getResources().getDrawable(R.drawable.audio_background));
                     videoPlay.setVisibility(View.VISIBLE);
@@ -588,7 +597,7 @@ public class AudioRcvdMessageHolder extends RecyclerView.ViewHolder {
             public void onImageLinkError(Exception e) {
                 audioUri = null;
                 download.setVisibility(View.GONE);
-                alert.setVisibility(View.VISIBLE);
+//                alert.setVisibility(View.VISIBLE);
                 errorMessage = "File does not exist either on server or local anymore";
                 playAudioFrame.setVisibility(View.VISIBLE);
                 videoPlay.setVisibility(View.GONE);

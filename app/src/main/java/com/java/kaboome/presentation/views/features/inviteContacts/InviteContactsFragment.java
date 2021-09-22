@@ -15,12 +15,14 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +44,7 @@ import com.java.kaboome.presentation.entities.InvitationModel;
 import com.java.kaboome.presentation.entities.UserGroupModel;
 import com.java.kaboome.presentation.helpers.DialogHelper;
 import com.java.kaboome.presentation.views.features.BaseFragment;
+import com.java.kaboome.presentation.views.features.groupMessages.GroupAdminUserMessagesFragment;
 import com.java.kaboome.presentation.views.features.inviteContacts.viewmodel.ContactsViewModel;
 import com.java.kaboome.presentation.views.features.inviteContacts.adapter.InvitationContactListener;
 
@@ -63,6 +66,7 @@ public class InviteContactsFragment extends BaseFragment implements InvitationCo
     private SearchView searchView;
     private AppCompatButton doneButton;
     private MenuItem itemSearch;
+    private NavController navController;
 
 
     public InviteContactsFragment() {
@@ -88,6 +92,15 @@ public class InviteContactsFragment extends BaseFragment implements InvitationCo
 
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         mainToolbar = act.findViewById(R.id.mainToolbar);
+
+        mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavigationUI.navigateUp(navController, (DrawerLayout) null);
+            }
+        });
+
+
         mainToolbar.getMenu().clear(); //removing old menu if any
         mainToolbar.inflateMenu(R.menu.contact_search_menu);
 
@@ -107,6 +120,7 @@ public class InviteContactsFragment extends BaseFragment implements InvitationCo
 //        MenuItemCompat.setActionView(itemSearch, searchView);
 
         itemSearch.setActionView(searchView);
+        navController = NavHostFragment.findNavController(InviteContactsFragment.this);
         return rootView;
     }
 

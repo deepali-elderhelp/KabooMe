@@ -149,7 +149,7 @@ public class ConvsListViewModel extends ViewModel {
                                     public void run() {
                                         for(UserGroupConversationModel userGroupConversationModel: newUserGroupConversationModels){
                                             GetConversationLastMessageCache getUserGroupLastConvMessageCache = new GetConversationLastMessageCache(messagesListRepository);
-                                            DomainMessage lastMessage = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId()));
+                                            DomainMessage lastMessage = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId(), false));
                                             if(lastMessage != null){
                                                 userGroupConversationModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupConversationModel.setLastMessageText(lastMessage.getMessageText());
@@ -219,7 +219,7 @@ public class ConvsListViewModel extends ViewModel {
                                     public void run() {
                                         for(UserGroupConversationModel userGroupConversationModel: newUserGroupConversationModels){
                                             GetConversationLastMessageCache getUserGroupLastConvMessageCache = new GetConversationLastMessageCache(messagesListRepository);
-                                            DomainMessage lastMessage = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId()));
+                                            DomainMessage lastMessage = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId(), false));
                                             if(lastMessage != null){
                                                 userGroupConversationModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupConversationModel.setLastMessageText(lastMessage.getMessageText());

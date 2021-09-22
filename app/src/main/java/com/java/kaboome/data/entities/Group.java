@@ -56,6 +56,9 @@ public class Group implements Serializable {
     @SerializedName("privateGroup")
     private Boolean privateGroup;
 
+    @SerializedName("unicastGroup")
+    private Boolean unicastGroup;
+
     @SerializedName("openToRequests")
     private Boolean openToRequests;
 
@@ -257,6 +260,14 @@ public class Group implements Serializable {
 
     public void setPrivateGroup(Boolean privateGroup) {
         this.privateGroup = privateGroup;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public ArrayList<GroupUser> getUsersJoined() {

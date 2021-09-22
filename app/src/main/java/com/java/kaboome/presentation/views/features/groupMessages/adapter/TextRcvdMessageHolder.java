@@ -76,9 +76,17 @@ public class TextRcvdMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
+        if(message.getNotify() == 1){
+            urgentImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            urgentImage.setVisibility(View.INVISIBLE);
+        }
+
 
         if(message.getDeleted() != null && message.getDeleted()){
-            messageText.setText("Message Deleted");
+            messageText.setText(message.getMessageText()); //the message text must be updated to - deleted by so and so
+            urgentImage.setVisibility(View.INVISIBLE);
         }
         else{
 //            messageText.setText(message.getMessageText());
@@ -101,13 +109,6 @@ public class TextRcvdMessageHolder extends RecyclerView.ViewHolder {
             timeText.setText(DateHelper.getPrettyTime(message.getSentAt()));
         }
 
-
-        if(message.getNotify() == 1){
-            urgentImage.setVisibility(View.VISIBLE);
-        }
-        else{
-            urgentImage.setVisibility(View.INVISIBLE);
-        }
 
 //        Drawable imageErrorAndPlaceholder = context.getResources().getDrawable(R.drawable.bs_profile);
 //        ImageHelper.loadUserImage(message.getSentBy(), null, requestManager,handler, profileImage, null);

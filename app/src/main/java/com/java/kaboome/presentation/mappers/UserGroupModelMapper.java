@@ -49,6 +49,7 @@ public class UserGroupModelMapper {
                 userGroupModel.setIsAdmin(domainUserGroup.getIsAdmin());
                 userGroupModel.setRole(domainUserGroup.getGroupAdminRole());
                 userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
+                userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                 userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
                 userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                 userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
@@ -109,6 +110,7 @@ public class UserGroupModelMapper {
                 userGroupModel.setIsAdmin(domainUserGroup.getIsAdmin());
                 userGroupModel.setRole(domainUserGroup.getGroupAdminRole());
                 userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
+                userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                 userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
                 userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                 userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
@@ -170,6 +172,7 @@ public class UserGroupModelMapper {
                     userGroupModel.setIsAdmin(domainUserGroup.getIsAdmin());
                     userGroupModel.setRole(domainUserGroup.getGroupAdminRole());
                     userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
+                    userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                     userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
                     userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                     userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
@@ -241,6 +244,7 @@ public class UserGroupModelMapper {
         domainUserGroup.setIsAdmin(userGroupModel.getIsAdmin());
         domainUserGroup.setGroupAdminRole(userGroupModel.getRole());
         domainUserGroup.setPrivateGroup(userGroupModel.getPrivate());
+        domainUserGroup.setUnicastGroup(userGroupModel.getUnicastGroup());
         domainUserGroup.setImageUpdateTimestamp(userGroupModel.getImageUpdateTimestamp());
         domainUserGroup.setUserImageUpdateTimestamp(userGroupModel.getUserImageUpdateTimestamp());
         domainUserGroup.setCacheClearTS(userGroupModel.getCacheClearTS());
@@ -264,6 +268,7 @@ public class UserGroupModelMapper {
         userGroupModel.setIsAdmin(domainUserGroup.getIsAdmin());
         userGroupModel.setRole(domainUserGroup.getGroupAdminRole());
         userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
+        userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
         userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
         userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
         userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());

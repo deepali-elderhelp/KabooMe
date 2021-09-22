@@ -27,6 +27,8 @@ public class DomainGroup {
 
     private Boolean privateGroup;
 
+    private Boolean unicastGroup;
+
     private Boolean openToRequests;
 
     private Boolean isDeleted;
@@ -130,6 +132,14 @@ public class DomainGroup {
 
     public void setPrivateGroup(Boolean privateGroup) {
         this.privateGroup = privateGroup;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public Boolean getOpenToRequests() {

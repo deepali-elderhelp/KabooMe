@@ -111,6 +111,7 @@ public GroupNotificationHandler(RemoteMessage remoteMessage, Context context) {
             newDomainMessage.setMessageId(UUID.randomUUID().toString());
             newDomainMessage.setSentBy(GroupStatusConstants.JOINED_GROUP.getStatus());
             newDomainMessage.setSentTo(MessageGroupsConstants.GROUP_MESSAGES.toString());
+            newDomainMessage.setDeleted(false);
             newDomainMessage.setAlias("");
             newDomainMessage.setGroupId(groupObject.getGroupId());
             newDomainMessage.setSentAt(groupObject.getLastAccessed());

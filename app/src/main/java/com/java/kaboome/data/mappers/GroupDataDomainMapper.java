@@ -35,6 +35,7 @@ public class GroupDataDomainMapper {
         domainGroup.setGroupCreatorRole(group.getGroupCreatorRole());
         domainGroup.setExpiry(group.getExpiry());
         domainGroup.setPrivateGroup(group.isPrivateGroup());
+        domainGroup.setUnicastGroup(group.getUnicastGroup());
         domainGroup.setOpenToRequests(group.getOpenToRequests());
         domainGroup.setDeleted(group.getDeleted());
         domainGroup.setCurrentUserStatusForGroup(group.getCurrentUserStatusForGroup());
@@ -68,6 +69,7 @@ public class GroupDataDomainMapper {
         group.setCreatedByAlias(domainGroup.getCreatedByAlias());
         group.setExpiry(domainGroup.getExpiry());
         group.setPrivateGroup(domainGroup.isPrivateGroup());
+        group.setUnicastGroup(domainGroup.getUnicastGroup());
         group.setOpenToRequests(domainGroup.getOpenToRequests());
         group.setDeleted(domainGroup.getDeleted());
         group.setCurrentUserStatusForGroup(domainGroup.getCurrentUserStatusForGroup());

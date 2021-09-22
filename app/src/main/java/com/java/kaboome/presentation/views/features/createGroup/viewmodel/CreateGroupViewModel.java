@@ -91,9 +91,10 @@ public class CreateGroupViewModel extends ViewModel {
         return createGroup;
     }
 
-    public void addGroupNameAndDesc(String name, String desc){
+    public void addGroupNameAndDesc(String name, String desc, Boolean unicast){
         groupModel.setGroupName(name);
         groupModel.setGroupDescription(desc);
+        groupModel.setUnicastGroup(unicast);
     }
 
     public void addGroupAliasAndRole(String alias, String role, String userImagePath, boolean userImageChanged, String userThumbnailPath){
@@ -210,6 +211,7 @@ public class CreateGroupViewModel extends ViewModel {
                         newDomainMessage.setSentAt(domainGroupUser.getDateJoined());
                         newDomainMessage.setUploadedToServer(true);
                         newDomainMessage.setHasAttachment(false);
+                        newDomainMessage.setDeleted(false);
                         newDomainMessage.setMessageText(AppConfigHelper.getContext().getString(R.string.new_group_welcome_message_1a));
                         addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(newDomainMessage));
 

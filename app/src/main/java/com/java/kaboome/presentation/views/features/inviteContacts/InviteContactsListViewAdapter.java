@@ -77,26 +77,28 @@ public class InviteContactsListViewAdapter extends RecyclerView.Adapter<InviteCo
     public void onBindViewHolder(final @NonNull ContactViewHolder holder, int position) {
         final ContactModel contact = contacts.get(position);
 
-
-        GlideApp.with(mContext).load(contact.getPhotoURI()).addListener(new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                Log.d(TAG, "Error loading groupImage from server "+ e.getMessage());
-                if(holder.progressBar != null){
-                    holder.progressBar.setVisibility(View.GONE);
+        if(contact.getPhotoURI() != null) {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            GlideApp.with(mContext).load(contact.getPhotoURI()).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    Log.d(TAG, "Error loading groupImage from server " + e.getMessage());
+                    if (holder.progressBar != null) {
+                        holder.progressBar.setVisibility(View.GONE);
+                    }
+                    return false;
                 }
-                return false;
-            }
 
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                Log.d(TAG, "Loaded groupImage successfully from server" );
-                if(holder.progressBar != null){
-                    holder.progressBar.setVisibility(View.GONE);
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    Log.d(TAG, "Loaded groupImage successfully from server");
+                    if (holder.progressBar != null) {
+                        holder.progressBar.setVisibility(View.GONE);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        }).into(holder.profileImage);
+            }).into(holder.profileImage);
+        }
 
         holder.displayName.setText(contact.getName());
 

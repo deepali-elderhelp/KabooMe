@@ -88,10 +88,16 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
                 }
             }
         });
-
+//        trying to put on resume before the init call
+//        checking if this works okay and this was the reason behind it -
+//        when init fails and the user goes to LoginFailure, there the intent to go to SignIn is called
+//        but since onResume() has not finished, there is no context - context is null, hence an NPE is created
+//        see how this one goes - not sure if there is any other catch with onResume() being called in the end
+//        more testing should clear it out
+        super.onResume();
         CognitoHelper.init(AppConfigHelper.getContext());
         findCurrent();
-        super.onResume();
+//        super.onResume();
 
     }
 
@@ -120,6 +126,7 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
 
                 @Override
                 public void onFailure(Exception exception) {
+                    Log.d(TAG, "onFailure: Exception - "+exception);
                     if(exception instanceof CognitoInternalErrorException){
                         if(exception.getCause().getMessage().contains("Unable to resolve host")){
                             //login failed because token expired(1 hour limit) and now there is no internet connection
@@ -178,6 +185,7 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
 
     @Override
     public void onLoginFailure(Exception exception) {
+        Log.d(TAG, "onLoginFailure: Exception - "+exception);
         //user cannot continue, his login is invalid
         Intent intent = new Intent(getContext(), SignUpActivity.class);
         startActivity(intent);

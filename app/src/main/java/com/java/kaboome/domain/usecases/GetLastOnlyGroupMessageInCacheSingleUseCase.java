@@ -21,18 +21,20 @@ public class GetLastOnlyGroupMessageInCacheSingleUseCase extends BaseSingleUseCa
     @Override
     protected DomainMessage executeUseCase(Params params) {
 //        return messagesListRepository.getLatestGroupMessageInCache(params.groupId, params.sentTo);
-        return messagesListRepository.getLastMessageForOnlyGroupFromCacheSingle(params.groupId);
+        return messagesListRepository.getLastMessageForOnlyGroupFromCacheSingle(params.groupId, params.includeDeleted);
     }
 
     public static final class Params {
         private final String groupId;
+        private final boolean includeDeleted;
 
-        private Params(String groupId) {
+        private Params(String groupId, boolean includeDeleted) {
             this.groupId = groupId;
+            this.includeDeleted = includeDeleted;
         }
 
-        public static Params forGroup(String groupId){
-            return new Params(groupId);
+        public static Params forGroup(String groupId, boolean includeDeleted){
+            return new Params(groupId, includeDeleted);
         }
     }
 }

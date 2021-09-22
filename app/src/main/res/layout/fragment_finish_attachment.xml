@@ -56,11 +56,12 @@
         app:layout_constraintEnd_toEndOf="@id/guideline_finish_attach_vertical_end"
         android:visibility="gone"/>
 
-    <ImageView
+<!--    <ImageView-->
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/finish_attach_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="@id/guideline_finish_attach_hori_top"
         app:layout_constraintBottom_toBottomOf="@id/guideline_finish_attach_hori_bottom"
         app:layout_constraintStart_toStartOf="@id/guideline_finish_attach_vertical_start"

@@ -127,12 +127,16 @@ public class AudioSentMessageHolder extends RecyclerView.ViewHolder {
         }
 
         if (message.getDeleted()) {
+            urgentImage.setVisibility(View.INVISIBLE);
+            attachmentLoadProgess.setVisibility(View.GONE);
+            playAudioFrame.setVisibility(View.GONE);
             messageText.setText("Message Deleted");
             download.setVisibility(View.GONE);
             errorMessage = "Message has been deleted";
 
         } else {
 
+//            playAudioFrame.setVisibility(View.VISIBLE);
             messageText.setText(message.getMessageText());
 
             //first thing first, if any upload or download happening, show progress bar

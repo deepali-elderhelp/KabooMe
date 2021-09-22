@@ -121,6 +121,8 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     private WebView mWebView;
     private TextView leaveAndDeleteGroup;
     private SwitchCompat acceptingRequest;
+    private ImageView privateImage;
+    private ImageView unicastImage;
 
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 102;
     private ImageView networkOffImageView;
@@ -171,6 +173,21 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
         shareQRCodeTextView.setOnClickListener(shareQRCodeClicked);
         printQRCode = rootView.findViewById(R.id.group_info_print_qr_code);
         printQRCode.setOnClickListener(printQRCodeClicked);
+
+        privateImage = rootView.findViewById(R.id.group_private_image);
+        privateImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogHelper.showDialogMessage(getActivity(), "Private Group", getResources().getString(R.string.group_private_message));
+            }
+        });
+        unicastImage = rootView.findViewById(R.id.group_broadcast_image);
+        unicastImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogHelper.showDialogMessage(getActivity(), "Admin Messages Only", getResources().getString(R.string.announcement_only_alert));
+            }
+        });
 
         navController = NavHostFragment.findNavController(GroupInfoFragment.this);
         uploadInProgress = false;
@@ -334,6 +351,42 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
             }
         });
+
+        //trying for going to conversations from here
+//        MutableLiveData groupSendPrivateMessageLiveData = navController.getCurrentBackStackEntry()
+//                .getSavedStateHandle()
+//                .getLiveData("groupSendAdminMessage");
+//        groupSendPrivateMessageLiveData.observe(getViewLifecycleOwner(), new Observer() {
+//            @Override
+//            public void onChanged(Object o) {
+//                Log.d(TAG, "Received send private message to member - "+o);
+//                GroupUserModel memberToSendDataTo = (GroupUserModel) o;
+//                UserGroupConversationModel userGroupConversationModel = new UserGroupConversationModel();
+//                userGroupConversationModel.setGroupId(memberToSendDataTo.getGroupId());
+//                userGroupConversationModel.setUserId(AppConfigHelper.getUserId());
+//                userGroupConversationModel.setOtherUserId(memberToSendDataTo.getUserId());
+//                userGroupConversationModel.setOtherUserName(memberToSendDataTo.getAlias());
+//                userGroupConversationModel.setOtherUserRole(memberToSendDataTo.getRole());
+//                userGroupConversationModel.setLastAccessed((new Date()).getTime());
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("conversation", userGroupConversationModel);
+//                bundle.putSerializable("group", group);
+//                if(!NetworkHelper.isOnline()){
+//                    Toast.makeText(getContext(), "Sorry, this action needs Network Connection", Toast.LENGTH_SHORT).show();
+//                }
+//                else{
+//                    if(navController.getCurrentDestination().getId() == R.id.groupInfoFragment) {
+//                        navController.navigate(R.id.action_groupInfoFragment_to_groupAdminUserMessagesFragment, bundle);
+//                    }
+//
+//                }
+//
+//            }
+//        });
+
+        //till here
+
         MutableLiveData groupNewNamePrivacyImageLiveData = navController.getCurrentBackStackEntry()
                 .getSavedStateHandle()
                 .getLiveData("groupNamePrivacyAndImage");
@@ -1012,6 +1065,20 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                     handler, groupImage, null);
         }
 
+        if(groupModel.getGroupPrivate() != null && groupModel.getGroupPrivate()) {
+            privateImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            privateImage.setVisibility(View.GONE);
+        }
+
+        if(groupModel.getUnicastGroup() != null && groupModel.getUnicastGroup()){
+            unicastImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            unicastImage.setVisibility(View.GONE);
+        }
+
     }
 
     private void initRecyclerViews(){
@@ -1207,6 +1274,7 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
         //show user image big
         Bundle bundle = new Bundle();
         bundle.putSerializable("groupUser", groupUserModel);
+        bundle.putSerializable("userGroup", group);
         bundle.putBoolean("currentUserIsAdmin", isCurrentUserAnAdmin());
 
         if(AppConfigHelper.getUserId().equals(groupUserModel.getUserId())){

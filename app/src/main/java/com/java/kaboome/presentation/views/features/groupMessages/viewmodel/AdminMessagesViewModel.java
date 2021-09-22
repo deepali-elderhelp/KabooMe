@@ -29,8 +29,9 @@ import com.java.kaboome.domain.repositories.MessagesListRepository;
 import com.java.kaboome.domain.repositories.UserGroupsListRepository;
 import com.java.kaboome.domain.usecases.AddNewMessageUseCase;
 import com.java.kaboome.domain.usecases.DeleteLocalMessageUseCase;
-import com.java.kaboome.domain.usecases.DeleteMessageUseCase;
+//import com.java.kaboome.domain.usecases.DeleteMessageUseCase;
 import com.java.kaboome.domain.usecases.DownloadAttachmentUseCase;
+import com.java.kaboome.domain.usecases.GetConversationLastMessageCache;
 import com.java.kaboome.domain.usecases.GetMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadOnlyGroupMessagesUseCase;
 import com.java.kaboome.domain.usecases.UpdateMessageAttachmentDetailsUseCase;
@@ -62,12 +63,13 @@ public class AdminMessagesViewModel extends ViewModel {
 //    private GetOnlyGroupUnreadMessagesUseCase getOnlyGroupUnreadMessagesUseCase;
     private GetNetUnreadOnlyGroupMessagesUseCase getNetUnreadOnlyGroupMessagesUseCase;
     private DeleteLocalMessageUseCase deleteLocalMessageUseCase;
-    private DeleteMessageUseCase deleteMessageUseCase;
+//    private DeleteMessageUseCase deleteMessageUseCase;
     private MessagesListRepository messagesListRepository;
     private UploadImageUseCase uploadImageUseCase;
     private DownloadAttachmentUseCase downloadAttachmentUseCase;
     private UpdateMessageAttachmentDetailsUseCase updateMessageAttachmentDetailsUseCase;
     private UpdateMessageLoadingProgressUseCase updateMessageLoadingProgressUseCase;
+    private GetConversationLastMessageCache getUserGroupLastConvMessageCache;
     private ImageUploadRepository imageUploadRepository;
 
     private LiveData<PagedList<Message>> messagesList;
@@ -106,7 +108,7 @@ public class AdminMessagesViewModel extends ViewModel {
         messagesListRepository = DataGroupMessagesRepository.getInstance();
         getMessagesUseCase = new GetMessagesUseCase(messagesListRepository);
         addNewMessageUseCase = new AddNewMessageUseCase(messagesListRepository);
-        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
+//        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
         deleteLocalMessageUseCase = new DeleteLocalMessageUseCase(messagesListRepository);
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -123,7 +125,7 @@ public class AdminMessagesViewModel extends ViewModel {
         updateMessageAttachmentDetailsUseCase = new UpdateMessageAttachmentDetailsUseCase(messagesListRepository);
         updateMessageLoadingProgressUseCase = new UpdateMessageLoadingProgressUseCase(messagesListRepository);
         getNetUnreadOnlyGroupMessagesUseCase = new GetNetUnreadOnlyGroupMessagesUseCase(messagesListRepository);
-
+        getUserGroupLastConvMessageCache = new GetConversationLastMessageCache(messagesListRepository);
     }
 
     public String getTopicName() {
@@ -278,7 +280,8 @@ public class AdminMessagesViewModel extends ViewModel {
             @Override
             public void run() {
 //                DomainMessage lastMessageInCache = messagesListRepository.getLatestMessageInCache(group.getGroupId(), MessageGroupsConstants.USER_ADMIN_MESSAGES, AppConfigHelper.getUserId());
-                DomainMessage lastMessageInCache = messagesListRepository.getLastMessageForConvFromCacheSingle(group.getGroupId(), AppConfigHelper.getUserId());
+                DomainMessage lastMessageInCache = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(group.getGroupId(), AppConfigHelper.getUserId(), true));
+//                DomainMessage lastMessageInCache = messagesListRepository.getLastMessageForConvFromCacheSingle(group.getGroupId(), AppConfigHelper.getUserId());
                 if(lastMessageInCache != null && (lastMessageInCache.getSentAt() != null)){
                     Long lastAccessed = lastMessageInCache.getSentAt();
 
@@ -485,25 +488,31 @@ public void startDownloadingAttachment(final Message message, final String fileP
 
     public void deleteMessage(Message message, PublishMessageCallback callback) {
 
+        String messageText = "Message Deleted By "+group.getAlias()+","+group.getRole();
 
         //all you need to do is to publish the message again with isDeleted set to true
-        publishIoTMessage(message.getMessageId(), message.getMessageText(), message.getSentAt(), message.getNotify(), message.getHasAttachment(),
+        publishIoTMessage(message.getMessageId(), messageText, message.getSentAt(), message.getNotify(), message.getHasAttachment(),
                 message.getAttachmentUploaded(), message.isAttachmentLoadingGoingOn(), message.getAttachmentExtension(),
                 message.getAttachmentMime(), true, message.getTnBlob(),message.getAttachmentUri(), MessageGroupsHelper.getMessageGroupConstantBySentTo(message.getSentTo()), AppConfigHelper.getUserId(), callback);
 
         //if it has attachment downloaded, then delete it, or make a worker thread do it
         if(message.getHasAttachment()){
-            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message);
+            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message, group.getGroupName());
         }
     }
 
     /**
      * This method only deletes the message from the cache.
      * Created for deleting the welcome message when user chooses close button
+     * But also being used for when the user selects a particular message to be
+     * only "Delete for only me"
      * @param message
      */
     public void deleteLocalMessage(Message message){
         deleteLocalMessageUseCase.execute(DeleteLocalMessageUseCase.Params.messageToBeDeleted(MessageDataDomainMapper.transformFromMessage(message)));
+        if(message.getHasAttachment()){
+            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message, group.getGroupName());
+        }
     }
 
 

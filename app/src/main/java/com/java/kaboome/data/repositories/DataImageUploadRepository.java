@@ -414,6 +414,7 @@ public class DataImageUploadRepository implements ImageUploadRepository {
                                 if (TransferState.COMPLETED == state) {
                                     //all callbacks are called on main thread
                                     //download the image for further use
+                                    Log.d("TestTAG", "uploading of the image is done = "+key);
                                     ImageHelper.getInstance().downloadImage(key);
 
                                 } else if (TransferState.FAILED == state) {

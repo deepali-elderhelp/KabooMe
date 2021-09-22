@@ -89,6 +89,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/audio_user_alias_rcvd"
             android:background="@drawable/video_play_background"
+            android:visibility="visible"
             >
             <ImageView
                 android:id="@+id/video_play"
@@ -96,20 +97,20 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:src="@drawable/video_play_png"
-                android:visibility="gone"
-                />
-
-
-            <ImageView
-                android:id="@+id/audio_alert"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/alert_circle"
                 android:visibility="visible"
-                android:tint="@color/white"
                 />
+
+
+<!--            <ImageView-->
+<!--                android:id="@+id/audio_alert"-->
+<!--                android:layout_width="45dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:scaleType="fitXY"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:src="@drawable/alert_circle"-->
+<!--                android:visibility="visible"-->
+<!--                app:tint="@color/white"-->
+<!--                />-->
 
         </FrameLayout>
 

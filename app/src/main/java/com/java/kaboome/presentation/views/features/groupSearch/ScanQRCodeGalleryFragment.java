@@ -43,6 +43,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -136,19 +138,25 @@ public class ScanQRCodeGalleryFragment extends BaseFragment {
 //        super.onActivityResult(requestCode, resultCode, data);
 
         //data.getData return the content URI for the selected Image
-        Uri selectedImage = data.getData();
+        if(resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
 
-        InputStream imageStream = null;
-        try {
-            //getting the image
-            imageStream = getContext().getContentResolver().openInputStream(selectedImage);
-        } catch (FileNotFoundException e) {
-            Toast.makeText(getContext(), "File not found", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            InputStream imageStream = null;
+            try {
+                //getting the image
+                imageStream = getContext().getContentResolver().openInputStream(selectedImage);
+            } catch (FileNotFoundException e) {
+                Toast.makeText(getContext(), "File not found", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+            //decoding bitmap
+            Bitmap bMap = BitmapFactory.decodeStream(imageStream);
+            scanQRImage(bMap);
         }
-        //decoding bitmap
-        Bitmap bMap = BitmapFactory.decodeStream(imageStream);
-        scanQRImage(bMap);
+        else{
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.popBackStack(R.id.searchGroupFragment, false);
+        }
 
     }
 

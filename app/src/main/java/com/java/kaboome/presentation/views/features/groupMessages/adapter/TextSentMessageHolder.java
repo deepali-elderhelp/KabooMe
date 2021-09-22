@@ -80,9 +80,18 @@ public class TextSentMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
+        if(message.getNotify() == 1){
+            urgentImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            urgentImage.setVisibility(View.INVISIBLE);
+        }
+
 
         if(message.getDeleted()){
-            messageText.setText("Message Deleted");
+//            messageText.setText("Message Deleted");
+            messageText.setText(message.getMessageText()); //the message text must be updated to - deleted by so and so
+            urgentImage.setVisibility(View.INVISIBLE);
         }
         else{
 //            messageText.setText(message.getMessageText());
@@ -118,13 +127,6 @@ public class TextSentMessageHolder extends RecyclerView.ViewHolder {
             continueText.setVisibility(View.GONE);
         }
 
-
-        if(message.getNotify() == 1){
-            urgentImage.setVisibility(View.VISIBLE);
-        }
-        else{
-            urgentImage.setVisibility(View.INVISIBLE);
-        }
 
         Drawable imageErrorAndPlaceholder = itemView.getContext().getResources().getDrawable(R.drawable.account_gray_192);
 

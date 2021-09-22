@@ -92,7 +92,7 @@ public class SyncAllMessagesFromServer extends IntentService {
                     @Override
                     public void run() {
                         GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(DataGroupMessagesRepository.getInstance());
-                        final DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroup.getGroupId()));
+                        final DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroup.getGroupId(), true));
 
 
                         String groupId = userGroup.getGroupId();
@@ -123,7 +123,7 @@ public class SyncAllMessagesFromServer extends IntentService {
                         if(userGroup.getIsAdmin().equals("false")){
                             Log.d(TAG, "User is a regular member");
                             GetConversationLastMessageCache getConversationLastMessageCache = new GetConversationLastMessageCache(DataGroupMessagesRepository.getInstance());
-                            final DomainMessage lastAdminMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroup.getGroupId(), AppConfigHelper.getUserId()));
+                            final DomainMessage lastAdminMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroup.getGroupId(), AppConfigHelper.getUserId(), true));
                             lastAccessed.set((lastAdminMessage != null && lastAdminMessage.getSentAt() != null)? lastAdminMessage.getSentAt() : userGroup.getAdminsLastAccessed() != null? userGroup.getAdminsLastAccessed() : (new Date()).getTime());
                             getMessagesFromServer(groupId, userGroup.getAdminsCacheClearTS() != null? userGroup.getAdminsCacheClearTS() : (new Date()).getTime(), limit, scanDirection, AppConfigHelper.getUserId());
                         }
@@ -136,7 +136,7 @@ public class SyncAllMessagesFromServer extends IntentService {
                             if(listOfConversations != null && listOfConversations.size() > 0){
                                 for(DomainUserGroupConversation userGroupConversation: listOfConversations){
                                     GetConversationLastMessageCache getConversationLastMessageCache = new GetConversationLastMessageCache(DataGroupMessagesRepository.getInstance());
-                                    final DomainMessage lastConversationMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroup.getGroupId(), userGroupConversation.getOtherUserId()));
+                                    final DomainMessage lastConversationMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroup.getGroupId(), userGroupConversation.getOtherUserId(), true));
                                     lastAccessed.set((lastConversationMessage != null && lastConversationMessage.getSentAt() != null)? lastConversationMessage.getSentAt() : userGroupConversation.getLastAccessed() != null? userGroupConversation.getLastAccessed() : (new Date()).getTime());
                                     getMessagesFromServer(groupId, userGroupConversation.getCacheClearTS() != null? userGroupConversation.getCacheClearTS() : (new Date()).getTime(), limit, scanDirection, userGroupConversation.getOtherUserId());
                                 }

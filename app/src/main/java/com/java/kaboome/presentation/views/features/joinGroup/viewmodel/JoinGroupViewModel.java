@@ -136,6 +136,7 @@ public class JoinGroupViewModel extends ViewModel {
                             newDomainMessage.setMessageId(UUID.randomUUID().toString());
                             newDomainMessage.setSentBy(GroupStatusConstants.JOINED_GROUP.getStatus());
                             newDomainMessage.setSentTo(MessageGroupsConstants.GROUP_MESSAGES.toString());
+                            newDomainMessage.setDeleted(false);
                             newDomainMessage.setAlias("");
                             newDomainMessage.setGroupId(userGroupModel.getGroupId());
                             newDomainMessage.setSentAt(userGroupModel.getLastAccessed());

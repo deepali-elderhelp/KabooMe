@@ -6,7 +6,12 @@
     tools:context=".presentation.views.features.groupMessages.viewers.ImageViewerFragment"
     android:id="@+id/image_viewer_frame">
 
-    <ImageView
+<!--    <ImageView-->
+<!--        android:id="@+id/image_viewer_image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        />-->
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/image_viewer_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,7 +37,9 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "KMImageRcvdMsgHolder";
 
-    private ImageView download, alert;
+    private FrameLayout imageBubble;
+//    private ImageView download, alert;
+    private ImageView download;
     private TextView messageText, timeText, aliasText, roleText, newMessageHeader;
     private ImageView urgentImage, imageAttached;
     private CircleImageView profileImage;
@@ -46,6 +49,7 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
 //    private RequestManager requestManager;
     private Handler handler;
 //    private PlayerView audioPlayer;
+    private boolean mediaDownloaded = false;
 
 
 
@@ -62,12 +66,13 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
         roleText = itemView.findViewById(R.id.image_user_role_rcvd);
 
         urgentImage = itemView.findViewById(R.id.urgent_image_rcvd);
-        alert = itemView.findViewById(R.id.alert_image_rcvd);
+//        alert = itemView.findViewById(R.id.alert_image_rcvd);
         newMessageHeader = itemView.findViewById(R.id.imageNewMessagesLabel_rcvd);
 
         download =  itemView.findViewById(R.id.image_bubble_download_rcvd);
 
         imageAttached = itemView.findViewById(R.id.image_bubble_image_rcvd);
+        imageBubble = itemView.findViewById(R.id.image_bubble_frame_rcvd);
 
         profileImage = itemView.findViewById(R.id.image_user_profile_rcvd);
 
@@ -107,8 +112,15 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
+        if (message.getNotify() == 1) {
+            urgentImage.setVisibility(View.VISIBLE);
+        } else {
+            urgentImage .setVisibility(View.INVISIBLE);
+        }
+
         if (message.getDeleted()) {
-            imageAttached.setVisibility(View.GONE);
+            urgentImage .setVisibility(View.INVISIBLE);
+            imageBubble.setVisibility(View.GONE);
             download.setVisibility(View.GONE);
             attachmentLoadProgess.setVisibility(View.GONE);
             messageText.setText("Message Deleted");
@@ -123,7 +135,7 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
             }
 
         } else {
-            imageAttached.setVisibility(View.VISIBLE);
+            imageBubble.setVisibility(View.VISIBLE);
             messageText.setText(message.getMessageText());
 
             aliasText.setText(message.getAlias());
@@ -137,7 +149,7 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
 
             //first thing first, if any upload or download happening, show progress bar
             if (message.isAttachmentLoadingGoingOn()) {
-                alert.setVisibility(View.GONE);
+//                alert.setVisibility(View.GONE);
                 attachmentLoadProgess.setVisibility(View.VISIBLE);
                 int progress = message.getLoadingProgress();
                 Log.d(TAG, "Progress - "+progress);
@@ -171,8 +183,9 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
                             .load(attachmentUri)
                             .into(imageAttached);
 
+                    mediaDownloaded = true;
                     download.setVisibility(View.GONE);
-                    alert.setVisibility(View.GONE);
+//                    alert.setVisibility(View.GONE);
 
 //                    if (!message.getAttachmentUploaded()) { //not uploaded
 //                        download.setVisibility(View.GONE);
@@ -184,12 +197,13 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
 
                 }
                 else{
+                    mediaDownloaded = false;
                     if (message.getAttachmentUploaded()) {
                         //not available locally, but uploaded
                         download.setVisibility(View.VISIBLE);
-                        alert.setVisibility(View.GONE);
+//                        alert.setVisibility(View.GONE);
                     } else { //file is not uploaded and also does not exist
-                        alert.setVisibility(View.VISIBLE);
+//                        alert.setVisibility(View.VISIBLE);
                         download.setVisibility(View.GONE);
                         //play will not do anything, disable it
                         itemView.setOnClickListener(null);
@@ -247,11 +261,7 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
 //
 //            }
 
-            if (message.getNotify() == 1) {
-                urgentImage.setVisibility(View.VISIBLE);
-            } else {
-                urgentImage.setVisibility(View.INVISIBLE);
-            }
+
 
             download.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -260,12 +270,12 @@ public class ImageRcvdMessageHolder extends RecyclerView.ViewHolder {
                 }
             });
 
-            alert.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Error accessing file", Toast.LENGTH_SHORT).show();
-                }
-            });
+//            alert.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Toast.makeText(context, "Error accessing file", Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
 
         }

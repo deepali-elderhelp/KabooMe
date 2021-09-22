@@ -134,6 +134,7 @@ public class VerificationActivity extends AppCompatActivity {
                 showDialogMessage("Wrong code", "Either wrong code was put too many times or it expired, please resend the code");
             }
             else{
+                Log.d(TAG, "onFailure: "+e.getMessage());
                 Toast.makeText(VerificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

@@ -91,6 +91,9 @@ public class MediaHelper {
                 values.put(MediaStore.Images.Media.DATA, pathToMedia);
                 // .DATA is deprecated in API 29
                 imageUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                if(imageUri == null){
+                    return null;
+                }
                 return imageUri.toString();
             }
 //                File imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);

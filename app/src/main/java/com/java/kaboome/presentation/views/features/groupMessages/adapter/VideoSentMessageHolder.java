@@ -52,6 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class VideoSentMessageHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "KMVideoSentMsgHolder";
+    private final FrameLayout videoBubbleFrame;
 
     private ImageView download, upload;
     private TextView messageText, timeText, yourAliasText, yourRoleText, newMessageHeader;
@@ -89,6 +90,7 @@ public class VideoSentMessageHolder extends RecyclerView.ViewHolder {
 
         imageAttached = itemView.findViewById(R.id.video_bubble_image);
         videoPlayFrame = itemView.findViewById(R.id.video_play_frame);
+        videoBubbleFrame = itemView.findViewById(R.id.video_bubble_frame);
 
         videoPlay = itemView.findViewById(R.id.video_play);
         alert = itemView.findViewById(R.id.video_alert);
@@ -126,7 +128,14 @@ public class VideoSentMessageHolder extends RecyclerView.ViewHolder {
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                 handler, profileImage, null);
 
+        if (message.getNotify() == 1) {
+            urgentImage.setVisibility(View.VISIBLE);
+        } else {
+            urgentImage.setVisibility(View.INVISIBLE);
+        }
+
         if(message.getDeleted()){
+            urgentImage.setVisibility(View.INVISIBLE);
             messageText.setText("Message Deleted");
             yourAliasText.setText(message.getAlias());
             if (message.getRole() != null && !(message.getRole().trim().isEmpty())) {
@@ -142,12 +151,13 @@ public class VideoSentMessageHolder extends RecyclerView.ViewHolder {
             download.setVisibility(View.GONE);
             upload.setVisibility(View.GONE);
             imageAttached.setVisibility(View.GONE);
-            videoPlayFrame.setVisibility(View.GONE);
+            videoBubbleFrame.setVisibility(View.GONE);
         }
         else {
 
             //first enable defaults
             imageAttached.setVisibility(View.VISIBLE);
+            videoBubbleFrame.setVisibility(View.VISIBLE);
 
             if (message.getHasAttachment() != null && message.getHasAttachment()) {
 
@@ -297,11 +307,6 @@ public class VideoSentMessageHolder extends RecyclerView.ViewHolder {
 //
 //                }
 
-                if (message.getNotify() == 1) {
-                    urgentImage.setVisibility(View.VISIBLE);
-                } else {
-                    urgentImage.setVisibility(View.INVISIBLE);
-                }
 
 
                 videoPlayFrame.setOnClickListener(new View.OnClickListener() {

@@ -42,7 +42,8 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "KMVideoRcvdMsgHolder";
     private final FrameLayout videoPlayFrame;
-    private final ImageView alert;
+//    private final ImageView alert;
+    private final FrameLayout videoBubbleFrame;
 
     private ImageView download;
     private TextView messageText, timeText, aliasText, roleText, newMessageHeader;
@@ -78,9 +79,10 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
 
         imageAttached = itemView.findViewById(R.id.video_bubble_image_rcvd);
         videoPlayFrame = itemView.findViewById(R.id.video_play_frame_rcvd);
+        videoBubbleFrame = itemView.findViewById(R.id.video_bubble_frame_rcvd);
 
         videoPlay = itemView.findViewById(R.id.video_play_rcvd);
-        alert = itemView.findViewById(R.id.video_alert_rcvd);
+//        alert = itemView.findViewById(R.id.video_alert_rcvd);
 
         attachmentLoadProgess = itemView.findViewById(R.id.video_upload_progress_rcvd);
         attachmentLoadProgess.setMax(100);
@@ -118,7 +120,14 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
+        if (message.getNotify() == 1) {
+            urgentImage.setVisibility(View.VISIBLE);
+        } else {
+            urgentImage.setVisibility(View.INVISIBLE);
+        }
+
         if (message.getDeleted()) {
+            urgentImage.setVisibility(View.INVISIBLE);
             messageText.setText("Message Deleted");
             aliasText.setText(message.getAlias());
             if (message.getRole() != null && !(message.getRole().trim().isEmpty())) {
@@ -133,12 +142,12 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
             attachmentLoadProgess.setVisibility(View.GONE);
             download.setVisibility(View.GONE);
             imageAttached.setVisibility(View.GONE);
-            videoPlayFrame.setVisibility(View.GONE);
+            videoBubbleFrame.setVisibility(View.GONE);
         } else {
 
             //first enable defaults
             imageAttached.setVisibility(View.VISIBLE);
-            videoPlayFrame.setVisibility(View.VISIBLE);
+            videoBubbleFrame.setVisibility(View.VISIBLE);
 
             if (message.getHasAttachment() != null && message.getHasAttachment()) {
 
@@ -158,7 +167,7 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
                     int progress = message.getLoadingProgress();
                     attachmentLoadProgess.setProgress(progress);
                     download.setVisibility(View.GONE);
-                    alert.setVisibility(View.GONE);
+//                    alert.setVisibility(View.GONE);
                 } else {
                     attachmentLoadProgess.setVisibility(View.GONE);
                     String attachmentUriString = message.getAttachmentUri();
@@ -183,12 +192,12 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
                         if (!message.getAttachmentUploaded()) { //not uploaded
                             videoPlay.setVisibility(View.GONE);
                             download.setVisibility(View.GONE);
-                            alert.setVisibility(View.VISIBLE);
+//                            alert.setVisibility(View.VISIBLE);
                             errorMessage = "Upload of the file did not go through, please try again after sometime";
 
                         } else { //video is uploaded and file exists
                             download.setVisibility(View.GONE);
-                            alert.setVisibility(View.GONE);
+//                            alert.setVisibility(View.GONE);
                             videoPlay.setVisibility(View.VISIBLE);
 
                         }
@@ -204,7 +213,7 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
                         } else { //file is not uploaded and also does not exist
 
                             download.setVisibility(View.GONE);
-                            alert.setVisibility(View.VISIBLE);
+//                            alert.setVisibility(View.VISIBLE);
                             errorMessage = "File does not exist anymore";
                             videoPlay.setVisibility(View.GONE);
                         }
@@ -263,15 +272,6 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
 //                        videoPlay.setVisibility(View.GONE);
 //                    }
 
-
-
-                if (message.getNotify() == 1) {
-                    urgentImage.setVisibility(View.VISIBLE);
-                } else {
-                    urgentImage.setVisibility(View.INVISIBLE);
-                }
-
-
                 videoPlayFrame.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -305,12 +305,12 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
 
 
 
-                alert.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(itemView.getContext(), errorMessage == null ? "Error accessing file" : errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                alert.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(itemView.getContext(), errorMessage == null ? "Error accessing file" : errorMessage, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
             } //if attachment
         }
@@ -475,7 +475,7 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
                 pathToVideo = Uri.parse(url.toString());
                 if(pathToVideo != null){
                     download.setVisibility(View.VISIBLE);
-                    alert.setVisibility(View.GONE);
+//                    alert.setVisibility(View.GONE);
                     videoPlay.setVisibility(View.VISIBLE);
                 }
 
@@ -485,7 +485,7 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
             public void onImageLinkError(Exception e) {
                 pathToVideo = null;
                 download.setVisibility(View.GONE);
-                alert.setVisibility(View.VISIBLE);
+//                alert.setVisibility(View.VISIBLE);
                 errorMessage = "File does not exist either on server or local anymore";
                 videoPlay.setVisibility(View.GONE);
             }

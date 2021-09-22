@@ -52,6 +52,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/group_info_image_constraint_l"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -69,15 +70,27 @@
                     android:visibility="gone"
                     />
 
-<!--                <ImageView-->
-<!--                    android:id="@+id/group_info_edit_image"-->
-<!--                    android:layout_width="@dimen/group_info_edit_arrow_width"-->
-<!--                    android:layout_height="@dimen/group_info_edit_arrow_height"-->
-<!--                    android:layout_marginRight="15dp"-->
-<!--                    android:src="@drawable/more_arrow"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/group_info_image_frame"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/group_info_image_frame" />-->
+                <ImageView
+                    android:id="@+id/group_private_image"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/private_dark"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_image_constraint_l"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+
+                <ImageView
+                    android:id="@+id/group_broadcast_image"
+                    android:layout_width="@dimen/group_info_edit_arrow_width"
+                    android:layout_height="@dimen/group_info_edit_arrow_height"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/broadcast"
+                    app:layout_constraintBottom_toBottomOf="@id/group_info_image_constraint_l"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
 
                 <ImageView
                     android:id="@+id/group_info_edit_image"

@@ -35,8 +35,9 @@ import com.java.kaboome.domain.repositories.MessagesListRepository;
 import com.java.kaboome.domain.repositories.UserGroupsListRepository;
 import com.java.kaboome.domain.usecases.AddNewMessageUseCase;
 import com.java.kaboome.domain.usecases.DeleteLocalMessageUseCase;
-import com.java.kaboome.domain.usecases.DeleteMessageUseCase;
+//import com.java.kaboome.domain.usecases.DeleteMessageUseCase;
 import com.java.kaboome.domain.usecases.DownloadAttachmentUseCase;
+import com.java.kaboome.domain.usecases.GetLastOnlyGroupMessageInCacheSingleUseCase;
 import com.java.kaboome.domain.usecases.GetMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadGroupAllConversationMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadGroupConversationMessagesUseCase;
@@ -71,7 +72,7 @@ public class MessagesViewModel extends ViewModel {
     private GetUserGroupOnlyLocalUseCase getUserGroupOnlyLocalUseCase;
     private AddNewMessageUseCase addNewMessageUseCase;
     private DeleteLocalMessageUseCase deleteLocalMessageUseCase;
-    private DeleteMessageUseCase deleteMessageUseCase;
+//    private DeleteMessageUseCase deleteMessageUseCase;
     private MessagesListRepository messagesListRepository;
     private UploadImageUseCase uploadImageUseCase;
     private DownloadAttachmentUseCase downloadAttachmentUseCase;
@@ -80,6 +81,8 @@ public class MessagesViewModel extends ViewModel {
     private ImageUploadRepository imageUploadRepository;
     private GetNetUnreadGroupConversationMessagesUseCase getNetUnreadGroupConversationMessagesUseCase;
     private GetNetUnreadGroupAllConversationMessagesUseCase getNetUnreadGroupAllConversationMessagesUseCase;
+    private GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase;
+
 
     private LiveData<PagedList<Message>> messagesList;
     private DataSource.Factory<Integer, Message> dataSourceFactory;
@@ -125,7 +128,7 @@ public class MessagesViewModel extends ViewModel {
         getMessagesUseCase = new GetMessagesUseCase(messagesListRepository);
         getUserGroupOnlyLocalUseCase = new GetUserGroupOnlyLocalUseCase(DataUserGroupRepository.getInstance());
         addNewMessageUseCase = new AddNewMessageUseCase(messagesListRepository);
-        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
+//        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
         deleteLocalMessageUseCase = new DeleteLocalMessageUseCase(messagesListRepository);
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
@@ -146,6 +149,7 @@ public class MessagesViewModel extends ViewModel {
         //this is if the user is not an admin of the group
         getNetUnreadGroupConversationMessagesUseCase = new GetNetUnreadGroupConversationMessagesUseCase(messagesListRepository);
         getNetUnreadGroupAllConversationMessagesUseCase = new GetNetUnreadGroupAllConversationMessagesUseCase(messagesListRepository);
+        getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
 
     }
 
@@ -286,6 +290,18 @@ public class MessagesViewModel extends ViewModel {
 
     }
 
+    public boolean onPausePressed(){
+        Log.d(TAG, "onPausePressed: ");
+        if(isLoading){
+            // cancel the query
+            cancelRequest();
+            isLoading = false;
+        }
+        updateLastAccess();
+
+        return true;
+    }
+
     public boolean onBackPressed(){
         Log.d(TAG, "onBackPressed: ");
         if(isLoading){
@@ -309,7 +325,9 @@ public class MessagesViewModel extends ViewModel {
             public void run() {
 //                DomainMessage lastMessageInCache = messagesListRepository.getLatestGroupMessageInCache(group.getGroupId());
 //                DomainMessage lastMessageInCache = messagesListRepository.getLatestMessageInCache(group.getGroupId(), MessageGroupsConstants.GROUP_MESSAGES, AppConfigHelper.getUserId());
-                DomainMessage lastMessageInCache = messagesListRepository.getLastMessageForOnlyGroupFromCacheSingle(group.getGroupId());
+                final DomainMessage lastMessageInCache = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(group.getGroupId(), true));
+
+//                DomainMessage lastMessageInCache = messagesListRepository.getLastMessageForOnlyGroupFromCacheSingle(group.getGroupId());
                 if(lastMessageInCache != null && (lastMessageInCache.getSentAt() != null)){
                     Long lastAccessed = lastMessageInCache.getSentAt();
 
@@ -346,7 +364,7 @@ public class MessagesViewModel extends ViewModel {
 
     }
 
-    public void publishIoTMessage(String messageId, String textEnteredByUser, Long sentAt, int priority, Boolean hasAttachment,
+    public void publishIoTMessage(String messageId, String groupId, String sentBy, Long sentByImageTS, String sentByAlias, String sentByRole, String isSentByAdmin, String textEnteredByUser, Long sentAt, int priority, Boolean hasAttachment,
                                   Boolean attachmentUploaded, boolean isLoading, String fileExtension, String fileMime, Boolean isDeleted,
                                   String tnBlob,
                                   String attachmentUri,
@@ -355,14 +373,20 @@ public class MessagesViewModel extends ViewModel {
         String sentTo = MessageGroupsHelper.sentToBasedUponMessageGroupsConstants(MessageGroupsConstants.GROUP_MESSAGES, AppConfigHelper.getUserId());
         IoTMessage message = new IoTMessage();
         message.setMessageId(messageId);
-        message.setGroupId(this.group.getGroupId());
-        message.setSentBy(AppConfigHelper.getUserId());
+//        message.setGroupId(this.group.getGroupId()); //this one
+        message.setGroupId(groupId); //this one
+//        message.setSentBy(AppConfigHelper.getUserId()); //this one
+        message.setSentBy(sentBy); //this one
         message.setSentTo(sentTo);
-        message.setSentByImageTS(this.group.getUserImageUpdateTimestamp());
-        message.setAlias(this.group.getAlias());
-        message.setNotify(priority); //change it, just for now
-        message.setRole(this.group.getRole());
-        message.setIsAdmin(this.group.getIsAdmin());
+//        message.setSentByImageTS(this.group.getUserImageUpdateTimestamp()); //this one
+        message.setSentByImageTS(sentByImageTS); //this one
+//        message.setAlias(this.group.getAlias());//this one
+        message.setAlias(sentByAlias);//this one
+        message.setNotify(priority);
+//        message.setRole(this.group.getRole());//this one
+        message.setRole(sentByRole);//this one
+//        message.setIsAdmin(this.group.getIsAdmin());//this one
+        message.setIsAdmin(isSentByAdmin);//this one
         message.setMessageText(textEnteredByUser);
         message.setSentAt(sentAt);
         message.setHasAttachment(hasAttachment);
@@ -382,7 +406,7 @@ public class MessagesViewModel extends ViewModel {
 
         String messageId = UUID.randomUUID().toString();
         Long sentAt = new Date().getTime();
-        publishIoTMessage(messageId, textEnteredByUser, sentAt, priority, false, false, false, null, null, false,"", null, callback);
+        publishIoTMessage(messageId, group.getGroupId(), AppConfigHelper.getUserId(), group.getUserImageUpdateTimestamp(), group.getAlias(), group.getRole(), group.getIsAdmin(), textEnteredByUser, sentAt, priority, false, false, false, null, null, false,"", null, callback);
 
     }
 
@@ -532,25 +556,38 @@ public class MessagesViewModel extends ViewModel {
 
     public void deleteMessage(Message message, PublishMessageCallback callback) {
 
+        String messageText = "Message Deleted By "+group.getAlias()+","+group.getRole();
 
         //all you need to do is to publish the message again with isDeleted set to true
-        publishIoTMessage(message.getMessageId(), message.getMessageText(), message.getSentAt(), message.getNotify(), message.getHasAttachment(),
+        //AppConfigHelper.getUserId(), group.getUserImageUpdateTimestamp(), group.getAlias(), group.getRole()
+        publishIoTMessage(message.getMessageId(), message.getGroupId(), message.getSentBy(), message.getSentByImageTS(), message.getAlias(),
+                message.getRole(),message.getIsAdmin(),
+                messageText, message.getSentAt(), message.getNotify(), message.getHasAttachment(),
                 message.getAttachmentUploaded(), message.isAttachmentLoadingGoingOn(), message.getAttachmentExtension(),
                 message.getAttachmentMime(), true, message.getTnBlob(),message.getAttachmentUri(), callback);
 
+        //do the delete attachment first
         //if it has attachment downloaded, then delete it, or make a worker thread do it
         if(message.getHasAttachment()){
-            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message);
+            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message, group.getGroupName());
         }
+
+
     }
 
     /**
      * This method only deletes the message from the cache.
      * Created for deleting the welcome message when user chooses close button
+     * But also being used for when the user selects a particular message to be
+     * only "Delete for only me"
      * @param message
      */
     public void deleteLocalMessage(Message message){
         deleteLocalMessageUseCase.execute(DeleteLocalMessageUseCase.Params.messageToBeDeleted(MessageDataDomainMapper.transformFromMessage(message)));
+
+        if(message.getHasAttachment()){
+            WorkerBuilderHelper.callDeleteMessageAttachmentWorker(message, group.getGroupName());
+        }
     }
 
 

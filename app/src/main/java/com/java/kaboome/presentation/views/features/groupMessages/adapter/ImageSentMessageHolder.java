@@ -38,6 +38,7 @@ public class ImageSentMessageHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "KMImageSentMsgHolder";
 
+    private FrameLayout imageBubble;
     private ImageView download, upload, alert;
     private TextView messageText, timeText, yourAliasText, yourRoleText, newMessageHeader;
     private ImageView urgentImage, imageAttached;
@@ -70,6 +71,7 @@ public class ImageSentMessageHolder extends RecyclerView.ViewHolder {
         upload = itemView.findViewById(R.id.image_bubble_upload);
 
         imageAttached = itemView.findViewById(R.id.image_bubble_image);
+        imageBubble = itemView.findViewById(R.id.image_bubble_frame);
 
 
         attachmentLoadProgess = itemView.findViewById(R.id.image_load_progress);
@@ -103,8 +105,16 @@ public class ImageSentMessageHolder extends RecyclerView.ViewHolder {
             newMessageHeader.setVisibility(View.GONE);
         }
 
+        if (message.getNotify() == 1) {
+            urgentImage.setVisibility(View.VISIBLE);
+        } else {
+            urgentImage.setVisibility(View.INVISIBLE);
+        }
+
         if (message.getDeleted()) {
-            imageAttached.setVisibility(View.GONE);
+            urgentImage.setVisibility(View.INVISIBLE);
+            imageBubble.setVisibility(View.GONE);
+//            imageAttached.setVisibility(View.GONE);
             download.setVisibility(View.GONE);
             upload.setVisibility(View.GONE);
             attachmentLoadProgess.setVisibility(View.GONE);
@@ -120,7 +130,7 @@ public class ImageSentMessageHolder extends RecyclerView.ViewHolder {
             }
 
         } else {
-            imageAttached.setVisibility(View.VISIBLE);
+            imageBubble.setVisibility(View.VISIBLE);
             messageText.setText(message.getMessageText());
 //        }
 
@@ -249,11 +259,6 @@ public class ImageSentMessageHolder extends RecyclerView.ViewHolder {
 //
 //            }
 
-            if (message.getNotify() == 1) {
-                urgentImage.setVisibility(View.VISIBLE);
-            } else {
-                urgentImage.setVisibility(View.INVISIBLE);
-            }
 
             download.setOnClickListener(new View.OnClickListener() {
                 @Override

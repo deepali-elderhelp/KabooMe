@@ -72,6 +72,9 @@ public class Message implements Serializable {
     @SerializedName("isDeleted")
     private Boolean isDeleted;
 
+    @SerializedName("isDeletedLocally")
+    private Boolean isDeletedLocally; //if the user deletes this message only for him - not for all
+
     @SerializedName("tnBlob")
     private String tnBlob;
 
@@ -79,13 +82,13 @@ public class Message implements Serializable {
     private Boolean attachmentLoadingGoingOn = false;
 
     /**
-     * @ColumnInfo(name = "show_id") public transient String showId; – Ali Kazi Nov 30 '18 at 5:08
+     * @ColumnInfo(name = "show_id") public transient String showId;
      * transient ones are only local, room uses them, but they are not sent to the server
      */
 
 //    @ColumnInfo(name = "attachmentDownloaded")
 //    private transient Boolean attachmentDownloaded;
-//
+////
 //    @ColumnInfo(name = "attachmentPath")
 //    private transient String attachmentPath;
 
@@ -406,6 +409,14 @@ public class Message implements Serializable {
         this.attachmentUri = attachmentUri;
     }
 
+    public Boolean getDeletedLocally() {
+        return isDeletedLocally;
+    }
+
+    public void setDeletedLocally(Boolean deletedLocally) {
+        isDeletedLocally = deletedLocally;
+    }
+
     /**
      * This method is used by MessageListViewAdapter PagedListAdapter's
      * DIFF_CALLBACK to compare if the contentsAreSame
@@ -462,7 +473,8 @@ public class Message implements Serializable {
                 Objects.equals(waitingToBeDeleted, newMessage.waitingToBeDeleted) &&
                 Objects.equals(attachmentLoadingGoingOn, newMessage.attachmentLoadingGoingOn) &&
                 Objects.equals(loadingProgress, newMessage.loadingProgress) &&
-                Objects.equals(isDeleted, newMessage.isDeleted)){
+                Objects.equals(isDeleted, newMessage.isDeleted) &&
+                Objects.equals(isDeletedLocally, newMessage.isDeletedLocally)){
             return true;
         }
         return false;

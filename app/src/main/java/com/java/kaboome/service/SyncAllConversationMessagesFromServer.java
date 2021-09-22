@@ -97,7 +97,7 @@ public class SyncAllConversationMessagesFromServer extends IntentService {
 
 
                         GetConversationLastMessageCache getConversationLastMessageCache = new GetConversationLastMessageCache(DataGroupMessagesRepository.getInstance());
-                        final DomainMessage lastConversationMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversation.getGroupId(), userGroupConversation.getOtherUserId()));
+                        final DomainMessage lastConversationMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversation.getGroupId(), userGroupConversation.getOtherUserId(), true));
                         lastAccessed.set((lastConversationMessage != null && lastConversationMessage.getSentAt() != null)? lastConversationMessage.getSentAt() : userGroupConversation.getLastAccessed() != null? userGroupConversation.getLastAccessed() : (new Date()).getTime());
                         getMessagesFromServer(userGroupConversation.getGroupId(), userGroupConversation.getCacheClearTS() != null? userGroupConversation.getCacheClearTS() : (new Date()).getTime(), limit, scanDirection, userGroupConversation.getOtherUserId());
                     }

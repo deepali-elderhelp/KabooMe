@@ -41,6 +41,8 @@ public class GroupModelMapper {
 
         group.setGroupPrivate(domainGroup.isPrivateGroup());
 
+        group.setUnicastGroup(domainGroup.getUnicastGroup());
+
         group.setAdmins(getAdmins(groupUsers));
 
         group.setRegularMembers(getNonAdminMembers(groupUsers));
@@ -163,6 +165,7 @@ public class GroupModelMapper {
         domainGroup.setGroupDescription(groupModel.getGroupDescription());
         domainGroup.setExpiry(groupModel.getExpiryDate());
         domainGroup.setPrivateGroup(groupModel.getGroupPrivate());
+        domainGroup.setUnicastGroup(groupModel.getUnicastGroup());
         domainGroup.setOpenToRequests(groupModel.getOpenToRequests());
         domainGroup.setImageUpdateTimestamp(groupModel.getImageUpdateTimestamp());
         domainGroup.setGroupCreatorRole(groupModel.getCreatorRole());
@@ -180,6 +183,7 @@ public class GroupModelMapper {
         domainGroup.setGroupDescription(groupModel.getGroupDescription());
         domainGroup.setExpiry(groupModel.getExpiryDate());
         domainGroup.setPrivateGroup(groupModel.getGroupPrivate());
+        domainGroup.setUnicastGroup(groupModel.getUnicastGroup());
         domainGroup.setOpenToRequests(groupModel.getOpenToRequests());
         domainGroup.setImageUpdateTimestamp(groupModel.getImageUpdateTimestamp());
         domainGroup.setGroupCreatorRole(groupModel.getCreatorRole());
@@ -208,6 +212,7 @@ public class GroupModelMapper {
         groupModel.setCurrentUserGroupStatus(domainGroup.getCurrentUserStatusForGroup());
         groupModel.setCreatedByAlias(domainGroup.getCreatedByAlias());
         groupModel.setGroupPrivate(domainGroup.isPrivateGroup());
+        groupModel.setUnicastGroup(domainGroup.getUnicastGroup());
         groupModel.setExpiryDate(domainGroup.getExpiry());
         groupModel.setOpenToRequests(domainGroup.getOpenToRequests());
         groupModel.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
@@ -282,6 +287,7 @@ public class GroupModelMapper {
                 groupModel.setCreatorRole(domainGroup.getGroupCreatorRole());
                 groupModel.setCurrentUserGroupStatus(domainGroup.getCurrentUserStatusForGroup());
                 groupModel.setGroupPrivate(domainGroup.isPrivateGroup());
+                groupModel.setUnicastGroup(domainGroup.getUnicastGroup());
                 groupModel.setExpiryDate(domainGroup.getExpiry());
                 groupModel.setOpenToRequests(domainGroup.getOpenToRequests());
                 groupModel.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());

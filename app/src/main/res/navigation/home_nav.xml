@@ -385,7 +385,11 @@
         android:id="@+id/groupUserActionsDialog"
         android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupUserActionsDialog"
         android:label="Member"
-        tools:layout="@layout/fragment_group_user_actions_dialog" />
+        tools:layout="@layout/fragment_group_user_actions_dialog" >
+        <action
+            android:id="@+id/action_groupUserActionsDialog_to_groupAdminUserMessagesFragment"
+            app:destination="@id/groupAdminUserMessagesFragment" />
+    </dialog>
     <dialog
         android:id="@+id/groupPicDisplayFragment"
         android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupPicDisplayFragment"
@@ -453,6 +457,9 @@
         <action
             android:id="@+id/action_groupAdminUserMessagesFragment_to_userImageDisplayFragment"
             app:destination="@id/userImageDisplayFragment" />
+        <action
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_groupMessagesFragment"
+            app:destination="@id/groupMessagesFragment" />
     </fragment>
     <dialog
         android:id="@+id/addAdminUserConversationFragment"

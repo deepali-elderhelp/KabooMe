@@ -3,7 +3,6 @@ package com.java.kaboome.presentation.views.features.groupInfo;
 
 import android.app.Dialog;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -39,7 +38,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.constants.UserGroupStatusConstants;
-import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.GroupModel;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.helpers.DialogHelper;
@@ -61,6 +59,7 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
     Button saveButton;
     TextInputEditText newGroupName;
     SwitchCompat publicOrPrivateSwitch;
+    SwitchCompat announcementsOnlySwitch;
     ImageView closeButton;
     CircleImageView groupImage;
     ProgressBar groupImageProgressBar;
@@ -142,6 +141,13 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
                 }
             }
         });
+        announcementsOnlySwitch = view.findViewById(R.id.edit_group_name_announcments_switch);
+        if(groupModel.getUnicastGroup() != null && groupModel.getUnicastGroup()){
+            announcementsOnlySwitch.setChecked(true);
+        }
+        else{
+            announcementsOnlySwitch.setChecked(false);
+        }
         newGroupName = view.findViewById(R.id.editGroupName);
         newGroupName.setText(groupModel.getGroupName());
         newGroupName.addTextChangedListener(new GroupNameTextWatcher());

@@ -66,7 +66,8 @@ public class GroupRequestsListViewHolder extends RecyclerView.ViewHolder {
         //load groupImage
 //        ImageHelper.loadUserImage(groupRequestModel.getUserId(), null, requestManager, handler, userImage, userImageLoadingProgress);
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(itemView.getContext(),R.dimen.user_group_list_image_width, groupRequestModel.getUserAlias() != null? groupRequestModel.getUserAlias():"K M");
-        ImageHelper.getInstance().loadUserImage(groupRequestModel.getUserId(), ImageTypeConstants.MAIN, groupRequestModel.getImageUpdateTimestamp(),
+
+        ImageHelper.getInstance().loadGroupUserImage(groupRequestModel.getGroupId(), ImageTypeConstants.MAIN, groupRequestModel.getUserId(), groupRequestModel.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                 handler, userImage, null);
 

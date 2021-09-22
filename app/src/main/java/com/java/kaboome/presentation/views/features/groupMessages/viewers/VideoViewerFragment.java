@@ -147,9 +147,14 @@ public class VideoViewerFragment extends Fragment {
 //            playFromS3(dataSourceFactory, messageId, groupId);
 //        }
 
-        if(videoPathUri != null && MediaHelper.doesUriFileExists(getContext().getContentResolver(), videoPathUri)){
+//        if(videoPathUri != null && MediaHelper.doesUriFileExists(getContext().getContentResolver(), videoPathUri)){
+//            play(dataSourceFactory, videoPathUri);
+//        }
+
+        if(videoPathUri != null){
             play(dataSourceFactory, videoPathUri);
         }
+
 
 
 

@@ -335,11 +335,13 @@ public class WorkerBuilderHelper {
         }
     }
 
-    public static void callDeleteMessageAttachmentWorker(final Message message){
+    public static void callDeleteMessageAttachmentWorker(final Message message, final String groupName){
 
         Data inputData = new Data.Builder()
+                .putString("attachmentURI", message.getAttachmentUri())
                 .putString("messageId", message.getMessageId())
                 .putString("groupId", message.getGroupId())
+                .putString("groupName", groupName)
                 .putString("fileExtension", message.getAttachmentExtension())
                 .putString("fileMime", message.getAttachmentMime())
                 .putString("sentTo", message.getSentTo())

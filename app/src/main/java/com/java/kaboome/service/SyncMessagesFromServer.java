@@ -89,7 +89,7 @@ public class SyncMessagesFromServer extends IntentService {
                     @Override
                     public void run() {
                         GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(DataGroupMessagesRepository.getInstance());
-                        final DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroup.getGroupId()));
+                        final DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroup.getGroupId(), true));
 
 
                         String groupId = userGroup.getGroupId();

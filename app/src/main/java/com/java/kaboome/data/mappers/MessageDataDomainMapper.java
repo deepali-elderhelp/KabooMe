@@ -41,6 +41,7 @@ public class MessageDataDomainMapper {
         domainMessage.setAttachmentLoadingGoingOn(message.isAttachmentLoadingGoingOn());
         domainMessage.setLoadingProgress(message.getLoadingProgress());
         domainMessage.setDeleted(message.getDeleted());
+        domainMessage.setDeletedLocally(message.getDeletedLocally());
         domainMessage.setTnBlob(message.getTnBlob());
 
         domainMessage.setSentToUserName(message.getSentToUserName());
@@ -85,6 +86,7 @@ public class MessageDataDomainMapper {
         message.setAttachmentLoadingGoingOn(domainMessage.isAttachmentLoadingGoingOn());
         message.setLoadingProgress(domainMessage.getLoadingProgress());
         message.setDeleted(domainMessage.getDeleted());
+        message.setDeletedLocally(domainMessage.getDeletedLocally());
         message.setTnBlob(domainMessage.getTnBlob());
 
         message.setSentToUserName(domainMessage.getSentToUserName());

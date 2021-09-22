@@ -40,6 +40,8 @@ public class DomainUserGroup implements Serializable {
 
     private Boolean privateGroup;
 
+    private Boolean unicastGroup;
+
     private Boolean isDeleted = false;
 
     private String deviceId;
@@ -216,6 +218,14 @@ public class DomainUserGroup implements Serializable {
 
     public void setPrivateGroup(Boolean privateGroup) {
         this.privateGroup = privateGroup;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public Boolean getDeleted() {

@@ -155,8 +155,14 @@ public class MessageNotificationHandler extends BaseNotificationHandler {
     }
 
     private void buildNotificationForUser(Context context, IoTMessage message) {
+
         //form a notification
         Log.d(TAG, "buildNotificationForUser");
+
+        if(message.getDeleted()){
+            //this message is freshly deleted - we do not want to show a notification for that
+            return;
+        }
 
         int notificationIdToUse = AppConfigHelper.getNotificationId();
 

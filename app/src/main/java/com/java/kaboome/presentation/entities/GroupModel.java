@@ -30,6 +30,8 @@ public class GroupModel implements Serializable {
 
     Boolean isGroupPrivate;
 
+    Boolean unicastGroup;
+
     UserGroupStatusConstants currentUserGroupStatus;
 
     Long imageUpdateTimestamp; //group's image's time stamp
@@ -190,6 +192,14 @@ public class GroupModel implements Serializable {
 
     public void setGroupPrivate(Boolean groupPrivate) {
         isGroupPrivate = groupPrivate;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     public Long getImageUpdateTimestamp() {

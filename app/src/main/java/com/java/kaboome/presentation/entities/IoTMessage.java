@@ -40,6 +40,8 @@ public class IoTMessage {
 
     private Boolean isDeleted;
 
+    private Boolean isDeletedLocally;
+
     private String tnBlob;
 //
 //    private Boolean attachmentDownloaded;
@@ -272,6 +274,14 @@ public class IoTMessage {
 
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Boolean getDeletedLocally() {
+        return isDeletedLocally;
+    }
+
+    public void setDeletedLocally(Boolean deletedLocally) {
+        isDeletedLocally = deletedLocally;
     }
 
     public String getTnBlob() {

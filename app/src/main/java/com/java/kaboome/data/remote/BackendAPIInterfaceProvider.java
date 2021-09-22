@@ -186,9 +186,20 @@ public class BackendAPIInterfaceProvider {
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
-                        Request newRequest = chain.request().newBuilder()
-                                .addHeader("Authorization", CognitoHelper.getCurrSession().getIdToken().getJWTToken())
-                                .build();
+                        Request newRequest = null;
+                        //the reason I put the below code in try catch is because sometimes
+                        //when the app is coming up after a while, there is no current session
+                        //for some reason the following code is executed and then fails since there is no current session
+                        //it results in an NPE. NPEs or any other exception other than IOException is not handled by Retrofit
+                        //and it crashes the app, so I am catching any other exception which is thrown in the process and
+                        //wrap it in an IOException and fwd it
+                        try {
+                            newRequest = chain.request().newBuilder()
+                                    .addHeader("Authorization", CognitoHelper.getCurrSession().getIdToken().getJWTToken())
+                                    .build();
+                        } catch (Exception e) {
+                            throw new IOException(e);
+                        }
                         return chain.proceed(newRequest);
                     }
                 })

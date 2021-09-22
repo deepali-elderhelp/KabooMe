@@ -194,6 +194,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
     @Override
     public void onResume() {
         Log.d(TAG, "onResume: ");
+        Log.d("TestTAG", "Resuming Groups List");
         super.onResume();
 
         //trial crash
@@ -355,6 +356,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
             @Override
             public void onChanged(UserGroupModel userGroupModel) {
                 if(adapter != null) {
+                    Log.d(TAG, "onChanged: for Group - "+userGroupModel.getGroupName());
                     adapter.updateGroup(userGroupModel);
                 }
 
@@ -384,8 +386,11 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
 
 //        initRecyclerView();
 
-        if(alreadyThere)
+        if(alreadyThere) {
+            Log.d(TAG, "it is already there");
             return;
+        }
+        Log.d(TAG, "NOT already there");
 
 //        userGroupsListViewModel = ViewModelProviders.of(this).get(UserGroupsListViewModel.class);
 
