@@ -96,6 +96,7 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
 //        more testing should clear it out
         super.onResume();
         CognitoHelper.init(AppConfigHelper.getContext());
+        whileLoginInProgress();
         findCurrent();
 //        super.onResume();
 
@@ -183,6 +184,15 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
         }
     }
 
+
+//    @Override
+//    public void onLoginSuccess() {
+//        //some cleanup
+//        baseViewModel.cleanUpOldDeletedUserGroups();
+//        //this will trigger getting the number from backend and update the badge accordingly
+//        baseViewModel.getNumberOfInvitationsFromBackend();
+//    }
+
     @Override
     public void onLoginFailure(Exception exception) {
         Log.d(TAG, "onLoginFailure: Exception - "+exception);
@@ -191,6 +201,11 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
         startActivity(intent);
         getActivity().finish();
 
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
     }
 
     //    private void findCurrent() {

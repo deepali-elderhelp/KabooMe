@@ -31,6 +31,8 @@ public class UserGroupModel implements Serializable {
 
     int unreadCount;
 
+    int unreadPMCount;
+
     boolean highPriorityUnread;
 
     Long groupExpiry;
@@ -314,7 +316,15 @@ public class UserGroupModel implements Serializable {
         return false;
     }
 
-//    public boolean isSame(UserGroupModel userGroupModel){
+    public int getUnreadPMCount() {
+        return unreadPMCount;
+    }
+
+    public void setUnreadPMCount(int unreadPMCount) {
+        this.unreadPMCount = unreadPMCount;
+    }
+
+    //    public boolean isSame(UserGroupModel userGroupModel){
 //
 //
 //        if( groupId.equals(userGroupModel.groupId) &&

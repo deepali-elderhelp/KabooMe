@@ -227,6 +227,30 @@ public class MessagesViewModel extends ViewModel {
                         } else if (listDomainResource.status == DomainResource.Status.ERROR) {
                             Log.d(TAG, "Error...Error....Error..."+listDomainResource.message);
                             isLoading = false;
+//                            if (listDomainResource.data != null) {
+//                                if(listDomainResource.data.size() == 0){
+//                                    //there were only 15 records
+//                                    isLoading = false;
+//                                    hasLoadedAll = true;
+//                                    Log.d(TAG, "no more messages in the server...");
+//                                }
+//                                if (listDomainResource.data.size() > 0 && listDomainResource.data.size() < 15) {
+//                                    Log.d(TAG, "no more messages in the server...");
+//                                    isLoading = false;
+//                                    hasLoadedAll = true;
+//                                    lastAccessedTime = listDomainResource.data.get(listDomainResource.data.size()-1).getSentAt();
+//                                    Log.d(TAG, "onChanged: new last accessed becomes "+lastAccessedTime);
+//                                }
+//                                if(listDomainResource.data.size() == 15){
+//                                    Log.d(TAG, "There are more messages in the server...");
+//                                    isLoading = false;
+//                                    hasLoadedAll = false;
+//                                    //new last accessed time
+//                                    lastAccessedTime = listDomainResource.data.get(listDomainResource.data.size()-1).getSentAt();
+//                                    Log.d(TAG, "onChanged: new last accessed becomes "+lastAccessedTime);
+//                                }
+//
+//                            }
                             serverMessages.removeSource(messagesSource);
                         }
                     } else {

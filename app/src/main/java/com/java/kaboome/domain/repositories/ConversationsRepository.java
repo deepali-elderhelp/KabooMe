@@ -28,4 +28,5 @@ public interface ConversationsRepository {
 
     void addNewConversation(DomainUserGroupConversation domainUserGroupConversation);
 
+    LiveData<DomainUserGroupConversation> getUserGroupConversationFromCache(String groupId, String otherUserId);
 }

@@ -304,7 +304,7 @@ public class GroupModelMapper {
         }
         else if(groupsResource.status == DomainResource.Status.SUCCESS){
             if(groups.isEmpty()){
-                if(serverFetch) {
+                if(serverFetch) { //?? why is server fetch there, can't remember
                     GroupModel groupModel = new GroupModel();
                     groupModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
                     viewGroupsList.add(groupModel);
@@ -312,12 +312,16 @@ public class GroupModelMapper {
             }
             //else it is already done
         }
-//        else if(groupsResource.status == DomainResource.Status.ERROR){
-//            UserGroupModel userGroupModel = new UserGroupModel();
-//            userGroupModel.setGroupId(GroupListStatusConstants.ERROR.toString());
-//            viewGroupsList.add(userGroupModel);
-//        }
-
+        else if(groupsResource.status == DomainResource.Status.ERROR){
+            if(groups.isEmpty()){
+                if(serverFetch) { //?? why is server fetch there, can't remember
+                    GroupModel groupModel = new GroupModel();
+                    groupModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                    viewGroupsList.add(groupModel);
+                }
+            }
+            //else it is already done
+        }
         return viewGroupsList;
     }
 

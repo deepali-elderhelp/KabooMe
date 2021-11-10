@@ -221,6 +221,11 @@ public class ScanQRCodeGalleryFragment extends BaseFragment {
 
     @Override
     public void onLoginSuccess() {
+//        requestRequiredGalleryPermissions();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         requestRequiredGalleryPermissions();
     }
 

@@ -80,11 +80,13 @@ public class UserGroupModelMapper {
             }
             //else it is already done
         }
-//        else if(groupsResource.status == DomainResource.Status.ERROR){
-//            UserGroupModel userGroupModel = new UserGroupModel();
-//            userGroupModel.setGroupId(GroupListStatusConstants.ERROR.toString());
-//            viewGroupsList.add(userGroupModel);
-//        }
+        else if(groupsResource.status == DomainResource.Status.ERROR){
+            if(groups.isEmpty()){
+                UserGroupModel userGroupModel = new UserGroupModel();
+                userGroupModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                viewGroupsList.add(userGroupModel);
+            }
+        }
 
         return viewGroupsList;
     }
@@ -143,11 +145,13 @@ public class UserGroupModelMapper {
             }
             //else it is already done
         }
-//        else if(groupsResource.status == DomainResource.Status.ERROR){
-//            UserGroupModel userGroupModel = new UserGroupModel();
-//            userGroupModel.setGroupId(GroupListStatusConstants.ERROR.toString());
-//            viewGroupsList.add(userGroupModel);
-//        }
+        else if(groupsResource.status == DomainResource.Status.ERROR){
+            if(groups.isEmpty()){
+                UserGroupModel userGroupModel = new UserGroupModel();
+                userGroupModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                viewGroupsList.add(userGroupModel);
+            }
+        }
 
         return viewGroupsList;
     }
@@ -201,12 +205,13 @@ public class UserGroupModelMapper {
                 }
                 //else it is already done
             }
-//        else if(groupsResource.status == DomainResource.Status.ERROR){
-//            UserGroupModel userGroupModel = new UserGroupModel();
-//            userGroupModel.setGroupId(GroupListStatusConstants.ERROR.toString());
-//            viewGroupsList.add(userGroupModel);
-//        }
-
+            else if(groupsResource.status == DomainResource.Status.ERROR){
+                if(groups.isEmpty()){
+                    UserGroupModel userGroupModel = new UserGroupModel();
+                    userGroupModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                    viewGroupsList.add(userGroupModel);
+                }
+            }
             return viewGroupsList;
         }
 

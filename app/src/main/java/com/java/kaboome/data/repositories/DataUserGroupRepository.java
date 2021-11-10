@@ -18,6 +18,7 @@ import com.java.kaboome.data.mappers.UserGroupDataDomainMapper;
 import com.java.kaboome.data.persistence.UserGroupDao;
 import com.java.kaboome.data.remote.responses.ApiResponse;
 import com.java.kaboome.data.remote.responses.GroupResponse;
+import com.java.kaboome.data.remote.responses.UserGroupResponse;
 import com.java.kaboome.domain.entities.DomainGroup;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
@@ -195,22 +196,23 @@ public class DataUserGroupRepository implements UserGroupRepository {
 
     private LiveData<UpdateResource<String>> addUserToGroupOnServer(final UserGroup userGroup, final String action) {
 
-        return new NewNetworkBoundUpdateRes<String, Void>(AppExecutors2.getInstance()){
+        return new NewNetworkBoundUpdateRes<String, UserGroupResponse>(AppExecutors2.getInstance()){
 
             @Override
-            protected String processResult(Void aVoid) {
+            protected String processResult(UserGroupResponse userGroupResponse) {
                 return action;
             }
 
             @NonNull
             @Override
-            protected LiveData<ApiResponse<Void>> createCall() {
+            protected LiveData<ApiResponse<UserGroupResponse>> createCall() {
                 return AppConfigHelper.getBackendApiServiceProvider().joinGroup(AppConfigHelper.getUserId(), userGroup.getGroupId(), userGroup);
             }
 
             @Override
-            protected void reflectDataInDB(Void aVoid) {
-                userGroupDao.insertUserGroup(userGroup);
+            protected void reflectDataInDB(UserGroupResponse userGroupResponse) {
+//                userGroupDao.insertUserGroup(userGroup);
+                userGroupDao.insertUserGroup(userGroupResponse.getUserGroup());
             }
         }.getAsLiveData();
 //        return new NetworkBoundUpdateResource(AppExecutors2.getInstance(), action){

@@ -9,7 +9,7 @@
     >
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:id="@+id/guideline_conv_user_action_vertical_middle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_hori_middle">
+        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_vertical_middle">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/group_user_actions_dialog_image"
@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/group_user_actions_user_alias"
-        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintBottom_toTopOf="@id/guideline_conv_user_action_vertical_middle"
         android:layout_marginTop="6dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -108,7 +108,7 @@
         android:layout_width="@dimen/group_actions_icon_width"
         android:layout_height="@dimen/group_actions_icon_height"
         android:src="@drawable/admin_small"
-        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideline_dialog_actions_vertical"
         android:layout_marginTop="32dp"/>
@@ -117,7 +117,7 @@
         android:id="@+id/group_user_actions_admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toBottomOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintLeft_toRightOf="@id/guideline_dialog_actions_vertical"
         android:layout_marginTop="32dp"
         style="@style/GroupActionsLabelsSmall"

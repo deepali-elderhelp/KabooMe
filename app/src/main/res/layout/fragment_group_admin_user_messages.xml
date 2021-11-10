@@ -66,7 +66,7 @@
             android:id="@+id/fr_gr_me_reyclerview_message_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/linear_send"
+            android:layout_above="@id/messages_send_ll"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingBottom="10dp"
@@ -89,7 +89,7 @@
             android:id="@+id/fr_gr_me_new_messages_icon"
             android:layout_width="@dimen/message_recvd_sender_image_width"
             android:layout_height="@dimen/message_recvd_sender_image_height"
-            android:layout_above="@id/linear_send"
+            android:layout_above="@id/messages_send_ll"
             android:layout_alignRight="@id/fr_gr_me_reyclerview_message_list"
             android:background="@drawable/downward_circle"
             android:visibility="gone"
@@ -115,22 +115,86 @@
 
         </FrameLayout>
 
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/linear_send"-->
+<!--            android:layout_above="@id/fr_gr_me_layout_chatbox"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:background="@color/white_two"-->
+<!--            android:paddingLeft="20dp"-->
+<!--            android:paddingRight="20dp"-->
+<!--            android:weightSum="1"-->
+<!--            android:gravity="center_horizontal">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginLeft="8dp"-->
+<!--                android:weightSum="1"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_weight="0.8"-->
+<!--                >-->
+
+
+
+<!--                <androidx.appcompat.widget.AppCompatButton-->
+<!--                    android:id="@+id/normal_button"-->
+<!--                    style="@style/SmallGreyGradientButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:minHeight="0dp"-->
+<!--                    android:layout_marginLeft="8dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:text="@string/normal"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:layout_weight="0.2"-->
+
+<!--                    />-->
+
+<!--                <androidx.appcompat.widget.AppCompatButton-->
+<!--                    android:id="@+id/urgent_button"-->
+<!--                    style="@style/SmallGreyGradientButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:minHeight="0dp"-->
+<!--                    android:layout_marginLeft="8dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:text="@string/urgent"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    />-->
+<!--            </LinearLayout>-->
+<!--        </LinearLayout>-->
+
+
+<!--        <com.java.kaboome.presentation.views.widgets.MessageInput-->
+<!--            android:id="@+id/fr_gr_me_layout_chatbox"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:background="@color/white_two"-->
+<!--            app:inputHint="@string/hint_enter_a_message"-->
+<!--            app:showAttachmentButton="true"-->
+<!--            />-->
+
+
+
         <LinearLayout
+            android:id="@+id/messages_send_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/linear_send"
-            android:layout_above="@id/fr_gr_me_layout_chatbox"
-            android:orientation="horizontal"
-            android:background="@color/white_two"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:weightSum="1"
-            android:gravity="center_horizontal">
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/messages_priority_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:background="@color/white_two"
                 android:weightSum="1"
                 android:orientation="horizontal"
                 android:gravity="center"
@@ -167,19 +231,51 @@
                     android:textAllCaps="false"
                     android:layout_weight="0.2"
                     />
+
+
+
+
+
+
             </LinearLayout>
+
+
+            <com.java.kaboome.presentation.views.widgets.MessageInput
+                android:id="@+id/fr_gr_me_layout_chatbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white_two"
+                app:inputHint="@string/hint_enter_a_message"
+                app:showAttachmentButton="true"
+                android:visibility="visible"
+                />
+
+            <TextView
+                android:id="@+id/userLeftMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:linksClickable="true"
+                android:background="@color/white_two"
+                android:textColor="@color/colorPrimary"
+                android:textColorLink="@color/colorAccent"
+                android:textSize="15sp"
+                android:text="@string/user_left_message" />
+
         </LinearLayout>
 
-
-        <com.java.kaboome.presentation.views.widgets.MessageInput
-            android:id="@+id/fr_gr_me_layout_chatbox"
+        <LinearLayout
+            android:id="@+id/linear_non_send"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white_two"
-            app:inputHint="@string/hint_enter_a_message"
-            app:showAttachmentButton="true"
-            />
+            android:layout_height="50dp"
+            android:layout_below="@id/fr_gr_me_reyclerview_message_list"
+            android:orientation="vertical"
+            android:background="@drawable/default_wallpaper"
+            android:visibility="gone">
+        </LinearLayout>
 
     </RelativeLayout>
 

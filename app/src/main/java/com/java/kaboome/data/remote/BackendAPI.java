@@ -66,4 +66,6 @@ public interface BackendAPI {
     String inviteContactsForGroup = "users/{userid}/invite";
     String rejectOrCancelUserInvitation = "users/{userid}/invite";
 
+    String sendHelpFeedback = "users/{userid}/help";
+
 }

@@ -58,7 +58,7 @@ import java.util.List;
  */
 public class CreateGroupFragment extends BaseFragment implements ViewPagerNextListener, SelectGroupImageListener, SelectUserImageListener, HandleNextListener {
 
-    private static final String TAG = "KMGlideGroupFragment";
+    private static final String TAG = "KMCreateGroupFragment";
 
     private View rootView;
     private CreateGroupViewPager viewPager;
@@ -268,7 +268,10 @@ public class CreateGroupFragment extends BaseFragment implements ViewPagerNextLi
             public void onChanged(CreateGroupStatusContants createGroupStatusContants) {
 
                 Log.d(TAG, "onChanged: ");
-                if(createGroupStatusContants == CreateGroupStatusContants.LOADING_GROUP){
+                if(createGroupStatusContants == CreateGroupStatusContants.LOADING_GROUP ||
+                        createGroupStatusContants == CreateGroupStatusContants.LOADING_GROUP_IMAGE ||
+                        createGroupStatusContants == CreateGroupStatusContants.LOADING_GROUP_USER_IMAGE){
+                    Log.d(TAG, "Loading - now show wait dialog");
                     DialogHelper.showWaitDialog(getContext(), "Please wait..");
                 }
 //                if(createGroupStatusContants == CreateGroupStatusContants.SUCCESS_GROUP){
@@ -278,6 +281,7 @@ public class CreateGroupFragment extends BaseFragment implements ViewPagerNextLi
 //                    DialogHelper.updateWaitDialogMessage("Group image loaded, loading your image");
 //                }
                 if(createGroupStatusContants == CreateGroupStatusContants.ERROR_GROUP){
+                    Log.d(TAG, "Error Group");
                     progressBar.setVisibility(View.GONE);
                     DialogHelper.closeWaitDialog();
                     if(navController.getCurrentDestination().getId() == R.id.createGroupFragment){
@@ -297,6 +301,7 @@ public class CreateGroupFragment extends BaseFragment implements ViewPagerNextLi
                     navController.popBackStack(R.id.groupsListFragment, false);
                 }
                 if(createGroupStatusContants == CreateGroupStatusContants.ERROR_GROUP_IMAGE){
+                    Log.d(TAG, "Error Group Image");
 //                    progressBar.setVisibility(View.GONE);
                     DialogHelper.closeWaitDialog();
                     if(navController.getCurrentDestination().getId() == R.id.createGroupFragment){
@@ -316,6 +321,7 @@ public class CreateGroupFragment extends BaseFragment implements ViewPagerNextLi
                     navController.popBackStack(R.id.groupsListFragment, false);
                 }
                 if(createGroupStatusContants == CreateGroupStatusContants.ERROR_GROUP_USER_IMAGE){
+                    Log.d(TAG, "Error Group User Image");
 //                    progressBar.setVisibility(View.GONE);
                     DialogHelper.closeWaitDialog();
                     if(navController.getCurrentDestination().getId() == R.id.createGroupFragment){
@@ -400,6 +406,11 @@ public class CreateGroupFragment extends BaseFragment implements ViewPagerNextLi
 
     @Override
     public void onLoginSuccess() {
+//        subscribeObservers();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         subscribeObservers();
     }
 

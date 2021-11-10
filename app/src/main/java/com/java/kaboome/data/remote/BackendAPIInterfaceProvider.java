@@ -19,6 +19,9 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Chal
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.exceptions.CognitoInternalErrorException;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.java.kaboome.data.entities.Group;
 import com.java.kaboome.data.entities.GroupUser;
 import com.java.kaboome.data.entities.Invitation;
@@ -26,6 +29,7 @@ import com.java.kaboome.data.entities.User;
 import com.java.kaboome.data.entities.UserGroup;
 import com.java.kaboome.data.entities.UserGroupConversation;
 import com.java.kaboome.data.remote.requests.ConversationCreateRequest;
+import com.java.kaboome.data.remote.requests.HelpFeedbackRequest;
 import com.java.kaboome.data.remote.requests.InviteContactsRequest;
 import com.java.kaboome.data.remote.requests.RequestCreateRequest;
 import com.java.kaboome.data.remote.requests.RequestDeleteRequest;
@@ -37,6 +41,7 @@ import com.java.kaboome.data.remote.responses.GroupUsersResponse;
 import com.java.kaboome.data.remote.responses.GroupsResponse;
 import com.java.kaboome.data.remote.responses.InvitationsResponse;
 import com.java.kaboome.data.remote.responses.UserGroupConversationsResponse;
+import com.java.kaboome.data.remote.responses.UserGroupResponse;
 import com.java.kaboome.data.remote.responses.UserResponse;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.AuthenticationCallback;
@@ -205,6 +210,7 @@ public class BackendAPIInterfaceProvider {
                 })
                 .build();
 
+//        Gson builder = new GsonBuilder().disableHtmlEscaping().create();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BackendAPI.baseRemoteUrl)
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -299,7 +305,7 @@ public class BackendAPIInterfaceProvider {
 //    public Call<ResponseBody> joinGroup(String userId, String groupId, UserGroup group){
 //        return apiInterface.joinGroup(userId, groupId, group);
 //    }
-    public LiveData<ApiResponse<Void>> joinGroup(String userId, String groupId, UserGroup group) {
+    public LiveData<ApiResponse<UserGroupResponse>> joinGroup(String userId, String groupId, UserGroup group) {
         return apiInterface.joinGroup(userId, groupId, group);
     }
 
@@ -418,6 +424,16 @@ public class BackendAPIInterfaceProvider {
     }
 //    public LiveData<ApiResponse<Void>> inviteContactsToJoinGroup(String userId, InviteContactsRequest inviteContactsRequest) {
 //        return apiInterface.inviteContactsToJoinGroup(userId, inviteContactsRequest);
+//    }
+
+    public Call<ResponseBody> sendHelpFeedbackMessage(String userId, HelpFeedbackRequest helpFeedbackRequest){
+       return apiInterface.sendHelpFeedbackMessage(userId, helpFeedbackRequest);
+//       return apiInterface.sendHelpFeedbackMessage(userId, helpFeedbackRequest.getMessageText());
+    }
+
+//    public Call<ResponseBody> sendHelpFeedbackMessage(String userId, JsonObject jsonObject){
+//        return apiInterface.sendHelpFeedbackMessage(userId, jsonObject);
+////       return apiInterface.sendHelpFeedbackMessage(userId, helpFeedbackRequest.getMessageText());
 //    }
 }
 

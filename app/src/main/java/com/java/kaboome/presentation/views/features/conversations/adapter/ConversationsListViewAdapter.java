@@ -73,7 +73,8 @@ public class ConversationsListViewAdapter extends RecyclerView.Adapter<RecyclerV
         for(UserGroupConversationModel groupModel: conversations){
             Log.d(TAG, "Group - "+groupModel.getGroupId());
         }
-        this.conversations = conversations;
+//        this.conversations = conversations;
+        this.conversations.addAll(conversations);
         notifyDataSetChanged();
     }
     @Override

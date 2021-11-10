@@ -37,7 +37,7 @@ public class ConversationsListViewHolder extends RecyclerView.ViewHolder {
     TextView lastMessage;
     TextView lastMessageDay;
     TextView lastMessageTime;
-    TextView groupExpiry;
+    TextView userLeft;
     FrameLayout unreadMessagesLayout;
     TextView unreadMessagesCount;
     FrameLayout newRequestsLayout;
@@ -60,6 +60,7 @@ public class ConversationsListViewHolder extends RecyclerView.ViewHolder {
         conversationImage = itemView.findViewById(R.id.conv_li_fr_list_item_conv_image);
 //        groupImageLoadingProgress = itemView.findViewById(R.id.gr_li_fr_list_item_group_image_progress);
         conversationName = itemView.findViewById(R.id.conv_li_fr_list_item_conv_name);
+        userLeft = itemView.findViewById(R.id.conv_li_fr_list_item_user_left);
         lastMessage = itemView.findViewById(R.id.conv_li_fr_list_item_conv_message);
         lastMessageDay = itemView.findViewById(R.id.conv_li_fr_list_item_message_day);
         lastMessageTime = itemView.findViewById(R.id.conv_li_fr_list_item_message_time);
@@ -108,6 +109,13 @@ public class ConversationsListViewHolder extends RecyclerView.ViewHolder {
 //        groupIdPositionMap.put(conversation.getGroupId(), new Integer(position));
 
         conversationName.setText(conversation.getOtherUserName()+" - "+conversation.getOtherUserRole());
+
+        if(conversation.getDeleted() != null && conversation.getDeleted()){
+            userLeft.setVisibility(View.VISIBLE);
+        }
+        else{
+            userLeft.setVisibility(View.INVISIBLE);
+        }
 
         if(conversation.getUnreadCount() <= 0){
             unreadMessagesLayout.setVisibility(View.INVISIBLE);

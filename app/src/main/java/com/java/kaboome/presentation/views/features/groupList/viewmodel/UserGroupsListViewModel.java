@@ -30,8 +30,14 @@ import com.java.kaboome.domain.repositories.GroupRequestRepository;
 import com.java.kaboome.domain.repositories.MessagesListRepository;
 import com.java.kaboome.domain.repositories.UserGroupsListRepository;
 import com.java.kaboome.domain.usecases.GetGroupRequestsListSingleUseCase;
+import com.java.kaboome.domain.usecases.GetLastOnlyGroupMessageInCacheSingleUseCase;
+import com.java.kaboome.domain.usecases.GetLastOnlyGroupMessagesInCacheLiveDataUseCase;
 import com.java.kaboome.domain.usecases.GetLastWholeGroupMessageInCacheSingleUseCase;
 import com.java.kaboome.domain.usecases.GetLastWholeGroupMessagesInCacheLiveDataUseCase;
+import com.java.kaboome.domain.usecases.GetNetUnreadAllConvMessagesSingleUseCase;
+import com.java.kaboome.domain.usecases.GetNetUnreadGroupAllConversationMessagesUseCase;
+import com.java.kaboome.domain.usecases.GetNetUnreadOnlyGroupMessagesSingleUseCase;
+import com.java.kaboome.domain.usecases.GetNetUnreadOnlyGroupMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadWholeGroupMessagesSingleUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadWholeGroupMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetUserGroupRequestsListUseCase;
@@ -50,16 +56,14 @@ import java.util.Map;
 
 public class UserGroupsListViewModel extends AndroidViewModel {
 
-    private static final String TAG = "KMUGroupsListViewModel";
+    private static final String TAG = "KMUGrpsListViewModel";
     private Context context;
     private GetUserGroupsListUseCase getUserGroupsListUseCase;
     private UserGroupsListRepository userGroupsListRepository;
     private MessagesListRepository messagesListRepository;
-//    private GetGroupMessagesAfterLastAccessUseCase getGroupMessagesAfterLastAccessUseCase;
-//    private GetNetUnreadOnlyGroupMessagesUseCase getNetUnreadOnlyGroupMessagesUseCase;
-    private GetNetUnreadWholeGroupMessagesUseCase getNetUnreadWholeGroupMessagesUseCase;
-//    private GetNetUnreadOnlyGroupMessagesUseCase getNetUnreadOnlyGroupMessagesUseCase;
-    private GetLastWholeGroupMessagesInCacheLiveDataUseCase getLastWholeGroupMessagesInCacheLiveDataUseCase;
+    private GetNetUnreadOnlyGroupMessagesUseCase getNetUnreadOnlyGroupMessagesUseCase;
+    private GetNetUnreadGroupAllConversationMessagesUseCase getNetUnreadGroupAllConversationMessagesUseCase;
+    private GetLastOnlyGroupMessagesInCacheLiveDataUseCase getLastOnlyGroupMessagesInCacheLiveDataUseCase;
     private GroupRequestRepository groupRequestRepository;
     private GetUserGroupRequestsListUseCase getUserGroupRequestsListUseCase;
     private MediatorLiveData<List<UserGroupModel>> userGroupsData = new MediatorLiveData<>();
@@ -67,6 +71,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
     private LiveData<DomainResource<List<DomainUserGroup>>> repositorySource;
     private List<LiveData<UserGroupModel>> eachUserGroupModelLiveDataList = new ArrayList<>(); //needed for cleanup/remove source purpose
     private Map<String, MutableLiveData<UserGroupModel>> mutableLiveDataForEachGroup = new HashMap<>();
+    private volatile DomainResource.Status threadSafeStatus;
 
 
 
@@ -78,9 +83,11 @@ public class UserGroupsListViewModel extends AndroidViewModel {
         getUserGroupsListUseCase = new GetUserGroupsListUseCase(userGroupsListRepository);
 
         messagesListRepository = DataGroupMessagesRepository.getInstance();
-//        getNetUnreadOnlyGroupMessagesUseCase = new GetNetUnreadOnlyGroupMessagesUseCase(messagesListRepository);
-        getNetUnreadWholeGroupMessagesUseCase = new GetNetUnreadWholeGroupMessagesUseCase(messagesListRepository);
-        getLastWholeGroupMessagesInCacheLiveDataUseCase = new GetLastWholeGroupMessagesInCacheLiveDataUseCase(messagesListRepository);
+        getNetUnreadOnlyGroupMessagesUseCase = new GetNetUnreadOnlyGroupMessagesUseCase(messagesListRepository);
+        getNetUnreadGroupAllConversationMessagesUseCase = new GetNetUnreadGroupAllConversationMessagesUseCase(messagesListRepository);
+//        getNetUnreadWholeGroupMessagesUseCase = new GetNetUnreadWholeGroupMessagesUseCase(messagesListRepository);
+//        getLastWholeGroupMessagesInCacheLiveDataUseCase = new GetLastWholeGroupMessagesInCacheLiveDataUseCase(messagesListRepository);
+        getLastOnlyGroupMessagesInCacheLiveDataUseCase = new GetLastOnlyGroupMessagesInCacheLiveDataUseCase(messagesListRepository);
 
         groupRequestRepository = DataGroupRequestRepository.getInstance();
         getUserGroupRequestsListUseCase = new GetUserGroupRequestsListUseCase(groupRequestRepository);
@@ -111,6 +118,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 
                     if (listDomainResource.status == DomainResource.Status.SUCCESS) {
 
+                        threadSafeStatus = DomainResource.Status.SUCCESS;
                         Log.d(TAG, "Status - SUCCESS");
                         if (listDomainResource.data != null) {
                             if (listDomainResource.data.size() == 0) {
@@ -125,7 +133,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 //launch the background process for loading the messages
 //                                MessagesDownloadHelper.updateMessagesForUserGroups(listDomainResource.data, AppExecutors2.getInstance());
                                 Intent serviceIntent = new Intent(context, SyncAllMessagesFromServer.class);
-                                serviceIntent.putExtra("groups", (Serializable)listDomainResource.data);
+                                serviceIntent.putExtra("groups", (Serializable) listDomainResource.data);
 
                                 //stop old service intent if running
                                 context.stopService(serviceIntent);
@@ -134,7 +142,6 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 //not keeping a foreground service, the user will see it in the device tray all the time
                                 //it is annoying
                                 context.startService(serviceIntent);
-
 
 
                                 Log.d(TAG, "There are groups...");
@@ -163,30 +170,29 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        for(UserGroupModel userGroupModel: newUserGroupModels){
+                                        for (UserGroupModel userGroupModel : newUserGroupModels) {
 //                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId(), "Group"));
 
-                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
-                                            if(lastMessage != null){
+//                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+                                            if (lastMessage != null) {
                                                 userGroupModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupModel.setLastMessageText(lastMessage.getMessageText());
                                                 userGroupModel.setLastMessageSentBy(lastMessage.getAlias());
-                                            }
-                                            else{
+                                            } else {
                                                 userGroupModel.setLastMessageSentAt(0L);
                                             }
 
                                             //get requests similarly so that request data is also considered while sorting groups when loading
                                             GetGroupRequestsListSingleUseCase getGroupRequestsListSingleUseCase = new GetGroupRequestsListSingleUseCase(groupRequestRepository);
                                             List<DomainGroupRequest> domainGroupRequests = getGroupRequestsListSingleUseCase.execute(GetGroupRequestsListSingleUseCase.Params.getRequestsForGroup(userGroupModel.getGroupId()));
-                                            if(domainGroupRequests == null || domainGroupRequests.size() <= 0){
+                                            if (domainGroupRequests == null || domainGroupRequests.size() <= 0) {
                                                 //                                Log.d(TAG, "onChanged: request size 0");
                                                 userGroupModel.setNumberOfRequests(0);
                                                 userGroupModel.setLastRequestSentAt(0L);
-                                            }
-                                            else{
+                                            } else {
                                                 //                                Log.d(TAG, "onChanged: request size - "+domainGroupRequests.size());
                                                 userGroupModel.setNumberOfRequests(domainGroupRequests.size());
                                                 userGroupModel.setLastRequestSentAt(domainGroupRequests.get(domainGroupRequests.size() - 1).getDateRequestMade());
@@ -201,13 +207,30 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                                                userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
 //                                            }
 
-                                            GetNetUnreadWholeGroupMessagesSingleUseCase getNetUnreadWholeGroupMessagesSingleUseCase = new GetNetUnreadWholeGroupMessagesSingleUseCase(messagesListRepository);
-                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadWholeGroupMessagesSingleUseCase.execute(GetNetUnreadWholeGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
-                                            if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+//                                            GetNetUnreadWholeGroupMessagesSingleUseCase getNetUnreadWholeGroupMessagesSingleUseCase = new GetNetUnreadWholeGroupMessagesSingleUseCase(messagesListRepository);
+//                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadWholeGroupMessagesSingleUseCase.execute(GetNetUnreadWholeGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
+//                                            if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+//                                                userGroupModel.setUnreadCount(0);
+//                                            }
+//                                            else{
+//                                                userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
+//                                            }
+
+                                            GetNetUnreadOnlyGroupMessagesSingleUseCase getNetUnreadOnlyGroupMessagesSingleUseCase = new GetNetUnreadOnlyGroupMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadOnlyGroupMessagesSingleUseCase.execute(GetNetUnreadOnlyGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
+                                            if (messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0) {
                                                 userGroupModel.setUnreadCount(0);
-                                            }
-                                            else{
+                                            } else {
                                                 userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
+                                            }
+
+                                            //for PM messages now
+                                            GetNetUnreadAllConvMessagesSingleUseCase getNetUnreadAllConvMessagesSingleUseCase = new GetNetUnreadAllConvMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesPMAfterLastAccess = getNetUnreadAllConvMessagesSingleUseCase.execute(GetNetUnreadAllConvMessagesSingleUseCase.Params.getNetUnreadMessagesCacheSingleForAllConv(userGroupModel.getGroupId()));
+                                            if (messagesPMAfterLastAccess == null || messagesPMAfterLastAccess.size() <= 0) {
+                                                userGroupModel.setUnreadPMCount(0);
+                                            } else {
+                                                userGroupModel.setUnreadPMCount(messagesAfterLastAccess.size());
                                             }
 
                                         }
@@ -230,11 +253,11 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 });
 
 
-
                             }
                         }
 //                        userGroupsData.removeSource(repositorySource);
                     } else if (listDomainResource.status == DomainResource.Status.LOADING) {
+                        threadSafeStatus = DomainResource.Status.LOADING;
                         Log.d(TAG, "Status - LOADING");
                         if (listDomainResource.data != null) {
                             if (listDomainResource.data.size() <= 0) {
@@ -252,33 +275,32 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        for(UserGroupModel userGroupModel: newUserGroupModels){
-                                            if(userGroupModel.getGroupId().equals(GroupListStatusConstants.LOADING.toString())){
+                                        for (UserGroupModel userGroupModel : newUserGroupModels) {
+                                            if (userGroupModel.getGroupId().equals(GroupListStatusConstants.LOADING.toString())) {
                                                 continue;
                                             }
-                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+//                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
 
 //                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId()));
-                                            if(lastMessage != null){
+                                            if (lastMessage != null) {
                                                 userGroupModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupModel.setLastMessageText(lastMessage.getMessageText());
                                                 userGroupModel.setLastMessageSentBy(lastMessage.getAlias());
-                                            }
-                                            else{
+                                            } else {
                                                 userGroupModel.setLastMessageSentAt(0L);
                                             }
 
                                             //get requests similarly so that request data is also considered while sorting groups when loading
                                             GetGroupRequestsListSingleUseCase getGroupRequestsListSingleUseCase = new GetGroupRequestsListSingleUseCase(groupRequestRepository);
                                             List<DomainGroupRequest> domainGroupRequests = getGroupRequestsListSingleUseCase.execute(GetGroupRequestsListSingleUseCase.Params.getRequestsForGroup(userGroupModel.getGroupId()));
-                                            if(domainGroupRequests == null || domainGroupRequests.size() <= 0){
+                                            if (domainGroupRequests == null || domainGroupRequests.size() <= 0) {
                                                 //                                Log.d(TAG, "onChanged: request size 0");
                                                 userGroupModel.setNumberOfRequests(0);
                                                 userGroupModel.setLastRequestSentAt(0L);
-                                            }
-                                            else{
+                                            } else {
                                                 //                                Log.d(TAG, "onChanged: request size - "+domainGroupRequests.size());
                                                 userGroupModel.setNumberOfRequests(domainGroupRequests.size());
                                                 userGroupModel.setLastRequestSentAt(domainGroupRequests.get(domainGroupRequests.size() - 1).getDateRequestMade());
@@ -294,17 +316,40 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                                                userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
 //                                            }
 
-                                            GetNetUnreadWholeGroupMessagesSingleUseCase getNetUnreadWholeGroupMessagesSingleUseCase = new GetNetUnreadWholeGroupMessagesSingleUseCase(messagesListRepository);
-                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadWholeGroupMessagesSingleUseCase.execute(GetNetUnreadWholeGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
-                                            if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+//                                            GetNetUnreadWholeGroupMessagesSingleUseCase getNetUnreadWholeGroupMessagesSingleUseCase = new GetNetUnreadWholeGroupMessagesSingleUseCase(messagesListRepository);
+//                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadWholeGroupMessagesSingleUseCase.execute(GetNetUnreadWholeGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
+//                                            if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+//                                                userGroupModel.setUnreadCount(0);
+//                                            }
+//                                            else{
+//                                                userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
+//                                            }
+
+                                            GetNetUnreadOnlyGroupMessagesSingleUseCase getNetUnreadOnlyGroupMessagesSingleUseCase = new GetNetUnreadOnlyGroupMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadOnlyGroupMessagesSingleUseCase.execute(GetNetUnreadOnlyGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
+                                            if (messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0) {
                                                 userGroupModel.setUnreadCount(0);
-                                            }
-                                            else{
+                                            } else {
                                                 userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
                                             }
 
+                                            //for PM messages now
+                                            GetNetUnreadAllConvMessagesSingleUseCase getNetUnreadAllConvMessagesSingleUseCase = new GetNetUnreadAllConvMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesPMAfterLastAccess = getNetUnreadAllConvMessagesSingleUseCase.execute(GetNetUnreadAllConvMessagesSingleUseCase.Params.getNetUnreadMessagesCacheSingleForAllConv(userGroupModel.getGroupId()));
+                                            if (messagesPMAfterLastAccess == null || messagesPMAfterLastAccess.size() <= 0) {
+                                                userGroupModel.setUnreadPMCount(0);
+                                            } else {
+                                                userGroupModel.setUnreadPMCount(messagesAfterLastAccess.size());
+                                            }
+
                                         }
-                                        userGroupsData.postValue(newUserGroupModels);
+                                        Log.d(TAG, "Status loading post is  " + threadSafeStatus);
+                                        if (threadSafeStatus == DomainResource.Status.LOADING) {
+                                            //only post it if the status is still loading
+                                            //if it is success or error, then it is already
+                                            //done
+                                            userGroupsData.postValue(newUserGroupModels);
+                                        }
                                     }
                                 });
 //                                for(UserGroupModel userGroupModel: newUserGroupModels){
@@ -326,28 +371,110 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                                userGroupsData.setValue(newUserGroupModels);
 
 
-
                             }
 
                         }
                     } else if (listDomainResource.status == DomainResource.Status.ERROR) {
+                        threadSafeStatus = DomainResource.Status.ERROR;
                         Log.d(TAG, "Status - ERROR");
-                        addGroupNeededDataTriggers(listDomainResource);
-                        userGroupsData.setValue(UserGroupModelMapper.transformAllFromDomain(listDomainResource));
-                        //TODO: this following line analyze it in this respect -
-                        //TODO: the first time, there is an error, so no continuous observing is being done
-                        //TODO: since the data is coming from the cache, the user does not know there is an error
-                        //TODO: user goes ahaead and creates a group which works, but since the observing is not happening
-                        //TODO: there is no addition of that group when he comes back to GroupsListFragment
+                        if (listDomainResource.data != null) {
+                            if (listDomainResource.data.size() <= 0) {
+                                Log.d(TAG, "no groups cached...");
+
+
+                            } else {
+                                Log.d(TAG, "There are groups cached...");
+
+                                /** - testing the error loading from here **/
+
+                                final List<UserGroupModel> newUserGroupModels = UserGroupModelMapper.transformAllFromDomain(listDomainResource);
+                                AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (UserGroupModel userGroupModel : newUserGroupModels) {
+                                            if (userGroupModel.getGroupId().equals(GroupListStatusConstants.LOADING.toString())) {
+                                                continue;
+                                            }
+//                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+
+//                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
+//                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId()));
+                                            if (lastMessage != null) {
+                                                userGroupModel.setLastMessageSentAt(lastMessage.getSentAt());
+                                                userGroupModel.setLastMessageText(lastMessage.getMessageText());
+                                                userGroupModel.setLastMessageSentBy(lastMessage.getAlias());
+                                            } else {
+                                                userGroupModel.setLastMessageSentAt(0L);
+                                            }
+
+                                            //get requests similarly so that request data is also considered while sorting groups when loading
+                                            GetGroupRequestsListSingleUseCase getGroupRequestsListSingleUseCase = new GetGroupRequestsListSingleUseCase(groupRequestRepository);
+                                            List<DomainGroupRequest> domainGroupRequests = getGroupRequestsListSingleUseCase.execute(GetGroupRequestsListSingleUseCase.Params.getRequestsForGroup(userGroupModel.getGroupId()));
+                                            if (domainGroupRequests == null || domainGroupRequests.size() <= 0) {
+                                                //                                Log.d(TAG, "onChanged: request size 0");
+                                                userGroupModel.setNumberOfRequests(0);
+                                                userGroupModel.setLastRequestSentAt(0L);
+                                            } else {
+                                                //                                Log.d(TAG, "onChanged: request size - "+domainGroupRequests.size());
+                                                userGroupModel.setNumberOfRequests(domainGroupRequests.size());
+                                                userGroupModel.setLastRequestSentAt(domainGroupRequests.get(domainGroupRequests.size() - 1).getDateRequestMade());
+                                            }
+
+                                            GetNetUnreadOnlyGroupMessagesSingleUseCase getNetUnreadOnlyGroupMessagesSingleUseCase = new GetNetUnreadOnlyGroupMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesAfterLastAccess = getNetUnreadOnlyGroupMessagesSingleUseCase.execute(GetNetUnreadOnlyGroupMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupModel.getGroupId()));
+                                            if (messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0) {
+                                                userGroupModel.setUnreadCount(0);
+                                            } else {
+                                                userGroupModel.setUnreadCount(messagesAfterLastAccess.size());
+                                            }
+
+                                            //for PM messages now
+                                            GetNetUnreadAllConvMessagesSingleUseCase getNetUnreadAllConvMessagesSingleUseCase = new GetNetUnreadAllConvMessagesSingleUseCase(messagesListRepository);
+                                            List<DomainMessage> messagesPMAfterLastAccess = getNetUnreadAllConvMessagesSingleUseCase.execute(GetNetUnreadAllConvMessagesSingleUseCase.Params.getNetUnreadMessagesCacheSingleForAllConv(userGroupModel.getGroupId()));
+                                            if (messagesPMAfterLastAccess == null || messagesPMAfterLastAccess.size() <= 0) {
+                                                userGroupModel.setUnreadPMCount(0);
+                                            } else {
+                                                userGroupModel.setUnreadPMCount(messagesAfterLastAccess.size());
+                                            }
+
+                                        }
+
+                                        userGroupsData.postValue(newUserGroupModels);
+                                        //We need to add triggers after the initial group data is loaded in the adapter
+                                        //hence adding it here. Once all the groups come back, there last message is updated,
+                                        //then we add the triggers.
+                                        //This avoids the case where notifyDatasetChanged() in Adapter was depending upon
+                                        //the group that comes later. It was losing data for the previous one and hence new messages
+                                        //unread count was being lost.
+                                        //For example, if we are updating unread for a group and that group's data is set later
+                                        //it is set with default unread, so we were losing the unread
+                                        AppExecutors2.getInstance().mainThread().execute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                addGroupNeededDataTriggers(listDomainResource);
+                                            }
+                                        });
+                                    }
+                                });
+                                /** - ending testing the error loading to here **/
+
+                            }
+
+                            //commenting the following line of removing the observing when error
+                            //continuing the observing because when the connection is formed
+                            //then there might be no error, then the observing should still be there
+                            //I think - not sure - let's see how it progresses
+//                        userGroupsData.removeSource(repositorySource);
+                        }
+                    } else {
                         userGroupsData.removeSource(repositorySource);
-//                        showNoNetworkErrorToast.setValue(true);
                     }
-                } else {
-                    userGroupsData.removeSource(repositorySource);
                 }
             }
-        });
 
+        });
     }
 
     private void addGroupNeededDataTriggers(@NonNull DomainResource<List<DomainUserGroup>> listDomainResource) {
@@ -402,7 +529,25 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                         //and add all that unread count to the group's unread count
                         //but I need order, so that the unread count is added, not replaced
 
-                        multipleFunctions.addSource(getNetUnreadWholeGroupMessagesUseCase.execute(GetNetUnreadWholeGroupMessagesUseCase.Params.getNetUnreadMessagesForGroup(input.getGroupId())), new Observer<List<DomainMessage>>() {
+//                        multipleFunctions.addSource(getNetUnreadWholeGroupMessagesUseCase.execute(GetNetUnreadWholeGroupMessagesUseCase.Params.getNetUnreadMessagesForGroup(input.getGroupId())), new Observer<List<DomainMessage>>() {
+//                            @Override
+//                            public void onChanged(List<DomainMessage> domainMessages) {
+//
+////                                Log.d(TAG, "onChanged: for getGroupMessagesAfterLastAccessUseCase");
+//                                if(domainMessages == null || domainMessages.size() <= 0){
+////                                    Log.d(TAG, "domain message is null, setting to 0");
+//                                    input.setUnreadCount(0);
+//                                }
+//                                else{
+////                                    Log.d(TAG, "domain messages unread are - "+domainMessages.size());
+//                                    input.setUnreadCount(domainMessages.size());
+//                                }
+//                                input.setReceivedGroupDataType(ReceivedGroupDataTypeConstants.UNREAD_COUNT);
+//                                multipleFunctions.setValue(input);
+//                            }
+//                        });
+
+                        multipleFunctions.addSource(getNetUnreadOnlyGroupMessagesUseCase.execute(GetNetUnreadOnlyGroupMessagesUseCase.Params.getNetUnreadMessagesForGroup(input.getGroupId())), new Observer<List<DomainMessage>>() {
                             @Override
                             public void onChanged(List<DomainMessage> domainMessages) {
 
@@ -419,6 +564,27 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                 multipleFunctions.setValue(input);
                             }
                         });
+
+                        //add observation for conv messages
+                        multipleFunctions.addSource(getNetUnreadGroupAllConversationMessagesUseCase.execute(GetNetUnreadGroupAllConversationMessagesUseCase.Params.getNetUnreadAllConvMessagesForGroup(input.getGroupId())), new Observer<List<DomainMessage>>() {
+                            @Override
+                            public void onChanged(List<DomainMessage> domainMessages) {
+
+//                                Log.d(TAG, "onChanged: for getGroupMessagesAfterLastAccessUseCase");
+                                if(domainMessages == null || domainMessages.size() <= 0){
+//                                    Log.d(TAG, "domain message is null, setting to 0");
+                                    input.setUnreadPMCount(0);
+                                }
+                                else{
+//                                    Log.d(TAG, "domain messages unread are - "+domainMessages.size());
+                                    input.setUnreadPMCount(domainMessages.size());
+                                }
+                                input.setReceivedGroupDataType(ReceivedGroupDataTypeConstants.UNREAD_PM_COUNT);
+                                multipleFunctions.setValue(input);
+                            }
+                        });
+
+
 
 //                        multipleFunctions.addSource(getGroupMessagesAfterLastAccessUseCase.execute(GetGroupMessagesAfterLastAccessUseCase.Params.getMessagesAfterLastAccessForGroup(input.getGroupId(), groupLastMessageSeenTS)), new Observer<List<DomainMessage>>() {
 //                            @Override
@@ -469,7 +635,8 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                            }
 //                        });
 
-                        multipleFunctions.addSource(getLastWholeGroupMessagesInCacheLiveDataUseCase.execute(GetLastWholeGroupMessagesInCacheLiveDataUseCase.Params.forGroup(input.getGroupId())), new Observer<DomainMessage>() {
+//                        multipleFunctions.addSource(getLastWholeGroupMessagesInCacheLiveDataUseCase.execute(GetLastWholeGroupMessagesInCacheLiveDataUseCase.Params.forGroup(input.getGroupId())), new Observer<DomainMessage>() {
+                        multipleFunctions.addSource(getLastOnlyGroupMessagesInCacheLiveDataUseCase.execute(GetLastOnlyGroupMessagesInCacheLiveDataUseCase.Params.forGroup(input.getGroupId())), new Observer<DomainMessage>() {
                             @Override
                             public void onChanged(DomainMessage domainMessage) {
 //                                Log.d(TAG, "onChanged: for getLastGroupMessagesInCacheUseCase");

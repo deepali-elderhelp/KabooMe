@@ -79,9 +79,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoginHan
     protected void onResume() {
 
 
-        //check connection here, if not, go to login
+        //check authorization here, if not, go to login
         // Initialize application
         CognitoHelper.init(getApplicationContext());
+        whileLoginInProgress();
         findCurrent();
 
         super.onResume();
@@ -98,6 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoginHan
             authenticationHandler.onFailure(new Exception("Not logged in"));
         }
         if(userName != null) {
+            Log.d(TAG, "user and user name is there, going to authenticate now");
             CognitoHelper.setUser(userName);
             user.getSessionInBackground(authenticationHandler);
         }
@@ -166,6 +168,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoginHan
             if(e instanceof  CognitoInternalErrorException){
                 //if no network, this happens to be true
                 if(e.getCause().getMessage().contains("Unable to resolve host")){
+                    Log.d(TAG, "onFailure: Still going to success with no connection");
                     //login failed because token expired(1 hour limit) and now there is no internet connection
                     //to get new tokens from refresh token
                     //let the user still in, but in offline mode

@@ -65,6 +65,10 @@ public class ImageHelper {
 
     public RequestManager getRequestManager(Context context){
 
+        if(context == null){
+            return null;
+        }
+
         RequestOptions options = new RequestOptions();
 
         return Glide.with(context)
@@ -73,6 +77,10 @@ public class ImageHelper {
     }
 
     public RequestManager getRequestManager(Context context, int placeholderImage, int errorImage){
+
+        if(context == null){
+            return null;
+        }
 
         RequestOptions options = new RequestOptions();
 
@@ -88,6 +96,9 @@ public class ImageHelper {
 
     public RequestManager getRequestManager(Context context, Drawable errorImage){
 
+        if(context == null){
+            return null;
+        }
         RequestOptions options = new RequestOptions();
 
 
@@ -246,6 +257,11 @@ public class ImageHelper {
             @Override
             public void onImageLinkError(Exception e) {
                 Log.d(TAG, "Error in getting pre-signed URL");
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
+                }
+                //load error image with glide
+                requestManager.load(errorBitmap).into(imageView);
             }
         });
     }
@@ -448,6 +464,11 @@ public class ImageHelper {
             @Override
             public void onImageLinkError(Exception e) {
                 Log.d(TAG, "Error in getting pre-signed URL");
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
+                }
+                //load error image with glide
+                requestManager.load(errorBitmap).into(imageView);
             }
         });
     }
@@ -499,6 +520,11 @@ public class ImageHelper {
             @Override
             public void onImageLinkError(Exception e) {
                 Log.d(TAG, "Error in getting pre-signed URL");
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
+                }
+                //load error image with glide
+                requestManager.load(errorBitmap).into(imageView);
             }
         });
     }
@@ -551,6 +577,7 @@ public class ImageHelper {
             @Override
             public void onImageLinkError(Exception e) {
                 Log.d(TAG, "Error in getting pre-signed URL");
+
             }
         });
     }

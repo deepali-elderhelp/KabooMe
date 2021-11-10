@@ -66,8 +66,9 @@ public class DrawerBottomSheetFragment extends BottomSheetDialogFragment {
                     case R.id.drawer_settings:
                         Toast.makeText(DrawerBottomSheetFragment.this.getContext(), "This feature has not been implemented yet", Toast.LENGTH_SHORT).show();
                         return true;
-                    case R.id.drawer_help:
-                        Toast.makeText(DrawerBottomSheetFragment.this.getContext(), "This feature has not been implemented yet", Toast.LENGTH_SHORT).show();
+                    case R.id.helpFragment:
+//                        Toast.makeText(DrawerBottomSheetFragment.this.getContext(), "This feature has not been implemented yet", Toast.LENGTH_SHORT).show();
+                        NavigationUI.onNavDestinationSelected(menuItem, navController);
                         return true;
                 }
                 return false;

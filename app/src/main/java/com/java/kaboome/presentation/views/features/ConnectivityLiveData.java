@@ -49,9 +49,11 @@ public class ConnectivityLiveData extends LiveData<Boolean> {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = cm.getActiveNetworkInfo();
             if(networkInfo != null && networkInfo.isConnected()){
+                Log.d(TAG, "Network connected");
                 postValue(true);
             }
             else{
+                Log.d(TAG, "Network disconnected");
                 postValue(false);
             }
 

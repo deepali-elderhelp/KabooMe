@@ -1225,8 +1225,8 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
             if(alreadyThere)
                 return;
 
-            initRecyclerView();
-            subscribeObservers();
+//            initRecyclerView();
+//            subscribeObservers();
 
             messagesViewModel.loadServerMessages();
             messagesViewModel.startOnlyGroupUnreadMessages();
@@ -1243,6 +1243,21 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 
             alreadyThere = true;
         }
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+
+        if(alreadyThere)
+            return;
+
+        initRecyclerView();
+        subscribeObservers();
+
+        messagesViewModel.loadServerMessages();
+        messagesViewModel.startOnlyGroupUnreadMessages();
+
+    }
 
         @Override
         public void onNetworkOff() {

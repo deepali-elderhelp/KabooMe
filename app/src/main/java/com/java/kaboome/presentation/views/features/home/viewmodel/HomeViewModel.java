@@ -137,6 +137,7 @@ public class HomeViewModel extends ViewModel {
 //    }
 
     public void getNumberOfInvitationsFromBackend(){
+        Log.d(TAG, "getNumberOfInvitationsFromBackend: being called");
         //false setting so that the data is only loaded from the cache and not from the server
         //user can go to the invitations page to see if there is any new invitation data
 

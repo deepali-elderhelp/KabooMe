@@ -334,6 +334,7 @@ public class GroupConversationsFragment extends BaseFragment implements Conversa
             public void onChanged(List<UserGroupConversationModel> userGroupConversationModels) {
                 Log.d(TAG, "List conversation changed ");
                 if(adapter != null) {
+                    Log.d(TAG, "Number of conversations - "+userGroupConversationModels.size());
                     adapter.setConversations(userGroupConversationModels);
                 }
 
@@ -373,19 +374,11 @@ public class GroupConversationsFragment extends BaseFragment implements Conversa
     public void onLoginSuccess() {
         Log.d(TAG, "onLoginSuccess: ");
 
-//        initRecyclerView();
-
-//        if(alreadyThere)
-//            return;
-
-//        userGroupsListViewModel = ViewModelProviders.of(this).get(UserGroupsListViewModel.class);
-
-//        initRecyclerView();
-        subscribeObservers();
+//        subscribeObservers();
         getInitialConvsList();
 
-//        alreadyThere = true;
     }
+
 
     @Override
     public void onNetworkOff() {
@@ -393,6 +386,12 @@ public class GroupConversationsFragment extends BaseFragment implements Conversa
         networkOffImageView.setVisibility(View.VISIBLE);
         newGroupFAB.hide();
         if(recyclerView != null) { recyclerView.clearOnScrollListeners();}
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        subscribeObservers();
+        getInitialConvsList();
     }
 
     @Override

@@ -401,7 +401,7 @@
                     android:id="@+id/group_info_add_admin_image"
                     android:layout_width="@dimen/group_info_add_admin_width"
                     android:layout_height="@dimen/group_info_add_admin_height"
-                    android:src="@drawable/admin_big"
+                    android:src="@drawable/shield"
                     android:layout_marginTop="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/group_info_admin_recycler" />

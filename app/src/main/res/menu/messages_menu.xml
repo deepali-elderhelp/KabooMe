@@ -21,21 +21,35 @@
         app:showAsAction="never">
     </item>
 
+<!--    <item android:id="@+id/group_admin_chat"-->
+<!--        android:title="Admins Chat"-->
+<!--        android:orderInCategory="300"-->
+<!--        android:icon="@drawable/admin_hat"-->
+<!--        app:showAsAction="always">-->
+<!--    </item>-->
+
+<!--    <item android:id="@+id/group_admin_chat_lit"-->
+<!--        android:title="Admins Chat"-->
+<!--        android:orderInCategory="300"-->
+<!--        android:icon="@drawable/admin_hat_lit"-->
+<!--        android:actionLayout="@layout/new_private_message_count"-->
+<!--        app:showAsAction="always">-->
+<!--    </item>-->
+
     <item android:id="@+id/group_admin_chat"
         android:title="Admins Chat"
         android:orderInCategory="300"
-        android:icon="@drawable/admin_hat"
+        android:icon="@drawable/shield_unlit"
         app:showAsAction="always">
     </item>
 
     <item android:id="@+id/group_admin_chat_lit"
         android:title="Admins Chat"
         android:orderInCategory="300"
-        android:icon="@drawable/admin_hat_lit"
+        android:icon="@drawable/shield"
         android:actionLayout="@layout/new_private_message_count"
         app:showAsAction="always">
     </item>
-
 
     <item android:id="@+id/group_chat"
         android:title="Group Chat"

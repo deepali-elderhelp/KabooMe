@@ -125,9 +125,11 @@ public class CreateGroupViewModel extends ViewModel {
         createGroup.removeSource(repositorySource); //if there is any old one hanging
         createGroup.removeSource(uploadImage); //if there is any old one hanging
         createGroup.removeSource(manageImage); //if there is any old one hanging
-        repositorySource = createNewGroupUseCase.execute(CreateNewGroupUseCase.Params.groupToBeCreated(GroupModelMapper.getDomainFromGroupModel(groupModel)));
 
         createGroup.setValue(CreateGroupStatusContants.LOADING_GROUP);
+        repositorySource = createNewGroupUseCase.execute(CreateNewGroupUseCase.Params.groupToBeCreated(GroupModelMapper.getDomainFromGroupModel(groupModel)));
+
+//        createGroup.setValue(CreateGroupStatusContants.LOADING_GROUP);
         Log.d(TAG, "createGroup: starting group creation - "+System.currentTimeMillis());
         //upload group image
         createGroup.addSource(uploadImage, new Observer<CreateGroupStatusContants>() {

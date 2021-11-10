@@ -352,6 +352,18 @@ public class InviteContactsFragment extends BaseFragment implements InvitationCo
 
     @Override
     public void onLoginSuccess() {
+//        this.group = (UserGroupModel)getArguments().getSerializable("group");
+//
+//        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+//            loadContacts();
+//        }
+//        else{
+//            requestRequiredPermissions();
+//        }
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         this.group = (UserGroupModel)getArguments().getSerializable("group");
 
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED){

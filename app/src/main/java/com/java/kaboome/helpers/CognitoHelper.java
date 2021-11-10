@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserDetails;
@@ -63,6 +64,15 @@ public class CognitoHelper {
 
             // Create a user pool with default ClientConfiguration
             userPool = new CognitoUserPool(context, AWSConstants.COGNITO_USER_POOL_ID.toString(), AWSConstants.COGNITO_CLIENT_ID.toString(), clientSecret, cognitoRegion);
+
+//            ClientConfiguration clientConfiguration = new ClientConfiguration();
+//            clientConfiguration.setConnectionTimeout(5000); // 5 seconds
+//            clientConfiguration.setSocketTimeout(5000);
+//            clientConfiguration.setMaxErrorRetry(0);
+
+//            userPool = new CognitoUserPool(context, AWSConstants.COGNITO_USER_POOL_ID.toString(), AWSConstants.COGNITO_CLIENT_ID.toString(), clientSecret, clientConfiguration, cognitoRegion);
+
+//            userPool = new CognitoUserPool(context,)
 
             // This will also work
             /*

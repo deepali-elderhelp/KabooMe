@@ -115,6 +115,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     private boolean urgentChecked = false;
     private NavController navController;
     private boolean firstLoad = true;
+    private boolean connectionEstablished = false;
     private FrameLayout newMessagesFlashIcon;
     private boolean alreadyThere = false;
     private static final int REQUEST_DOWNLOAD_CODE=1001;
@@ -607,6 +608,13 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             @Override
             public void onChanged(DomainUserGroup domainUserGroup) {
                 group = UserGroupModelMapper.getUserModelFromDomain(domainUserGroup);
+                //if this group has been deleted, and you are in messages
+                //set a toast that this group has been deleted
+                if(group.getDeleted() != null && group.getDeleted()){
+                    Toast.makeText(getContext(), "This group is now DELETED, no more messages can be sent", Toast.LENGTH_LONG).show();
+                    messagePrivacyLL.setVisibility(View.GONE);
+                    messageInput.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -677,6 +685,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                     try {
                         IoTHelper.getInstance().subscribeToGroup(MessageGroupsHelper.getTopicName(group.getGroupId(), null, MessageGroupsConstants.GROUP_MESSAGES));
                         messageInput.getButton().setEnabled(true);
+                        connectionEstablished = true;
                     } catch (Exception e) {
                         if(messagesViewModel.connectionErrorToBeDisplayed(e)){
                             Toast.makeText(getContext(), "Could not connect to network, please check", Toast.LENGTH_LONG).show();
@@ -686,6 +695,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                 }
                 else{
                     messageInput.getButton().setEnabled(false);
+                    connectionEstablished = false;
                 }
             }
         });
@@ -832,7 +842,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     public boolean onSubmit(CharSequence input) {
         firstLoad = false;
         //check if the connection is there
-        if(NetworkHelper.isOnline()){
+        //also check if subscription has happened
+        if(NetworkHelper.isOnline() && connectionEstablished){
             messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, new PublishMessageCallback() {
                 @Override
                 public void publishSuccessful() {
@@ -1344,8 +1355,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         if(alreadyThere)
             return;
 
-        initRecyclerView();
-        subscribeObservers();
+//        initRecyclerView();
+//        subscribeObservers();
 
         messagesViewModel.loadServerMessages();
         messagesViewModel.startNetUnreadGroupConversationMessagesUseCase();
@@ -1363,6 +1374,38 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
         alreadyThere = true;
     }
+
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+
+
+
+        if(alreadyThere)
+            return;
+
+        initRecyclerView();
+        subscribeObservers();
+
+        messagesViewModel.loadServerMessages();
+        messagesViewModel.startNetUnreadGroupConversationMessagesUseCase();
+        messagesViewModel.startNetUnreadGroupAllConversationMessagesUseCase();
+
+
+//        /**
+//         * sometimes when the user is on messages for a long time, the cognito session is expired
+//         * when user comes back, onResume() happens which starts the process of getting credentials
+//         * but the connectToIoT is called before waiting for the new token. So, basically, connectToIoT is called
+//         * before the session is established and hence credentials needed for IoT fail and the connection is not formed
+//         * so, we need to make the IoT connection only after login is successful
+//         */
+//        IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
+
+//        alreadyThere = true;
+    }
+
+
 
     @Override
     public void onNetworkOff() {

@@ -49,7 +49,7 @@
 
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:id="@+id/guideline_conv_user_action_vertical_middle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -81,7 +81,7 @@
         android:layout_width="@dimen/user_group_list_image_width"
         android:layout_height="@dimen/user_group_list_image_height"
         app:layout_constraintStart_toStartOf="@id/guideline_invi_list_item_vertical_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintTop_toTopOf="@id/guideline_invi_list_item_horizontal_start"
         app:layout_constraintBottom_toBottomOf="@id/guideline_invi_list_item_horizontal_middle">
 
@@ -107,7 +107,7 @@
                 style="@style/group_list_group_heading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
                 app:layout_constraintEnd_toEndOf="@id/guideline_conv_name_end"
                 app:layout_constraintTop_toTopOf="@id/invi_list_item_group_image_frame"
                 android:layout_marginLeft="10dp"
@@ -132,7 +132,7 @@
                 android:id="@+id/invi_list_item_invited_by"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
                 app:layout_constraintEnd_toEndOf="@id/guideline_unread_details"
                 app:layout_constraintTop_toBottomOf="@id/invi_list_item_group_name"
                 android:layout_marginTop="5dp"
@@ -160,7 +160,7 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         app:layout_constraintEnd_toEndOf="@+id/guideline_reject_button_start"
-        app:layout_constraintStart_toStartOf="@+id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintStart_toStartOf="@+id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintTop_toBottomOf="@+id/invi_list_item_invited_by"
         app:layout_constraintBottom_toBottomOf="@id/guideline_invi_list_item_horizontal_end"
         />
@@ -207,7 +207,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="@drawable/group_info_line_divider"
-        app:layout_constraintStart_toStartOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintStart_toStartOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/guideline_invi_list_item_horizontal_end"/>
 

@@ -66,7 +66,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d(TAG, "onMessageReceived: Message arrived, remote message is "+remoteMessage);
+        Log.d(TAG, "onMessageReceived: Message arrived, remote message is "+remoteMessage.toString());
         if(remoteMessage != null && remoteMessage.getData().containsValue(NotificationPurposeConstants.NEW_MESSAGE.getPurpose())){
             MessageNotificationHandler messageNotificationHandler = new MessageNotificationHandler(remoteMessage, this);
             messageNotificationHandler.handleNotification();

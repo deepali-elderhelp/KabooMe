@@ -267,6 +267,13 @@ public class InvitationsListFragment extends BaseFragment implements InvitationG
 
     @Override
     public void onLoginSuccess() {
+//        initRecyclerView();
+//        subscribeObservers();
+        invitationsListViewModel.getInvitationsFromServer();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         initRecyclerView();
         subscribeObservers();
         invitationsListViewModel.getInvitationsFromServer();

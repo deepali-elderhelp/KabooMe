@@ -56,7 +56,7 @@ public class ConvsListViewModel extends ViewModel {
     private LiveData<DomainResource<List<DomainUserGroupConversation>>> repositorySource;
     private List<LiveData<UserGroupConversationModel>> eachUserGroupConversationModelLiveDataList = new ArrayList<>(); //needed for cleanup/remove source purpose
     private Map<String, MutableLiveData<UserGroupConversationModel>> mutableLiveDataForEachGroup = new HashMap<>();
-
+    private volatile DomainResource.Status threadSafeStatus;
 
     public ConvsListViewModel(Context context, String groupId) {
 
@@ -96,7 +96,7 @@ public class ConvsListViewModel extends ViewModel {
 
 
                     if (listDomainResource.status == DomainResource.Status.SUCCESS) {
-
+                        threadSafeStatus = DomainResource.Status.SUCCESS;
                         Log.d(TAG, "Status - SUCCESS");
                         if (listDomainResource.data != null) {
                             if (listDomainResource.data.size() == 0) {
@@ -203,6 +203,7 @@ public class ConvsListViewModel extends ViewModel {
                         }
 //                        userGroupsData.removeSource(repositorySource);
                     } else if (listDomainResource.status == DomainResource.Status.LOADING) {
+                        threadSafeStatus = DomainResource.Status.LOADING;
                         Log.d(TAG, "Status - LOADING");
                         if (listDomainResource.data != null) {
                             if (listDomainResource.data.size() <= 0) {
@@ -211,8 +212,6 @@ public class ConvsListViewModel extends ViewModel {
 
                             } else {
                                 Log.d(TAG, "There are conversations cached...");
-
-
                                 final List<UserGroupConversationModel> newUserGroupConversationModels = UserGroupConversationModelMapper.transformAllFromDomain(listDomainResource);
                                 AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                                     @Override
@@ -248,7 +247,10 @@ public class ConvsListViewModel extends ViewModel {
                                                 userGroupConversationModel.setUnreadCount(messagesAfterLastAccess.size());
                                             }
                                         }
-                                        userGroupConvsData.postValue(newUserGroupConversationModels);
+                                        Log.d(TAG, "Status loading post is  " + threadSafeStatus);
+                                        if (threadSafeStatus == DomainResource.Status.LOADING) {
+                                            userGroupConvsData.postValue(newUserGroupConversationModels);
+                                        }
                                     }
                                 });
 //                                for(UserGroupModel userGroupModel: newUserGroupConversationsModels){
@@ -275,11 +277,67 @@ public class ConvsListViewModel extends ViewModel {
 
                         }
                     } else if (listDomainResource.status == DomainResource.Status.ERROR) {
+                        threadSafeStatus = DomainResource.Status.ERROR;
                         Log.d(TAG, "Status - ERROR");
-                        addGroupNeededDataTriggers(listDomainResource);
-                        userGroupConvsData.setValue(UserGroupConversationModelMapper.transformAllFromDomain(listDomainResource));
-                        userGroupConvsData.removeSource(repositorySource);
-//                        showNoNetworkErrorToast.setValue(true);
+
+                        final List<UserGroupConversationModel> newUserGroupConversationModels = UserGroupConversationModelMapper.transformAllFromDomain(listDomainResource);
+
+                        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                for(UserGroupConversationModel userGroupConversationModel: newUserGroupConversationModels){
+                                    GetConversationLastMessageCache getUserGroupLastConvMessageCache = new GetConversationLastMessageCache(messagesListRepository);
+                                    DomainMessage lastMessage = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId(), false));
+                                    if(lastMessage != null){
+                                        userGroupConversationModel.setLastMessageSentAt(lastMessage.getSentAt());
+                                        userGroupConversationModel.setLastMessageText(lastMessage.getMessageText());
+                                        userGroupConversationModel.setLastMessageSentBy(lastMessage.getAlias());
+                                    }
+                                    else{
+                                        userGroupConversationModel.setLastMessageSentAt(0L);
+                                    }
+
+
+//                                            GetGroupConvsAfterLastAccessSingleUseCase getGroupConvsAfterLastAccessSingleUseCase = new GetGroupConvsAfterLastAccessSingleUseCase(messagesListRepository);
+//                                            List<DomainMessage> messagesAfterLastAccess = getGroupConvsAfterLastAccessSingleUseCase.execute(GetGroupConvsAfterLastAccessSingleUseCase.Params.getMessagesAfterLastAccessForGroupConvCache(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId(), userGroupConversationModel.getLastAccessed()));
+//                                            if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+//                                                userGroupConversationModel.setUnreadCount(0);
+//                                            }
+//                                            else{
+//                                                userGroupConversationModel.setUnreadCount(messagesAfterLastAccess.size());
+//                                            }
+
+                                    GetNetUnreadGroupConvMessagesSingleUseCase getNetUnreadGroupConvMessagesSingleUseCase = new GetNetUnreadGroupConvMessagesSingleUseCase(messagesListRepository);
+                                    List<DomainMessage> messagesAfterLastAccess = getNetUnreadGroupConvMessagesSingleUseCase.execute(GetNetUnreadGroupConvMessagesSingleUseCase.Params.getNetUnreadMessagesCacheForGroup(userGroupConversationModel.getGroupId(), userGroupConversationModel.getOtherUserId()));
+                                    if(messagesAfterLastAccess == null || messagesAfterLastAccess.size() <= 0){
+                                        userGroupConversationModel.setUnreadCount(0);
+                                    }
+                                    else{
+                                        userGroupConversationModel.setUnreadCount(messagesAfterLastAccess.size());
+                                    }
+
+                                }
+                                userGroupConvsData.postValue(newUserGroupConversationModels);
+                                //We need to add triggers after the initial group data is loaded in the adapter
+                                //hence adding it here. Once all the groups come back, there last message is updated,
+                                //then we add the triggers.
+                                //This avoids the case where notifyDatasetChanged() in Adapter was depending upon
+                                //the group that comes later. It was losing data for the previous one and hence new messages
+                                //unread count was being lost.
+                                //For example, if we are updating unread for a group and that group's data is set later
+                                //it is set with default unread, so we were losing the unread
+                                AppExecutors2.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addGroupNeededDataTriggers(listDomainResource);
+                                    }
+                                });
+                            }
+                        });
+
+//                        addGroupNeededDataTriggers(listDomainResource);
+//                        userGroupConvsData.setValue(UserGroupConversationModelMapper.transformAllFromDomain(listDomainResource));
+//                        userGroupConvsData.removeSource(repositorySource);
                     }
                 } else {
                     userGroupConvsData.removeSource(repositorySource);

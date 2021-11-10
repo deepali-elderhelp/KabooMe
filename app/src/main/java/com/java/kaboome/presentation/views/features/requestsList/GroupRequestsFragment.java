@@ -156,11 +156,17 @@ public class GroupRequestsFragment extends BaseFragment implements GroupRequestI
 
     @Override
     public void onLoginSuccess() {
+//        initRecyclerView();
+//        subscribeObservers();
+        groupRequestsListViewModel.getRequestsFromServer();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         initRecyclerView();
         subscribeObservers();
         groupRequestsListViewModel.getRequestsFromServer();
     }
-
 
     @Override
     public void onNetworkOff() {

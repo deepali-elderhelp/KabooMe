@@ -49,7 +49,7 @@ import java.util.HashMap;
 
 public class HomeActivity extends CameraActivity {
 
-    private static final String TAG = "KMDataHomeActivity";
+    private static final String TAG = "KMHomeActivity";
 
 
     private NavController navController;
@@ -190,6 +190,11 @@ public class HomeActivity extends CameraActivity {
                     newGroupFAB.hide();
                 }
                 if(destination.getId() == R.id.profileFragment){
+                    getSupportActionBar().hide();
+                    newGroupFAB.hide();
+                    toolbar.getMenu().clear();
+                }
+                if(destination.getId() == R.id.helpFragment){
                     getSupportActionBar().hide();
                     newGroupFAB.hide();
                     toolbar.getMenu().clear();
@@ -360,6 +365,7 @@ public class HomeActivity extends CameraActivity {
 
     @Override
     public void onLoginSuccess() {
+        Log.d(TAG, "onLoginSuccess: ");
         //some cleanup
         homeViewModel.cleanUpOldDeletedUserGroups();
         //this will trigger getting the number from backend and update the badge accordingly
@@ -393,9 +399,16 @@ public class HomeActivity extends CameraActivity {
     @Override
     public void onLoginFailure(Exception exception) {
         //user is not logged in, go to sign up
+        Log.d(TAG, "onLoginFailure: exception - "+exception);
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+        homeViewModel.getNumberOfInvitationsFromBackend();
     }
 
 //    private void hideKeyboardFrom(Context context, View view) {

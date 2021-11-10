@@ -42,7 +42,7 @@
         app:layout_constraintGuide_percent="0.65"/>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:id="@+id/guideline_conv_user_action_vertical_middle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -53,7 +53,7 @@
         android:layout_width="@dimen/group_search_list_item_image_width"
         android:layout_height="@dimen/group_search_list_item_image_height"
         app:layout_constraintStart_toStartOf="@id/guideline_group_search_vertical_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="10dp"
@@ -94,7 +94,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/group_list_group_heading"
-            app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+            app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
             app:layout_constraintEnd_toEndOf="@id/guideline_group_name_vertical_end"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -150,7 +150,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/group_info_line_divider"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintEnd_toEndOf="parent"/>
 
 

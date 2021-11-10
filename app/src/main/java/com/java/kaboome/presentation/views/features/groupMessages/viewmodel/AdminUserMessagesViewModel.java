@@ -21,10 +21,13 @@ import com.java.kaboome.data.mappers.MessageDataDomainMapper;
 import com.java.kaboome.data.repositories.DataConversationsRepository;
 import com.java.kaboome.data.repositories.DataGroupMessagesRepository;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
+import com.java.kaboome.data.repositories.DataUserGroupRepository;
 import com.java.kaboome.data.repositories.DataUserGroupsListRepository;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
+import com.java.kaboome.domain.entities.DomainUserGroup;
+import com.java.kaboome.domain.entities.DomainUserGroupConversation;
 import com.java.kaboome.domain.repositories.ConversationsRepository;
 import com.java.kaboome.domain.repositories.ImageUploadRepository;
 import com.java.kaboome.domain.repositories.MessagesListRepository;
@@ -36,6 +39,8 @@ import com.java.kaboome.domain.usecases.DownloadAttachmentUseCase;
 import com.java.kaboome.domain.usecases.GetConversationLastMessageCache;
 import com.java.kaboome.domain.usecases.GetMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadOnlyGroupMessagesUseCase;
+import com.java.kaboome.domain.usecases.GetUserGroupConversationOnlyLocalUseCase;
+import com.java.kaboome.domain.usecases.GetUserGroupOnlyLocalUseCase;
 import com.java.kaboome.domain.usecases.UpdateMessageAttachmentDetailsUseCase;
 import com.java.kaboome.domain.usecases.UpdateMessageLoadingProgressUseCase;
 import com.java.kaboome.domain.usecases.UploadImageUseCase;
@@ -60,6 +65,7 @@ public class AdminUserMessagesViewModel extends ViewModel {
 
     private static final String TAG = "KMAdminMessViewModel";
     private String topicName;
+    private GetUserGroupConversationOnlyLocalUseCase getUserGroupConversationOnlyLocalUseCase;
     private GetMessagesUseCase getMessagesUseCase;
     private AddNewMessageUseCase addNewMessageUseCase;
     private DeleteLocalMessageUseCase deleteLocalMessageUseCase;
@@ -110,6 +116,7 @@ public class AdminUserMessagesViewModel extends ViewModel {
 
         messagesListRepository = DataGroupMessagesRepository.getInstance();
         getMessagesUseCase = new GetMessagesUseCase(messagesListRepository);
+        getUserGroupConversationOnlyLocalUseCase = new GetUserGroupConversationOnlyLocalUseCase(DataConversationsRepository.getInstance());
         addNewMessageUseCase = new AddNewMessageUseCase(messagesListRepository);
 //        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
         deleteLocalMessageUseCase = new DeleteLocalMessageUseCase(messagesListRepository);
@@ -142,6 +149,10 @@ public class AdminUserMessagesViewModel extends ViewModel {
 
     public LiveData<PagedList<Message>> getMessagesList() {
         return messagesList;
+    }
+
+    public LiveData<DomainUserGroupConversation> getUserGroupConversationFromCache(){
+        return getUserGroupConversationOnlyLocalUseCase.execute(GetUserGroupConversationOnlyLocalUseCase.Params.forGroup(userGroupModel.getGroupId(), conversation.getOtherUserId()));
     }
 
     public LiveData<DomainResource<List<DomainMessage>>> getServerMessages() {

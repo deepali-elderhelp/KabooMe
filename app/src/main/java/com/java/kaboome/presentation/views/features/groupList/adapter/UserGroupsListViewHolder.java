@@ -58,6 +58,8 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
     TextView groupExpiry;
     FrameLayout unreadMessagesLayout;
     TextView unreadMessagesCount;
+    FrameLayout unreadPMMessagesLayout;
+    TextView unreadPMMessagesCount;
     FrameLayout newRequestsLayout;
     TextView newRequestsCount;
     ImageView privacyImage;
@@ -85,6 +87,8 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
         groupExpiry = itemView.findViewById(R.id.gr_li_fr_list_item_group_expiry);
         unreadMessagesLayout = itemView.findViewById(R.id.gr_li_fr_list_item_unread_count);
         unreadMessagesCount = itemView.findViewById(R.id.gr_li_fr_list_item_unread_count_number);
+        unreadPMMessagesLayout = itemView.findViewById(R.id.gr_li_fr_list_item_unread_pm_count);
+        unreadPMMessagesCount = itemView.findViewById(R.id.gr_li_fr_list_item_unread_pm_count_number);
         newRequestsLayout = itemView.findViewById(R.id.gr_li_fr_list_item_group_requests);
         newRequestsCount = itemView.findViewById(R.id.gr_li_fr_list_item_group_requests_count);
         privacyImage = itemView.findViewById(R.id.gr_li_fr_list_item_privacy);
@@ -154,6 +158,17 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
             unreadMessagesCount.setVisibility(View.VISIBLE);
             String newCountString = String.valueOf(group.getUnreadCount());
             unreadMessagesCount.setText(newCountString);
+        }
+
+        if(group.getUnreadPMCount() <= 0){
+            unreadPMMessagesLayout.setVisibility(View.INVISIBLE);
+            unreadPMMessagesCount.setVisibility(View.INVISIBLE);
+        }
+        else{
+            unreadPMMessagesLayout.setVisibility(View.VISIBLE);
+            unreadPMMessagesCount.setVisibility(View.VISIBLE);
+            String newCountString = String.valueOf(group.getUnreadPMCount());
+            unreadPMMessagesCount.setText(newCountString);
         }
 
 //        lastMessage.setEllipsize(TextUtils.TruncateAt.END);

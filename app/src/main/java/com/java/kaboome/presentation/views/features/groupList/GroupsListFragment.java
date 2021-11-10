@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class GroupsListFragment extends BaseFragment implements UserGroupImageClickListener, UserGroupMessagesClickListener, UserGroupRequestsClickListener {
 
-    private static final String TAG = "KMGrpsListFragment";
+    private static final String TAG = "KMUGrpsListFragment";
 
     private View rootView;
     private RecyclerView recyclerView;
@@ -140,6 +140,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
         recyclerView = rootView.findViewById(R.id.fr_gr_li_recycler_view);
         splashScreen = rootView.findViewById(R.id.fr_gr_li_splash);
         if(!alreadyThere){
+//            Log.d(TAG, "Splash screen shown");
             splashScreen.setVisibility(View.VISIBLE);
         }
         newGroupFAB = getActivity().findViewById(R.id.createGroupFAB);
@@ -224,6 +225,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
 
         //if there is data already, set it
         if(userGroupsListViewModel.getUserGroupsData().getValue() != null) {
+//            Log.d(TAG, "Splash screen gone");
             splashScreen.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
             adapter.setGroups(userGroupsListViewModel.getUserGroupsData().getValue());
@@ -340,11 +342,12 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
         userGroupsListViewModel.getUserGroupsData().observe(this, new Observer<List<UserGroupModel>>() {
             @Override
             public void onChanged(List<UserGroupModel> userGroupModels) {
-                Log.d(TAG, "onChanged: ");
 
+//                Log.d(TAG, "Splash screen gone");
                     splashScreen.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     if(adapter != null) {
+                        Log.d(TAG, "onChanged: adapter not null ");
                         adapter.setGroups(userGroupModels);
                     }
 
@@ -356,7 +359,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
             @Override
             public void onChanged(UserGroupModel userGroupModel) {
                 if(adapter != null) {
-                    Log.d(TAG, "onChanged: for Group - "+userGroupModel.getGroupName());
+//                    Log.d(TAG, "onChanged: for Group - "+userGroupModel.getGroupName());
                     adapter.updateGroup(userGroupModel);
                 }
 
@@ -374,8 +377,8 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
     private void getInitialGroupsList() {
         Log.d(TAG, "getInitialGroupsList: ");
         //why was this check added? It will never work for offline if this check is there
+        userGroupsListViewModel.loadInitialList();
 //        if(CognitoHelper.getCurrSession() != null){
-            userGroupsListViewModel.loadInitialList();
 //        }
     }
 
@@ -395,10 +398,23 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
 //        userGroupsListViewModel = ViewModelProviders.of(this).get(UserGroupsListViewModel.class);
 
 //        initRecyclerView();
-        subscribeObservers();
+//        subscribeObservers();
         getInitialGroupsList();
 
         alreadyThere = true;
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+        if(alreadyThere) {
+            Log.d(TAG, "it is already there");
+            return;
+        }
+        subscribeObservers();
+        getInitialGroupsList();
+
+//        alreadyThere = true;
     }
 
     @Override

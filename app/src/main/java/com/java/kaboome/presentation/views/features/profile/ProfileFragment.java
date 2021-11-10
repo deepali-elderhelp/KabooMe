@@ -198,6 +198,17 @@ public class ProfileFragment extends BaseFragment {
 
     private void addListeners() {
 
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user", userModel);
+                if(navController.getCurrentDestination().getId() == R.id.profileFragment){
+                    navController.navigate(R.id.action_profileFragment_to_userPicDisplayFragment, bundle);
+                }
+            }
+        });
+
         ImageView profileImageEdit = rootView.findViewById(R.id.profile_edit_image);
         profileImageEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,6 +311,20 @@ public class ProfileFragment extends BaseFragment {
 
     @Override
     public void onLoginSuccess() {
+//        subscribeObservers();
+        //timestamp null will load the old existing image
+        Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
+        ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(),ImageTypeConstants.MAIN, AppConfigHelper.getCurrentUserImageTimestamp(),
+                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+                handler, profileImage, null);
+//        addListeners();
+
+        //initiate the loading
+        profileViewModel.loadUser();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         subscribeObservers();
         //timestamp null will load the old existing image
         Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);

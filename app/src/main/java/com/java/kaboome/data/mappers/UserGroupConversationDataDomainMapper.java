@@ -21,7 +21,8 @@ public class UserGroupConversationDataDomainMapper {
 
     public static DomainUserGroupConversation transform(UserGroupConversation userGroupConversation) {
         if (userGroupConversation == null) {
-            throw new IllegalArgumentException("Cannot transform a null value");
+//            throw new IllegalArgumentException("Cannot transform a null value");
+            return null;
         }
         DomainUserGroupConversation domainUserGroupConversation = new DomainUserGroupConversation();
         domainUserGroupConversation.setUserId(userGroupConversation.getUserId());

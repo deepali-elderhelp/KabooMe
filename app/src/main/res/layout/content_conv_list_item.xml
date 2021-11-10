@@ -42,7 +42,7 @@
 
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:id="@+id/guideline_conv_user_action_vertical_middle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -74,7 +74,7 @@
         android:layout_width="@dimen/user_group_list_image_width"
         android:layout_height="@dimen/user_group_list_image_height"
         app:layout_constraintStart_toStartOf="@id/guideline_conv_list_item_vertical_start"
-        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintEnd_toEndOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintTop_toTopOf="@id/guideline_conv_list_item_horizontal_start"
         app:layout_constraintBottom_toBottomOf="@id/guideline_conv_list_item_horizontal_end">
 
@@ -99,7 +99,7 @@
                 style="@style/group_list_group_heading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
                 app:layout_constraintEnd_toEndOf="@id/guideline_conv_name_end"
                 app:layout_constraintTop_toTopOf="@id/conv_li_fr_list_item_conv_image_frame"
                 android:layout_marginLeft="10dp"
@@ -108,12 +108,23 @@
                 android:maxLines="1"
                 android:text="Sample Conversation Name" />
 
+    <TextView
+        android:id="@+id/conv_li_fr_list_item_user_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideline_expiry_details"
+        app:layout_constraintEnd_toEndOf="@id/guideline_conv_list_item_vertical_end"
+        app:layout_constraintTop_toTopOf="@id/conv_li_fr_list_item_conv_name"
+        android:text="User left group"
+        style="@style/expiry_warning"
+        android:gravity="bottom"
 
+        />
             <TextView
                 android:id="@+id/conv_li_fr_list_item_conv_message"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_hori_middle"
+                app:layout_constraintStart_toEndOf="@id/guideline_conv_user_action_vertical_middle"
                 app:layout_constraintEnd_toEndOf="@id/guideline_expiry_details"
                 app:layout_constraintTop_toBottomOf="@id/conv_li_fr_list_item_conv_name"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -194,7 +205,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="@drawable/group_info_line_divider"
-        app:layout_constraintStart_toStartOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintStart_toStartOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

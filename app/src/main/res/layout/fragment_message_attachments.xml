@@ -16,7 +16,7 @@
         app:layout_constraintGuide_percent="0.15"/>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_conv_user_action_hori_middle"
+        android:id="@+id/guideline_conv_user_action_vertical_middle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/guideline_mess_attach_hori_top"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_start"
         app:layout_constraintRight_toLeftOf="@id/message_attach_item_camera"
         android:orientation="vertical">
@@ -98,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/guideline_mess_attach_hori_top"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
         android:orientation="vertical">
@@ -132,7 +132,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/guideline_mess_attach_hori_top"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
         app:layout_constraintLeft_toRightOf="@id/message_attach_item_gallery"
         android:orientation="vertical">
@@ -160,7 +160,7 @@
         android:id="@+id/message_attach_item_audio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_second_middle"
         app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_start"
         android:orientation="vertical">
@@ -187,7 +187,7 @@
         android:id="@+id/message_attach_item_documents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_second_middle"
         app:layout_constraintStart_toStartOf="@id/guideline_mess_attach_vertical_start"
         app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
@@ -221,7 +221,7 @@
         android:id="@+id/message_attach_item_contacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_hori_middle"
+        app:layout_constraintTop_toTopOf="@id/guideline_conv_user_action_vertical_middle"
         app:layout_constraintBottom_toBottomOf="@id/guideline_conv_user_action_hori_second_middle"
         app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
         app:layout_constraintLeft_toRightOf="@id/message_attach_item_audio"

@@ -9,6 +9,7 @@ package com.java.kaboome.data.remote;
 
 import androidx.lifecycle.LiveData;
 
+import com.google.gson.JsonObject;
 import com.java.kaboome.data.entities.Group;
 import com.java.kaboome.data.entities.GroupUser;
 import com.java.kaboome.data.entities.Invitation;
@@ -17,6 +18,7 @@ import com.java.kaboome.data.entities.UserGroup;
 import com.java.kaboome.data.entities.UserGroupConversation;
 import com.java.kaboome.data.remote.requests.ConversationCreateRequest;
 import com.java.kaboome.data.remote.requests.GroupCreateRequest;
+import com.java.kaboome.data.remote.requests.HelpFeedbackRequest;
 import com.java.kaboome.data.remote.requests.InviteContactsRequest;
 import com.java.kaboome.data.remote.requests.RequestCreateRequest;
 import com.java.kaboome.data.remote.requests.RequestDeleteRequest;
@@ -30,6 +32,7 @@ import com.java.kaboome.data.remote.responses.GroupUsersResponse;
 import com.java.kaboome.data.remote.responses.GroupsResponse;
 import com.java.kaboome.data.remote.responses.InvitationsResponse;
 import com.java.kaboome.data.remote.responses.UserGroupConversationsResponse;
+import com.java.kaboome.data.remote.responses.UserGroupResponse;
 import com.java.kaboome.data.remote.responses.UserGroupsResponse;
 import com.java.kaboome.data.remote.responses.UserResponse;
 
@@ -39,6 +42,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.POST;
@@ -81,7 +86,7 @@ public interface BackendAPIInterface {
     LiveData<ApiResponse<GroupUser>>createGroup(@Path(value = "userid") String userId, @Body GroupCreateRequest group);
 //
     @POST(BackendAPI.joinGroup)
-    LiveData<ApiResponse<Void>> joinGroup(@Path(value = "userid") String userId, @Path(value = "groupid") String groupId, @Body UserGroup group);
+    LiveData<ApiResponse<UserGroupResponse>> joinGroup(@Path(value = "userid") String userId, @Path(value = "groupid") String groupId, @Body UserGroup group);
 //    Call<ResponseBody> joinGroup(@Path(value = "userid") String userId, @Path(value = "groupid") String groupId, @Body UserGroup group);
 //
     /**
@@ -206,6 +211,12 @@ public interface BackendAPIInterface {
     Call<ResponseBody> inviteContactsToJoinGroup(@Path(value = "userid") String userId, @Body InviteContactsRequest inviteContactsRequest);
 
 //    LiveData<ApiResponse<Void>> inviteContactsToJoinGroup(@Path(value = "userid") String userId, @Body InviteContactsRequest inviteContactsRequest);
+
+    @POST(BackendAPI.sendHelpFeedback)
+//    Call<ResponseBody> sendHelpFeedbackMessage(@Path(value = "userid") String userId, @Field("messageText") String messageText);
+//    Call<ResponseBody> sendHelpFeedbackMessage(@Path(value = "userid") String userId, @Body HelpFeedbackRequest helpFeedbackRequest);
+    Call<ResponseBody> sendHelpFeedbackMessage(@Path(value = "userid") String userId, @Body HelpFeedbackRequest helpFeedbackRequest);
+//    Call<ResponseBody> sendHelpFeedbackMessage(@Path(value = "userid") String userId, @Body JsonObject jsonObject);
 
 
 }

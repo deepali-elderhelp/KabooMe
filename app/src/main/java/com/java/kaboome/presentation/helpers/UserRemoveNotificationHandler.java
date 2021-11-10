@@ -100,10 +100,12 @@ public UserRemoveNotificationHandler(RemoteMessage remoteMessage, Context contex
         if(groupUserObject != null && groupUserObject.getGroupId() != null && groupUserObject.getUserId() != null){
             deleteGroupUserFromCacheUseCase.execute(DeleteGroupUserFromCacheUseCase.Params.deleteGroup(groupUserObject.getGroupId(), groupUserObject.getUserId()));
             deleteUserGroupConvFromCacheUseCase.execute(DeleteUserGroupConvFromCacheUseCase.Params.deleteUserGroupConversation(groupUserObject.getGroupId(), groupUserObject.getUserId()));
+            //why delete local messages - not doing that - let them be there
+            //hence commenting the following code
             //also delete the messages from the local cache
-            //TODO: create a use case for it and call it via domain
-            MessagesListRepository messagesListRepository = DataGroupMessagesRepository.getInstance();
-            messagesListRepository.clearMessagesOfConversation(groupUserObject.getGroupId(), groupUserObject.getUserId());
+//            //TODO: create a use case for it and call it via domain
+//            MessagesListRepository messagesListRepository = DataGroupMessagesRepository.getInstance();
+//            messagesListRepository.clearMessagesOfConversation(groupUserObject.getGroupId(), groupUserObject.getUserId());
 
         }
 

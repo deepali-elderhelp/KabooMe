@@ -464,24 +464,49 @@ public class GroupQRFragment extends BaseFragment implements  EasyPermissions.Pe
 
     @Override
     public void onLoginSuccess() {
-        subscribeObservers();
-        initiateLoading();
+//        subscribeObservers();
+//        initiateLoading();
 
 //        ImageHelper.loadGroupImage(userGroupModel.getGroupId(), userGroupModel.getImageUpdateTimestamp(), ImageHelper.getRequestManager(getActivity(), R.drawable.account_group_grey, R.drawable.account_group_grey), handler, groupImage, null);
-        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
-        ImageHelper.getInstance().loadGroupImage(userGroupModel.getGroupId(), ImageTypeConstants.MAIN, userGroupModel.getImageUpdateTimestamp(),
-                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+        if(getContext() != null) {
+            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
+            ImageHelper.getInstance().loadGroupImage(userGroupModel.getGroupId(), ImageTypeConstants.MAIN, userGroupModel.getImageUpdateTimestamp(),
+                    ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+                    handler, groupImage, null);
+        }
 
 
 //        Bitmap qrCodeImageBitmap = getQRImage(userGroupModel.getGroupId(),2, 4.8, 2.6);
-        Bitmap qrCodeImageBitmap = QRCodeHelper.getQRImage(getContext(),userGroupModel.getGroupId(),2, 4.8, 2.6);
-        qrCodeImage.setImageBitmap(qrCodeImageBitmap);
+//        Bitmap qrCodeImageBitmap = QRCodeHelper.getQRImage(getContext(),userGroupModel.getGroupId(),2, 4.8, 2.6);
+//        qrCodeImage.setImageBitmap(qrCodeImageBitmap);
+//
+////        Bitmap qrCodeAppBitmap = getQRImage("http://www.kaboome.com", 2, 6, 4);
+//        Bitmap qrCodeAppBitmap = QRCodeHelper.getQRImage(getContext(),"http://www.kaboome.com", 2, 6, 4);
+//        appQrImage.setImageBitmap(qrCodeAppBitmap);
+
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        subscribeObservers();
+        initiateLoading();
+
+        if(getContext() != null) {
+//        ImageHelper.loadGroupImage(userGroupModel.getGroupId(), userGroupModel.getImageUpdateTimestamp(), ImageHelper.getRequestManager(getActivity(), R.drawable.account_group_grey, R.drawable.account_group_grey), handler, groupImage, null);
+            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
+            ImageHelper.getInstance().loadGroupImage(userGroupModel.getGroupId(), ImageTypeConstants.MAIN, userGroupModel.getImageUpdateTimestamp(),
+                    ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+                    handler, groupImage, null);
+
+
+//        Bitmap qrCodeImageBitmap = getQRImage(userGroupModel.getGroupId(),2, 4.8, 2.6);
+            Bitmap qrCodeImageBitmap = QRCodeHelper.getQRImage(getContext(), userGroupModel.getGroupId(), 2, 4.8, 2.6);
+            qrCodeImage.setImageBitmap(qrCodeImageBitmap);
 
 //        Bitmap qrCodeAppBitmap = getQRImage("http://www.kaboome.com", 2, 6, 4);
-        Bitmap qrCodeAppBitmap = QRCodeHelper.getQRImage(getContext(),"http://www.kaboome.com", 2, 6, 4);
-        appQrImage.setImageBitmap(qrCodeAppBitmap);
-
+            Bitmap qrCodeAppBitmap = QRCodeHelper.getQRImage(getContext(), "http://www.kaboome.com", 2, 6, 4);
+            appQrImage.setImageBitmap(qrCodeAppBitmap);
+        }
     }
 
     @Override

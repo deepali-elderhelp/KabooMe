@@ -9,6 +9,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.java.kaboome.data.entities.GroupRequest;
+import com.java.kaboome.data.entities.UserGroup;
 import com.java.kaboome.data.entities.UserGroupConversation;
 
 import java.util.List;
@@ -25,6 +26,9 @@ public abstract class UserGroupConversationDao {
 
     @Insert(onConflict = IGNORE)
     public abstract void insertUserGroupConversation(UserGroupConversation userGroupConversation);
+
+    @Query("SELECT * FROM user_group_conversation WHERE userId = :user_id and groupId = :group_id and otherUserId = :other_user_id")
+    public abstract LiveData<UserGroupConversation> getUserGroupConversation(String user_id, String group_id, String other_user_id);
 
     @Query("SELECT * FROM user_group_conversation where groupId = :group_id and userId = :user_id")
     public abstract LiveData<List<UserGroupConversation>> getUserGroupConversations(String group_id, String user_id);

@@ -332,6 +332,7 @@ public class JoinGroupDialog extends DialogFragment {
             userGroupModel.setPrivate(group.getGroupPrivate());
             userGroupModel.setGroupExpiry(group.getExpiryDate());
             userGroupModel.setLastAccessed(currentDate);
+            userGroupModel.setUnicastGroup(group.getUnicastGroup());
             userGroupModel.setAdminsLastAccessed(currentDate);
             userGroupModel.setCacheClearTS(currentDate);
             userGroupModel.setAdminsCacheClearTS(currentDate);

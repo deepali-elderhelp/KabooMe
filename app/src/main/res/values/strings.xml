@@ -186,5 +186,12 @@
     <string name="everyone_posts_alert">This Group allows everyone to post in the Group Message Board. Members can also send private messages to Admin if needed.</string>
     <string name="announcements_only_help">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed.</string>
     <string name="send_private_message">Send a private message to the Admins</string>
+    <string name="user_left_message">User is not member of the group anymore</string>
+    <string name="help_message">Please contact support@kaboome.com for addressing the issue</string>
+    <string name="subject">Subject</string>
+    <string name="hint_enter_feedback_message">Please type the feedback message in detail</string>
+    <string name="feedback_contact">Can we contact you?</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="drawer_feedback_help">Help/Feedback</string>
 
 </resources>

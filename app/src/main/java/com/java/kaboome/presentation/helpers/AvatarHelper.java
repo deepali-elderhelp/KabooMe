@@ -54,6 +54,10 @@ public class AvatarHelper {
 
     public static Drawable generateAvatar(Context context, Integer dimensionId, String name){
 
+        if(context == null){
+            return null;
+        }
+
         if(name == null || name.isEmpty()){
             return context.getResources().getDrawable(R.drawable.account_group_grey);
         }

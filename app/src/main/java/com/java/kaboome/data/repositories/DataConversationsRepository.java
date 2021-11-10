@@ -140,6 +140,17 @@ public class DataConversationsRepository implements ConversationsRepository {
         });
     }
 
+    @Override
+    public LiveData<DomainUserGroupConversation> getUserGroupConversationFromCache(final String groupId, final String otherUserId) {
+        final String userId = AppConfigHelper.getUserId();
+        return Transformations.map(userGroupConversationDao.getUserGroupConversation(userId, groupId, otherUserId), new Function<UserGroupConversation, DomainUserGroupConversation>() {
+            @Override
+            public DomainUserGroupConversation apply(UserGroupConversation input) {
+                return UserGroupConversationDataDomainMapper.transform(input);
+            }
+        });
+    }
+
     //    @Override
 //    public LiveData<List<DomainUserGroup>> getGroupsListOnlyFromCache() {
 //        final String userId = AppConfigHelper.getUserId();

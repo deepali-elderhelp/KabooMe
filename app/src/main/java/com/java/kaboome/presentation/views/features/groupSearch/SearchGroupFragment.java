@@ -118,9 +118,12 @@ public class SearchGroupFragment extends BaseFragment implements SearchView.OnQu
     private MenuItem.OnMenuItemClickListener searchByQRClicked = new MenuItem.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            Log.d(TAG, "onMenuItemClick: QR button clicked");
 //                Intent searchByQR = new Intent(GroupSearchActivity.this, ScanQRCodeActivity.class);
 //                startActivityForResult(searchByQR, SCANNED_QR_CODE);
-            Navigation.findNavController(getActivity(), R.id.fragment).navigate(R.id.action_searchGroupFragment_to_scanQRCodeFragment);
+            if(navController.getCurrentDestination().getId() == R.id.searchGroupFragment) {
+                Navigation.findNavController(getActivity(), R.id.fragment).navigate(R.id.action_searchGroupFragment_to_scanQRCodeFragment);
+            }
             return true;
         }
     };
@@ -157,8 +160,11 @@ public class SearchGroupFragment extends BaseFragment implements SearchView.OnQu
 
 //        mainToolbar.getMenu().clear();
 
-        itemSearchByQR.setOnMenuItemClickListener(null);
-        searchByQRClicked = null;
+        //why the following two lines were added??
+        //it causes problems later - not sure why they were added
+        //removing them
+//        itemSearchByQR.setOnMenuItemClickListener(null);
+//        searchByQRClicked = null;
 
     }
 
@@ -294,7 +300,7 @@ public class SearchGroupFragment extends BaseFragment implements SearchView.OnQu
         searchGroupsListViewModel.getGroups().observe(getViewLifecycleOwner(), new Observer<List<GroupModel>>() {
             @Override
             public void onChanged(List<GroupModel> groupModels) {
-                Log.d(TAG, "onChanged: ");
+                Log.d(TAG, "onChanged: number - "+groupModels.size());
                 adapter.setGroups(groupModels);
             }
         });
@@ -303,6 +309,12 @@ public class SearchGroupFragment extends BaseFragment implements SearchView.OnQu
 
     @Override
     public void onLoginSuccess() {
+//        initRecyclerView();
+//        subscribeObservers();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         initRecyclerView();
         subscribeObservers();
     }

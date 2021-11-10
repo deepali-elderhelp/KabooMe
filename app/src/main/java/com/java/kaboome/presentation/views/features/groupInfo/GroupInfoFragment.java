@@ -1229,16 +1229,41 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
     @Override
     public void onLoginSuccess() {
-        RequestManager requestManagerForGroupImage = Glide.with(groupImage);
-        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
+
+        if(getContext() != null) {
+            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
+            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
 //        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
 //                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
 //                handler, groupImage, null);
-        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
-                requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+                    handler, groupImage, null);
+        }
 
-        loadQRImage();
+//        loadQRImage();
+//
+//        addEditListeners();
+//        initRecyclerViews();
+//        subscribeObservers();
+        initiateLoading();
+    }
+
+    @Override
+    public void whileLoginInProgress() {
+        if(getContext() != null) {
+            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
+            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
+//        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+//                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+//                handler, groupImage, null);
+            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+                    handler, groupImage, null);
+
+
+            loadQRImage();
+        }
 
         addEditListeners();
         initRecyclerViews();
@@ -1265,7 +1290,7 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
         bundle.putSerializable("groupUser", groupUserModel);
 
         if(navController.getCurrentDestination().getId() == R.id.groupInfoFragment) {
-            navController.navigate(R.id.action_groupInfoFragment_to_userPicDisplayFragment, bundle);
+            navController.navigate(R.id.action_groupInfoFragment_to_groupUserPicDisplayFragment, bundle);
         }
     }
 

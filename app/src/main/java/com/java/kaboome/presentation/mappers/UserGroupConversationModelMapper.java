@@ -131,6 +131,14 @@ public class UserGroupConversationModelMapper {
             }
             //else it is already done
         }
+        else if(groupsResource.status == DomainResource.Status.ERROR){
+            if(convs.isEmpty() || allConversationsDeleted(convs)){
+                UserGroupConversationModel userGroupConversationModel = new UserGroupConversationModel();
+                userGroupConversationModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                viewConvsList.add(userGroupConversationModel);
+            }
+            //else it is already done
+        }
 
         return viewConvsList;
     }
@@ -145,8 +153,10 @@ public class UserGroupConversationModelMapper {
 
             for(DomainUserGroupConversation domainUserGroupConversation: convs){
 
+                //UNCHECKING the deleted group below - the admins should stil see this, just that the admin
+                //cannot send any message anymore to this user
                 //if group is deleted, do not add it to the list
-                if(domainUserGroupConversation.getDeleted() == null ||  domainUserGroupConversation.getDeleted() != true) {
+//                if(domainUserGroupConversation.getDeleted() == null ||  domainUserGroupConversation.getDeleted() != true) {
 
                     UserGroupConversationModel userGroupConversationModel = new UserGroupConversationModel();
                     userGroupConversationModel.setUserId(domainUserGroupConversation.getUserId());
@@ -161,7 +171,7 @@ public class UserGroupConversationModelMapper {
                     userGroupConversationModel.setImageUpdateTimestamp(domainUserGroupConversation.getImageUpdateTimestamp());
 
                     viewConvsList.add(userGroupConversationModel);
-                }
+//                }
             }
 
             if(groupsResource.status == DomainResource.Status.LOADING){
@@ -171,7 +181,17 @@ public class UserGroupConversationModelMapper {
                 viewConvsList.add(userGroupConversationModel);
             }
             else if(groupsResource.status == DomainResource.Status.SUCCESS){
-                if(convs.isEmpty() || allConversationsDeleted(convs)){
+//                if(convs.isEmpty() || allConversationsDeleted(convs)){
+                if(convs.isEmpty()){
+                    UserGroupConversationModel userGroupConversationModel = new UserGroupConversationModel();
+                    userGroupConversationModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
+                    viewConvsList.add(userGroupConversationModel);
+                }
+                //else it is already done
+            }
+            else if(groupsResource.status == DomainResource.Status.ERROR){
+//                if(convs.isEmpty() || allConversationsDeleted(convs)){
+                if(convs.isEmpty()){
                     UserGroupConversationModel userGroupConversationModel = new UserGroupConversationModel();
                     userGroupConversationModel.setGroupId(GroupListStatusConstants.NO_GROUPS.toString());
                     viewConvsList.add(userGroupConversationModel);
@@ -216,7 +236,8 @@ public class UserGroupConversationModelMapper {
 
     public static UserGroupConversationModel getUserModelFromDomain(DomainUserGroupConversation domainUserGroupConversation){
         if (domainUserGroupConversation == null) {
-            throw new IllegalArgumentException("Cannot transformFromDomain a null value");
+//            throw new IllegalArgumentException("Cannot transformFromDomain a null value");
+            return null;
         }
         UserGroupConversationModel userGroupConversation = new UserGroupConversationModel();
         userGroupConversation.setUserId(domainUserGroupConversation.getUserId());

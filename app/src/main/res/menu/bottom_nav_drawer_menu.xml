@@ -12,8 +12,8 @@
             android:icon="@drawable/bs_settings"
             android:title="@string/drawer_settings" />
         <item
-            android:id="@+id/drawer_help"
+            android:id="@+id/helpFragment"
             android:icon="@drawable/bs_help"
-            android:title="@string/drawer_help" />
+            android:title="@string/drawer_feedback_help" />
     </group>
 </menu>

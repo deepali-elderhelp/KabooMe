@@ -24,7 +24,9 @@
     <!--<color name="colorAccent">#D81B60</color>-->
     <color name="signUpHeader">#157D94</color>
 
-    <color name="colorAccent">#19D1EA</color>
+    <color name="colorAccent">#19EAE3</color>
+    <color name="colorAdmin">#E1C121</color>
+    <color name="colorAdminUnlit">#E3DEC6</color>
 <!--    <color name="colorAccent">#a6afb1</color>-->
     <color name="deepBlue">#243E45</color>
     <color name="grey">#BBC2C6</color>
@@ -42,6 +44,7 @@
 
 
     <color name="colorOffWhite">#FAF8D2</color>
+    <color name="colorYellow">#FFFFEB3B</color>
 
     <color name="colorNavBarPrimary">#19D1EA</color>
     <color name="colorNavBarPrimaryDark">#159CC7</color>

@@ -174,6 +174,17 @@ public class ScanQRCodeFragment extends BaseFragment implements ZXingScannerView
 
     @Override
     public void onLoginSuccess() {
+
+//        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+//            scanQRCode();
+//        }
+//        else{
+//            requestCameraPermission();
+//        }
+    }
+
+    @Override
+    public void whileLoginInProgress() {
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             scanQRCode();
         }

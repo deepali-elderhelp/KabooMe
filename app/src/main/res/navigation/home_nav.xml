@@ -126,7 +126,7 @@
     <dialog
         android:id="@+id/joinInvitedGroupDialog"
         android:name="com.java.kaboome.presentation.views.features.invitationsList.JoinInvitedGroupDialog"
-        android:label="fragment_join_invited_group_dialog"
+        android:label="Join Group"
         tools:layout="@layout/fragment_join_invited_group_dialog" >
         <action
             android:id="@+id/action_joinInvitedGroupDialog_to_pictureDialog"
@@ -135,7 +135,7 @@
     <dialog
         android:id="@+id/joinInvitedPrivateGroupDialog"
         android:name="com.java.kaboome.presentation.views.features.invitationsList.JoinInvitedPrivateGroupDialog"
-        android:label="fragment_join_invited_private_group_dialog"
+        android:label="Join Group"
         tools:layout="@layout/fragment_join_invited_private_group_dialog" >
         <action
             android:id="@+id/action_joinInvitedPrivateGroupDialog_to_pictureDialog"
@@ -192,8 +192,8 @@
             android:id="@+id/action_groupInfoFragment_to_inviteContactsFragment"
             app:destination="@id/inviteContactsFragment" />
         <action
-            android:id="@+id/action_groupInfoFragment_to_userPicDisplayFragment"
-            app:destination="@id/userPicDisplayFragment"
+            android:id="@+id/action_groupInfoFragment_to_groupUserPicDisplayFragment"
+            app:destination="@id/groupUserPicDisplayFragment"
             app:popUpTo="@id/groupInfoFragment"
             />
         <!-- app:enterAnim="@anim/anim_in"
@@ -221,7 +221,7 @@
     <dialog
         android:id="@+id/editGroupDescription"
         android:name="com.java.kaboome.presentation.views.features.groupInfo.EditGroupDescription"
-        android:label="fragment_edit_group_description"
+        android:label="Group Description"
         tools:layout="@layout/fragment_edit_group_description" />
     <dialog
         android:id="@+id/editGroupExpiryFragment"
@@ -248,8 +248,8 @@
         android:label="Add Admins"
         tools:layout="@layout/fragment_edit_group_add_admin" >
         <action
-            android:id="@+id/action_editGroupAddAdminFragment_to_userPicDisplayFragment"
-            app:destination="@id/userPicDisplayFragment" />
+            android:id="@+id/action_editGroupAddAdminFragment_to_groupUserPicDisplayFragment"
+            app:destination="@id/groupUserPicDisplayFragment" />
     </dialog>
     <dialog
         android:id="@+id/drawerBottomSheetFragment"
@@ -269,7 +269,16 @@
         <action
             android:id="@+id/action_profileFragment_to_editUserName"
             app:destination="@id/editUserName" />
+        <action
+            android:id="@+id/action_profileFragment_to_userPicDisplayFragment"
+            app:destination="@id/userPicDisplayFragment"
+            app:popUpTo="@id/profileFragment"
+            />
     </fragment>
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.java.kaboome.presentation.views.features.help.HelpFragment"
+        android:label="Help/Feedback" />
     <dialog
         android:id="@+id/editUserName"
         android:name="com.java.kaboome.presentation.views.features.profile.EditUserNameFragment"
@@ -292,7 +301,7 @@
     <dialog
         android:id="@+id/pictureDialog"
         android:name="com.java.kaboome.presentation.images.PictureDialog"
-        android:label="picture_dialog_layout"
+        android:label="Picture"
         tools:layout="@layout/picture_dialog_layout" />
     <fragment
         android:id="@+id/createGroupFragment"
@@ -321,7 +330,7 @@
     <fragment
         android:id="@+id/groupMessagesFragment"
         android:name="com.java.kaboome.presentation.views.features.groupMessages.GroupMessagesFragment"
-        tools:layout="@layout/fragment_group_messages_try_patch9" >
+        tools:layout="@layout/fragment_group_messages" >
         <action
             android:id="@+id/action_groupMessagesFragment_to_messageAttachmentsDialog"
             app:destination="@id/messageAttachmentsDialog" />
@@ -376,6 +385,11 @@
         android:name="com.java.kaboome.presentation.views.features.groupMessages.viewers.AudioViewerFragment"
         android:label="Audio"
         tools:layout="@layout/fragment_audio_viewer" />
+    <dialog
+        android:id="@+id/groupUserPicDisplayFragment"
+        android:name="com.java.kaboome.presentation.views.features.groupInfo.GroupUserPicDisplayFragment"
+        android:label="Image"
+        tools:layout="@layout/fragment_user_pic_display" />
     <dialog
         android:id="@+id/userPicDisplayFragment"
         android:name="com.java.kaboome.presentation.views.features.groupInfo.UserPicDisplayFragment"
@@ -470,4 +484,5 @@
             android:id="@+id/action_addAdminUserConversationFragment_to_groupAdminUserMessagesFragment"
             app:destination="@id/groupAdminUserMessagesFragment" />
     </dialog>
+
 </navigation>

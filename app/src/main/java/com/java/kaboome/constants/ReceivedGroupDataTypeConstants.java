@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum ReceivedGroupDataTypeConstants {
 
     UNREAD_COUNT("unreadCount"),
+    UNREAD_PM_COUNT("unreadPMCount"),
     LAST_MESSAGE("lastMessage"),
     BOTH_UNREAD_AND_LAST("bothUnreadAndLast"),
     REQUESTS_DATA("requestsData"),

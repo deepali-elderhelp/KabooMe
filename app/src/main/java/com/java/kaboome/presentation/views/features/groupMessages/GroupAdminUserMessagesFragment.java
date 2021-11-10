@@ -18,10 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -46,6 +46,8 @@ import com.java.kaboome.constants.MessageGroupsConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
+import com.java.kaboome.domain.entities.DomainUserGroup;
+import com.java.kaboome.domain.entities.DomainUserGroupConversation;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.ContactModel;
@@ -60,6 +62,8 @@ import com.java.kaboome.presentation.helpers.MediaHelper;
 import com.java.kaboome.presentation.helpers.MessageDeleteCheckHelper;
 import com.java.kaboome.presentation.helpers.MessageGroupsHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
+import com.java.kaboome.presentation.mappers.UserGroupConversationModelMapper;
+import com.java.kaboome.presentation.mappers.UserGroupModelMapper;
 import com.java.kaboome.presentation.viewModelProvider.CustomViewModelProvider;
 import com.java.kaboome.presentation.views.features.BaseFragment;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.DownloadClickListener;
@@ -114,6 +118,8 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         private MenuItem clearMedia;
         private MenuItem groupChat;
         private int newMessagesCount = 0;
+        private LinearLayout messagePrivacyLL;
+        private TextView userLeftMessage;
         private TextView newMessagesCountTextView;
         private ImageView scrollDownArrowImage;
         private boolean userScrolled = false;
@@ -256,6 +262,8 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
             normalButton = rootView.findViewById(R.id.normal_button);
             normalButton.setOnClickListener(normalButtonClicked);
             messageInput = rootView.findViewById(R.id.fr_gr_me_layout_chatbox);
+            messagePrivacyLL = rootView.findViewById(R.id.messages_priority_ll);
+            userLeftMessage = rootView.findViewById(R.id.userLeftMessage);
             sendButton = messageInput.getButton();
             attachmentButton = messageInput.getAttachmentButton();
 
@@ -265,6 +273,17 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 
             margueeTextView = rootView.findViewById(R.id.marquee_text_1);
             margueeTextView.setSelected(true);
+
+            if(userGroupConversationModel.getDeleted() != null && userGroupConversationModel.getDeleted()){
+                messagePrivacyLL.setVisibility(View.GONE);
+                messageInput.setVisibility(View.GONE);
+                userLeftMessage.setVisibility(View.VISIBLE);
+            }
+            else{
+                messagePrivacyLL.setVisibility(View.VISIBLE);
+                messageInput.setVisibility(View.VISIBLE);
+                userLeftMessage.setVisibility(View.GONE);
+            }
 
             navController = NavHostFragment.findNavController(GroupAdminUserMessagesFragment.this);
 
@@ -565,6 +584,23 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 
         @SuppressLint("FragmentLiveDataObserve")
         private void subscribeObservers() {
+
+            messagesViewModel.getUserGroupConversationFromCache().observe(this, new Observer<DomainUserGroupConversation>() {
+                @Override
+                public void onChanged(DomainUserGroupConversation domainUserGroupConversation) {
+                    if (domainUserGroupConversation != null) {
+                        userGroupConversationModel = UserGroupConversationModelMapper.getUserModelFromDomain(domainUserGroupConversation);
+                        //if this group has been deleted, and you are in messages
+                        //set a toast that this group has been deleted
+                        if (userGroupConversationModel.getDeleted() != null && userGroupConversationModel.getDeleted()) {
+                            Toast.makeText(getContext(), "This user is now DELETED, no more messages can be sent to him", Toast.LENGTH_LONG).show();
+                            messagePrivacyLL.setVisibility(View.GONE);
+                            messageInput.setVisibility(View.GONE);
+                            userLeftMessage.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
 
             messagesViewModel.getMessagesList().observe(this, new Observer<PagedList<Message>>() {
                 @Override
@@ -1299,13 +1335,14 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 
         @Override
         public void onLoginSuccess() {
+
             Log.d(TAG, "onLoginSuccess: ");
 
             if(alreadyThere)
                 return;
 
-            initRecyclerView();
-            subscribeObservers();
+//            initRecyclerView();
+//            subscribeObservers();
 
             messagesViewModel.loadServerMessages();
             messagesViewModel.startNetGroupUnreadMessages();
@@ -1322,6 +1359,22 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 
             alreadyThere = true;
         }
+
+
+    @Override
+    public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+
+        if(alreadyThere)
+            return;
+
+        initRecyclerView();
+        subscribeObservers();
+
+        messagesViewModel.loadServerMessages();
+        messagesViewModel.startNetGroupUnreadMessages();
+
+    }
 
         @Override
         public void onNetworkOff() {

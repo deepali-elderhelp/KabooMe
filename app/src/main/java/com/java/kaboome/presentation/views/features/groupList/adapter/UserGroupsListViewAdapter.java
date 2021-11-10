@@ -33,7 +33,7 @@ import java.util.List;
 
 public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private static final String TAG = "KMGroupsListViewAdapter";
+    private static final String TAG = "KMUGrpsListViewAdapter";
 
     private static final int GROUPS_LIST_TYPE = 1;
     private static final int LOADING_TYPE = 2;
@@ -79,7 +79,8 @@ public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView
         for(UserGroupModel groupModel: groups){
             Log.d(TAG, "Group - "+groupModel.getGroupName());
         }
-        this.groups = groups;
+//        this.groups = groups;
+        this.groups.addAll(groups);
         notifyDataSetChanged();
     }
     @Override
@@ -242,8 +243,12 @@ public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
         if(ReceivedGroupDataTypeConstants.UNREAD_COUNT.equals(dataTypeToUpdate)){
-            Log.d(TAG, "unread count - "+newUserGroup.getUnreadCount());
+//            Log.d(TAG, "unread count - "+newUserGroup.getUnreadCount());
             updateUnreadCount(newUserGroup, currentUserGroup);
+        }
+        if(ReceivedGroupDataTypeConstants.UNREAD_PM_COUNT.equals(dataTypeToUpdate)){
+//            Log.d(TAG, "unread count - "+newUserGroup.getUnreadCount());
+            updateUnreadPMCount(newUserGroup, currentUserGroup);
         }
         if(ReceivedGroupDataTypeConstants.LAST_MESSAGE.equals(dataTypeToUpdate)){
 
@@ -263,7 +268,7 @@ public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView
             currentUserGroup.setLastRequestSentAt(newUserGroup.getLastRequestSentAt());
         }
 
-        Log.d(TAG, "updateGroup: Item is changing for "+dataTypeToUpdate+" "+newUserGroup.getGroupName());
+//        Log.d(TAG, "updateGroup: Item is changing for "+dataTypeToUpdate+" "+newUserGroup.getGroupName());
 //        if(dataTypeToUpdate.equals(ReceivedGroupDataTypeConstants.LAST_MESSAGE)){
 //            Log.d(TAG, "message changed from "+currentUserGroup.getLastMessageText()+" to "+newUserGroup.getLastMessageText());
 //        }
@@ -296,6 +301,12 @@ public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView
             return;
         }
         currentUserGroup.setUnreadCount(newUserGroup.getUnreadCount());
+    }
+    private void updateUnreadPMCount(UserGroupModel newUserGroup, UserGroupModel currentUserGroup) {
+        if(currentUserGroup.getUnreadPMCount() == newUserGroup.getUnreadPMCount()){
+            return;
+        }
+        currentUserGroup.setUnreadPMCount(newUserGroup.getUnreadPMCount());
     }
 
 //    @Override

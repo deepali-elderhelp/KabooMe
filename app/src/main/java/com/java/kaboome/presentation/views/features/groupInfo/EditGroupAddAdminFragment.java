@@ -195,6 +195,6 @@ public class EditGroupAddAdminFragment extends DialogFragment implements GroupUs
         Bundle bundle = new Bundle();
         bundle.putSerializable("groupUser", groupUserModel);
 
-        navController.navigate(R.id.action_editGroupAddAdminFragment_to_userPicDisplayFragment, bundle);
+        navController.navigate(R.id.action_editGroupAddAdminFragment_to_groupUserPicDisplayFragment, bundle);
     }
 }

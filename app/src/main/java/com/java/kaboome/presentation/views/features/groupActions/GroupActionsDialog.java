@@ -234,7 +234,7 @@ public class GroupActionsDialog extends BottomSheetDialogFragment implements Vie
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                 handler, groupImage, groupImageProgressBar);
 
-
+        Log.d(TAG, "onResume: after image loading");
 
 
         super.onResume();

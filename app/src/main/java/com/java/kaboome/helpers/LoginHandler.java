@@ -13,4 +13,6 @@ public interface LoginHandler {
     void onLoginSuccess();
 
     void onLoginFailure(Exception exception);
+
+    void whileLoginInProgress();
 }

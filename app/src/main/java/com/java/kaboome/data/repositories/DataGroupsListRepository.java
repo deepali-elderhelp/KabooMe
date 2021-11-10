@@ -134,8 +134,8 @@ public class DataGroupsListRepository implements GroupsListRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Group> data) {
-                Log.d(TAG, "shouldFetch");
                 if (NetworkHelper.isOnline()) {
+                    Log.d(TAG, "going to Fetch");
                     return true;
                 }
                 return false;
