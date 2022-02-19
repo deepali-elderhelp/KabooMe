@@ -44,6 +44,7 @@ public class EditGroupExpiryFragment extends DialogFragment {
     Button saveButton;
     TextInputEditText newGroupExpiry;
     TextView resetLink;
+    TextView dateDescriptionLabel;
     Calendar selectedDate;
     ImageView closeButton;
 
@@ -94,9 +95,14 @@ public class EditGroupExpiryFragment extends DialogFragment {
         view = inflater.inflate(R.layout.fragment_edit_group_expiry, container, false);
         resetLink = view.findViewById(R.id.resetExpiryToManual);
         newGroupExpiry = view.findViewById(R.id.editGroupExpiry);
+        dateDescriptionLabel = view.findViewById(R.id.editGroupExpiryDetailsLabel);
         newGroupExpiry.setText("Manual");
+        dateDescriptionLabel.setText(getString(R.string.edit_group_expiry_manual));
+        resetLink.setVisibility(View.INVISIBLE);
         if(groupModel.getExpiryDate() !=null && groupModel.getExpiryDate() != 0){
             newGroupExpiry.setText(DateFormatter.getDateFormattedPretty(groupModel.getExpiryDate()));
+            dateDescriptionLabel.setText(getString(R.string.edit_group_expiry_date));
+            resetLink.setVisibility(View.VISIBLE);
         }
 
 
@@ -120,7 +126,8 @@ public class EditGroupExpiryFragment extends DialogFragment {
                                 selectedDate = Calendar.getInstance();
                                 selectedDate.set(year, monthOfYear, dayOfMonth);
                                 newGroupExpiry.setText(DateFormatter.getDateFormattedPretty(selectedDate.getTimeInMillis()));
-
+                                dateDescriptionLabel.setText(getString(R.string.edit_group_expiry_date));
+                                resetLink.setVisibility(View.VISIBLE);
 
                             }
                         }, mYear, mMonth, mDay);
@@ -133,6 +140,8 @@ public class EditGroupExpiryFragment extends DialogFragment {
             public void onClick(View v) {
                 newGroupExpiry.setText("Manual");
                 selectedDate = null;
+                dateDescriptionLabel.setText(getString(R.string.edit_group_expiry_manual));
+                resetLink.setVisibility(View.INVISIBLE);
             }
         });
 

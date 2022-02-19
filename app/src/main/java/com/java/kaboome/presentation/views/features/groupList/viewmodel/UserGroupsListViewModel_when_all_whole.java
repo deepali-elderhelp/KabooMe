@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class UserGroupsListViewModel extends AndroidViewModel {
+public class UserGroupsListViewModel_when_all_whole extends AndroidViewModel {
 
     private static final String TAG = "KMUGrpsListViewModel";
     private Context context;
@@ -75,7 +75,7 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 
 
 
-    public UserGroupsListViewModel(@NonNull Application application) {
+    public UserGroupsListViewModel_when_all_whole(@NonNull Application application) {
         super(application);
         context = application;
 
@@ -175,8 +175,11 @@ public class UserGroupsListViewModel extends AndroidViewModel {
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId(), "Group"));
 
 //                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+                                            //GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            //DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+
                                             if (lastMessage != null) {
                                                 userGroupModel.setLastMessageSentAt(lastMessage.getSentAt());
                                                 userGroupModel.setLastMessageText(lastMessage.getMessageText());
@@ -280,8 +283,11 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                                 continue;
                                             }
 //                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+//                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+//                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+
+                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
 
 //                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId()));
@@ -396,8 +402,11 @@ public class UserGroupsListViewModel extends AndroidViewModel {
                                                 continue;
                                             }
 //                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
-                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+//                                            GetLastOnlyGroupMessageInCacheSingleUseCase getLastOnlyGroupMessageInCacheSingleUseCase = new GetLastOnlyGroupMessageInCacheSingleUseCase(messagesListRepository);
+//                                            DomainMessage lastMessage = getLastOnlyGroupMessageInCacheSingleUseCase.execute(GetLastOnlyGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
+
+                                            GetLastWholeGroupMessageInCacheSingleUseCase getLastWholeGroupMessageInCacheSingleUseCase = new GetLastWholeGroupMessageInCacheSingleUseCase(messagesListRepository);
+                                            DomainMessage lastMessage = getLastWholeGroupMessageInCacheSingleUseCase.execute(GetLastWholeGroupMessageInCacheSingleUseCase.Params.forGroup(userGroupModel.getGroupId(), false));
 
 //                                            GetUserGroupLastMessageCache getUserGroupLastMessageCache = new GetUserGroupLastMessageCache(messagesListRepository);
 //                                            DomainMessage lastMessage = getUserGroupLastMessageCache.execute(GetUserGroupLastMessageCache.Params.forGroup(userGroupModel.getGroupId()));

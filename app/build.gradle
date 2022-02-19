@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.java.kaboome"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 6
-        versionName "6.0"
+        targetSdkVersion 30
+        versionCode 9
+        versionName "9.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,8 +25,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+           // minifyEnabled true
+           // shrinkResources true
+            debuggable true //for now - to be removed in production version
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -70,8 +71,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

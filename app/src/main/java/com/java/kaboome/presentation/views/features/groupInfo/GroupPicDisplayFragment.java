@@ -21,11 +21,8 @@ import androidx.fragment.app.Fragment;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.presentation.entities.GroupModel;
-import com.java.kaboome.presentation.entities.GroupUserModel;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -101,7 +98,7 @@ public class GroupPicDisplayFragment extends DialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
         ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                new Handler(), groupImage, null);
+                new Handler(), groupImage, null, true);
 
 
         return view;

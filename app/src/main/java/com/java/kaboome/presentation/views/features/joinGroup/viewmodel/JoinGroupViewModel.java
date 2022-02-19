@@ -8,18 +8,25 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
 
 import com.java.kaboome.R;
 import com.java.kaboome.constants.GeneralStatusContants;
-import com.java.kaboome.constants.GroupActionConstants;
 import com.java.kaboome.constants.GroupStatusConstants;
 import com.java.kaboome.constants.ImageTypeConstants;
+import com.java.kaboome.constants.MediaActionConstants;
 import com.java.kaboome.constants.MessageGroupsConstants;
+import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.data.repositories.DataGroupMessagesRepository;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
 import com.java.kaboome.data.repositories.DataInvitationsListRepository;
 import com.java.kaboome.data.repositories.DataUserGroupRepository;
-import com.java.kaboome.data.repositories.UpdateResource;
+import com.java.kaboome.data.workers.LoadMediaWorker;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.domain.entities.DomainUserGroup;
@@ -30,20 +37,16 @@ import com.java.kaboome.domain.usecases.CopyImageSingleUseCase;
 import com.java.kaboome.domain.usecases.CopyImageUseCase;
 import com.java.kaboome.domain.usecases.JoinGroupUseCase;
 import com.java.kaboome.domain.usecases.RejectInvitationCacheSingleUseCase;
-import com.java.kaboome.domain.usecases.RejectInvitationUseCase;
 import com.java.kaboome.domain.usecases.UploadImageSingleUseCase;
 import com.java.kaboome.domain.usecases.UploadImageUseCase;
 import com.java.kaboome.helpers.AppConfigHelper;
-import com.java.kaboome.presentation.entities.GroupRequestModel;
 import com.java.kaboome.presentation.entities.UpdateResourceModel;
 import com.java.kaboome.presentation.entities.UserGroupModel;
 import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
-import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.mappers.UserGroupModelMapper;
 
-import java.io.File;
-import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 
 public class JoinGroupViewModel extends ViewModel {
@@ -146,7 +149,8 @@ public class JoinGroupViewModel extends ViewModel {
                             addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(newDomainMessage));
 
 //                            groupJoinUpdate.setValue(Status.SUCCESS);
-                            uploadGroupUserImage(userGroupModel, imagePath, imageTNPath, imageChanged);
+//                            uploadGroupUserImage(userGroupModel, imagePath, imageTNPath, imageChanged);
+                            uploadGroupUserImage(imagePath, imageTNPath, imageChanged);
 
 
 
@@ -256,40 +260,185 @@ public class JoinGroupViewModel extends ViewModel {
     //this new uploadGroupUserImage does all the group user image either copy or upload in the background
     //the API call does not wait for the return and goes ahead
 
-    public void uploadGroupUserImage(UserGroupModel userGroupModel, String imagePath, String imageTNPath, boolean imageChanged) {
+    public void uploadGroupUserImage(String imagePath, String imageTNPath, boolean imageChanged) {
 
 //        Log.d(TAG, "joinUserToGroup: starting image "+System.currentTimeMillis());
-        String newTNKey = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
-        String newKey = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
+//        String newTNKey = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
+//        String newKey = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
+//
+//        if(!imageChanged){
+//            //user did not use any new image, so the regular profile image is the group user image
+//            //it should be copied to s3
+////            Log.d(TAG, "uploadGroupUserImage: starting before copy user image - "+System.currentTimeMillis());
+//            String userProfileTNPicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
+//            String userProfilePicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
+//
+//            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfileTNPicKey, newTNKey));
+//            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfilePicKey, newKey));
+//
+//            //now also download these images so that they are there in the cache when the user needs them
+//            ImageHelper.getInstance().downloadImage(newTNKey);
+//            ImageHelper.getInstance().downloadImage(newKey);
+//
+//        }
+//        else{
+//            //user used a new image, update that image to S3
+////            Log.d(TAG, "uploadGroupUserImage: ");
+//
+//            //start the upload of the normal size images - this will kick off in the background
+//            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newTNKey, new File(imageTNPath), true));
+//            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newKey, new File(imagePath), true));
+//
+//        }
 
         if(!imageChanged){
             //user did not use any new image, so the regular profile image is the group user image
             //it should be copied to s3
 //            Log.d(TAG, "uploadGroupUserImage: starting before copy user image - "+System.currentTimeMillis());
-            String userProfileTNPicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
-            String userProfilePicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
+//            String userProfileTNPicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
+//            String userProfilePicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
+//
+//            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfileTNPicKey, newTNKey));
+//            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfilePicKey, newKey));
+//
+//            //now also download these images so that they are there in the cache when the user needs them
+//            ImageHelper.getInstance().downloadImage(newTNKey);
+//            ImageHelper.getInstance().downloadImage(newKey);
 
-            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfileTNPicKey, newTNKey));
-            copyImageSingleUseCase.execute(CopyImageSingleUseCase.Params.imageToCopy(userProfilePicKey, newKey));
+            copyGroupUserImage(ImageTypeConstants.THUMBNAIL);
+            copyGroupUserImage(ImageTypeConstants.MAIN);
 
-            //now also download these images so that they are there in the cache when the user needs them
-            ImageHelper.getInstance().downloadImage(newTNKey);
-            ImageHelper.getInstance().downloadImage(newKey);
 
         }
         else{
-            //user used a new image, update that image to S3
-//            Log.d(TAG, "uploadGroupUserImage: ");
 
-            //start the upload of the normal size images - this will kick off in the background
-            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newTNKey, new File(imageTNPath), true));
-            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newKey, new File(imagePath), true));
+
+            uploadGroupUserImage(ImageTypeConstants.THUMBNAIL, imageTNPath);
+            uploadGroupUserImage(ImageTypeConstants.MAIN, imagePath);
+
+
+//            //user used a new image, update that image to S3
+////            Log.d(TAG, "uploadGroupUserImage: ");
+//
+//            //start the upload of the normal size and thumbnail images - this will kick off in the background
+//            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newTNKey, new File(userImageTNPath), true));
+//            uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(newKey, new File(userImagePath), true));
 
         }
 
         manageImage.setValue(GeneralStatusContants.SUCCESS);
 
     }
+
+
+    public void copyGroupUserImage(final ImageTypeConstants imageType){
+        String key;
+        if(ImageTypeConstants.THUMBNAIL.equals(imageType)){
+            key = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(),ImageTypeConstants.THUMBNAIL );
+        }
+        else{
+            key = ImagesUtilHelper.getGroupUserImageName(userGroupModel.getGroupId(), AppConfigHelper.getUserId(),ImageTypeConstants.MAIN );
+        }
+        String userProfilePicKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), imageType);
+
+        Data inputData = new Data.Builder()
+                .putString("groupId", userGroupModel.getGroupId())
+                .putString("userId", AppConfigHelper.getUserId())
+                .putString("imageType", imageType.getType())
+                .putString("action", MediaActionConstants.COPY_GROUP_USER_PIC.getAction())
+                .putString("keyToCopy", userProfilePicKey)
+                .putString("newKey", key)
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("copy_group_user_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
+
+
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+" copied successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"copy failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"copy failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Group User Pic "+imageType.getType()+"copy failed due to - "+e.getMessage());
+        }
+    }
+
+    private void uploadGroupUserImage(final ImageTypeConstants imageType, String pathOfImage) {
+        Data inputData = new Data.Builder()
+                .putString("groupId", userGroupModel.getGroupId())
+                .putString("userId", AppConfigHelper.getUserId())
+                .putString("groupUserName", userGroupModel.getAlias())
+                .putString("groupUserRole", userGroupModel.getRole())
+                .putString("imageType", imageType.getType())
+                .putString("action", MediaActionConstants.UPLOAD_GROUP_USER_PIC.getAction())
+                .putString("attachment_path", pathOfImage)
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("upload_group_user_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
+
+
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+" Uploaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to - "+e.getMessage());
+        }
+    }
+
 
     @Override
     protected void onCleared() {

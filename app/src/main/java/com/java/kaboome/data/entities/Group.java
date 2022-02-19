@@ -76,14 +76,19 @@ public class Group implements Serializable {
     @SerializedName("usersJoined")
     private ArrayList<GroupUser> usersJoined;
 
+    @SerializedName("groupPicUploaded")
+    private Boolean groupPicUploaded;
 
-    //Temporary field does not get updated to the server
-    @Ignore
-    private String tempGroupProfilePicLink;
+    @SerializedName("groupPicLoadingGoingOn")
+    private Boolean groupPicLoadingGoingOn = false;
 
-    //Temporary field does not get updated to the server
-    @Ignore
-    private String tempGroupTNPicLink;
+//    //Temporary field does not get updated to the server
+//    @Ignore
+//    private String tempGroupProfilePicLink;
+//
+//    //Temporary field does not get updated to the server
+//    @Ignore
+//    private String tempGroupTNPicLink;
 
 //    @ColumnInfo(name = "currentUserStatusForGroup")
     @SerializedName("currentUserStatusForGroup")
@@ -286,21 +291,37 @@ public class Group implements Serializable {
         isDeleted = deleted;
     }
 
-    public String getTempGroupProfilePicLink() {
-        return tempGroupProfilePicLink;
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
     }
 
-    public void setTempGroupProfilePicLink(String tempGroupProfilePicLink) {
-        this.tempGroupProfilePicLink = tempGroupProfilePicLink;
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
     }
 
-    public String getTempGroupTNPicLink() {
-        return tempGroupTNPicLink;
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
     }
 
-    public void setTempGroupTNPicLink(String tempGroupTNPicLink) {
-        this.tempGroupTNPicLink = tempGroupTNPicLink;
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
     }
+
+//    public String getTempGroupProfilePicLink() {
+//        return tempGroupProfilePicLink;
+//    }
+//
+//    public void setTempGroupProfilePicLink(String tempGroupProfilePicLink) {
+//        this.tempGroupProfilePicLink = tempGroupProfilePicLink;
+//    }
+//
+//    public String getTempGroupTNPicLink() {
+//        return tempGroupTNPicLink;
+//    }
+//
+//    public void setTempGroupTNPicLink(String tempGroupTNPicLink) {
+//        this.tempGroupTNPicLink = tempGroupTNPicLink;
+//    }
 
     public String getGroupCreatorRole() {
         return groupCreatorRole;
@@ -358,8 +379,8 @@ public class Group implements Serializable {
                 ", isDeleted=" + isDeleted +
                 ", imageUpdateTimestamp=" + imageUpdateTimestamp +
                 ", usersJoined=" + usersJoined +
-                ", tempGroupProfilePicLink='" + tempGroupProfilePicLink + '\'' +
-                ", tempGroupTNPicLink='" + tempGroupTNPicLink + '\'' +
+//                ", tempGroupProfilePicLink='" + tempGroupProfilePicLink + '\'' +
+//                ", tempGroupTNPicLink='" + tempGroupTNPicLink + '\'' +
                 ", currentUserStatusForGroup=" + currentUserStatusForGroup +
                 '}';
     }

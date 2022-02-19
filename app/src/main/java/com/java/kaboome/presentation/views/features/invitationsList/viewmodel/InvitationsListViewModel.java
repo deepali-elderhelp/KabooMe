@@ -8,13 +8,16 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.java.kaboome.constants.GroupActionConstants;
+import com.java.kaboome.data.repositories.DataGroupRepository;
 import com.java.kaboome.data.repositories.DataInvitationsListRepository;
-import com.java.kaboome.domain.entities.DomainDeleteResource;
+import com.java.kaboome.domain.entities.DomainGroup;
 import com.java.kaboome.domain.entities.DomainInvitation;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.repositories.InvitationsListRepository;
 import com.java.kaboome.domain.usecases.GetInvitationsListUseCase;
 import com.java.kaboome.domain.usecases.RejectInvitationUseCase;
+import com.java.kaboome.domain.usecases.UpdateGroupCacheUseCase;
 import com.java.kaboome.presentation.entities.InvitationModel;
 import com.java.kaboome.presentation.mappers.InvitationModelMapper;
 
@@ -113,7 +116,7 @@ public class InvitationsListViewModel extends ViewModel {
 //    }
 
 
-    public void rejectInvitation(String groupId){
+    public void rejectInvitation(final String groupId){
 
         rejectInvitation.removeSource(rejectInvitationSource); //remove old source if any
         rejectInvitationSource = rejectInvitationUseCase.execute(RejectInvitationUseCase.Params.forGroup(groupId));
@@ -124,6 +127,11 @@ public class InvitationsListViewModel extends ViewModel {
 
                     if (listDomainInvitations.status == DomainResource.Status.SUCCESS) {
                         if (listDomainInvitations.data != null) {
+                            //the invitation has been removed - if there is a group in local DB, then update it's current status from pending to none
+                            DomainGroup domainGroup = new DomainGroup();
+                            domainGroup.setGroupId(groupId);
+                            UpdateGroupCacheUseCase updateGroupCacheUseCase = new UpdateGroupCacheUseCase(DataGroupRepository.getInstance());
+                            updateGroupCacheUseCase.execute(UpdateGroupCacheUseCase.Params.forGroup(domainGroup, GroupActionConstants.UPDATE_GROUP_CURRENT_STATUS.getAction()));
 
                             invitations.setValue(InvitationModelMapper.transformAllFromDomainToModel(listDomainInvitations));
                         }

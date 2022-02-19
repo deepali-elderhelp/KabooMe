@@ -1,5 +1,7 @@
 package com.java.kaboome.domain.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DomainGroupUser {
 
     private String groupId;
@@ -23,6 +25,10 @@ public class DomainGroupUser {
     private Boolean isCheckedToBeAdmin;
 
     private Long imageUpdateTimestamp; //users's image's time stamp
+
+    private Boolean groupUserPicUploaded;
+
+    private Boolean groupUserPicLoadingGoingOn = false;
 
     public DomainGroupUser() {
     }
@@ -138,5 +144,21 @@ public class DomainGroupUser {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getGroupUserPicUploaded() {
+        return groupUserPicUploaded;
+    }
+
+    public void setGroupUserPicUploaded(Boolean groupUserPicUploaded) {
+        this.groupUserPicUploaded = groupUserPicUploaded;
+    }
+
+    public Boolean getGroupUserPicLoadingGoingOn() {
+        return groupUserPicLoadingGoingOn;
+    }
+
+    public void setGroupUserPicLoadingGoingOn(Boolean groupUserPicLoadingGoingOn) {
+        this.groupUserPicLoadingGoingOn = groupUserPicLoadingGoingOn;
     }
 }

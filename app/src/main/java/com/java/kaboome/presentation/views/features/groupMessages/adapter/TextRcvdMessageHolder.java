@@ -1,20 +1,12 @@
 package com.java.kaboome.presentation.views.features.groupMessages.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +15,6 @@ import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.helpers.DateHelper;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.views.widgets.MessagesListStyle;
 
@@ -117,9 +108,9 @@ public class TextRcvdMessageHolder extends RecyclerView.ViewHolder {
 //        ImageHelper.loadUserImage(message.getSentBy(), message.getSentByImageTS(),
 //                ImageHelper.getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
 //                handler, profileImage, null);
-        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.THUMBNAIL, message.getSentBy(), message.getSentByImageTS(),
+        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.MAIN, message.getSentBy(), message.getSentByImageTS(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, profileImage, null);
+                handler, profileImage, null, false);
 
 
         if(message.getMessageText() != null && message.getMessageText().length() >= 750){

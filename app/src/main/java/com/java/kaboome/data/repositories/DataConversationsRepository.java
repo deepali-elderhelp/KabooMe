@@ -75,7 +75,12 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.updateUserGroupConversationLastAccessed(newLastAccessed, AppConfigHelper.getUserId(), groupId, conversationId);
+                try {
+                    userGroupConversationDao.updateUserGroupConversationLastAccessed(newLastAccessed, AppConfigHelper.getUserId(), groupId, conversationId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateUserGroupConversationLastAccessed "+exception.getMessage());
+                }
             }
         });
     }
@@ -85,7 +90,13 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.updateUserGroupConversationCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), conversationId, groupId);
+//                userGroupConversationDao.updateUserGroupConversationCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), conversationId, groupId);
+                try {
+                    userGroupConversationDao.updateUserGroupConversationCacheClearTSAndLastAccessTS(newCacheClearTS, AppConfigHelper.getUserId(), conversationId, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateUserGroupConversationCacheClearTS "+exception.getMessage());
+                }
             }
         });
     }
@@ -95,7 +106,12 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.deleteUserGroupConversation(Boolean.TRUE, AppConfigHelper.getUserId(), conversationId, groupId);
+                try {
+                    userGroupConversationDao.deleteUserGroupConversation(Boolean.TRUE, AppConfigHelper.getUserId(), conversationId, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteUserGroupConversation "+exception.getMessage());
+                }
             }
         });
     }
@@ -105,7 +121,12 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.insertUserGroupConversation(UserGroupConversationDataDomainMapper.transformFromDomain(domainUserGroupConversation));
+                try {
+                    userGroupConversationDao.insertUserGroupConversation(UserGroupConversationDataDomainMapper.transformFromDomain(domainUserGroupConversation));
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in addNewConversation "+exception.getMessage());
+                }
             }
         });
     }
@@ -115,7 +136,12 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.removeUserGroupConversation(AppConfigHelper.getUserId(), conversationId, groupId);
+                try {
+                    userGroupConversationDao.removeUserGroupConversation(AppConfigHelper.getUserId(), conversationId, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in removeUserGroupConversation "+exception.getMessage());
+                }
             }
         });
     }
@@ -135,7 +161,12 @@ public class DataConversationsRepository implements ConversationsRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupConversationDao.updateUserGroupConversationDetails(otherUserName, otherUserRole, userImageTS, AppConfigHelper.getUserId(), conversationId, groupId);
+                try {
+                    userGroupConversationDao.updateUserGroupConversationDetails(otherUserName, otherUserRole, userImageTS, AppConfigHelper.getUserId(), conversationId, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateUserGroupConversationDetails "+exception.getMessage());
+                }
             }
         });
     }

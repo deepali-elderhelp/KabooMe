@@ -11,6 +11,7 @@ import androidx.lifecycle.Transformations;
 import com.java.kaboome.constants.UserActionConstants;
 import com.java.kaboome.data.entities.User;
 import com.java.kaboome.data.executors.AppExecutors2;
+import com.java.kaboome.data.mappers.GroupUserDataDomainMapper;
 import com.java.kaboome.data.mappers.ResourceDomainResourceMapper;
 import com.java.kaboome.data.mappers.UpdateResourceDomainResourceMapper;
 import com.java.kaboome.data.mappers.UserDataDomainMapper;
@@ -18,6 +19,7 @@ import com.java.kaboome.data.persistence.UserDao;
 import com.java.kaboome.data.remote.requests.UserUpdateRequest;
 import com.java.kaboome.data.remote.responses.ApiResponse;
 import com.java.kaboome.data.remote.responses.UserResponse;
+import com.java.kaboome.domain.entities.DomainGroupUser;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.domain.entities.DomainUser;
@@ -179,6 +181,10 @@ public class DataUserRepository implements UserRepository {
 
     };
 
+    @Override
+    public DomainUser getUserFromCache(String userId) {
+        return UserDataDomainMapper.transformFromUser(userDao.getUserNonLive(userId));
+    }
 
     @Override
     public LiveData<DomainUpdateResource<String>> updateUser(DomainUser user, String action) {
@@ -197,8 +203,33 @@ public class DataUserRepository implements UserRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userDao.insertUser(UserDataDomainMapper.transformFromDomain(user));
-                Log.d(TAG, "User "+user.getUserId()+" updated");
+                try {
+                    userDao.insertUser(UserDataDomainMapper.transformFromDomain(user));
+                    Log.d(TAG, "User "+user.getUserId()+" updated");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateUserInCache "+exception.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void updateUserInCache(final DomainUser user, final String action) {
+        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(action != null && UserActionConstants.UPDATE_USER_PROFILE_IMAGE_TS.getAction().equals(action)) {
+                        userDao.updateUserImageFieldsWithTS(user.getUserPicUploaded(), user.getUserPicLoadingGoingOn(), user.getImageUpdateTimestamp(), user.getUserId());
+                    }
+                    else if(action != null && UserActionConstants.UPDATE_USER_PROFILE_IMAGE_NO_TS.getAction().equals(action)) {
+                        userDao.updateUserImageFieldsNonTS(user.getUserPicUploaded(), user.getUserPicLoadingGoingOn(), user.getUserId());
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateUserInCache "+exception.getMessage());
+                }
             }
         });
     }

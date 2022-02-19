@@ -8,8 +8,6 @@
 package com.java.kaboome.presentation.views.features.createGroup;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -24,13 +22,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.helpers.AppConfigHelper;

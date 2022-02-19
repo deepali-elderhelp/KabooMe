@@ -27,6 +27,9 @@ public class GroupUserModelMapper {
         domainGroupUser.setIsAdmin(groupUserModel.getIsAdmin());
         domainGroupUser.setCheckedToBeAdmin(groupUserModel.getCheckedToBeAdmin());
         domainGroupUser.setImageUpdateTimestamp(groupUserModel.getImageUpdateTimestamp());
+        domainGroupUser.setGroupUserPicLoadingGoingOn(groupUserModel.getGroupUserPicLoadingGoingOn());
+        domainGroupUser.setGroupUserPicUploaded(groupUserModel.getGroupUserPicUploaded());
+
 
         return domainGroupUser;
     }
@@ -44,6 +47,8 @@ public class GroupUserModelMapper {
         groupUserModel.setIsAdmin(domainGroupUser.getIsAdmin());
         groupUserModel.setCheckedToBeAdmin(domainGroupUser.getCheckedToBeAdmin());
         groupUserModel.setImageUpdateTimestamp(domainGroupUser.getImageUpdateTimestamp());
+        groupUserModel.setGroupUserPicLoadingGoingOn(domainGroupUser.getGroupUserPicLoadingGoingOn());
+        groupUserModel.setGroupUserPicUploaded(domainGroupUser.getGroupUserPicUploaded());
 
         return groupUserModel;
     }

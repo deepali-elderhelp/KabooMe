@@ -808,7 +808,9 @@ public class MessageAttachmentsDialog extends BottomSheetDialogFragment implemen
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String newName = groupId + timeStamp + ".jpg";
                 final String galleryImageUri = MediaHelper.saveMediaToGallery(getContext(), getActivity().getContentResolver(), pathToPic, newName, "image/*", groupName);
-                selectedUri = Uri.parse(galleryImageUri);
+                if(galleryImageUri != null) {
+                    selectedUri = Uri.parse(galleryImageUri);
+                }
 //            }
 
 

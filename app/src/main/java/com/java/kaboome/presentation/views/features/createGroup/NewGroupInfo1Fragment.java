@@ -47,7 +47,7 @@ public class NewGroupInfo1Fragment extends Fragment implements TextWatcher {
     SwitchCompat unicastSwitch;
     CreateGroupViewModel createGroupViewModel;
     HandleNextListener handleNextListener;
-    boolean unicast = false;
+    boolean unicast = false; //the default value for unicast is false
 
 
 
@@ -133,9 +133,9 @@ public class NewGroupInfo1Fragment extends Fragment implements TextWatcher {
         String groupNameSet = getGroupName();
         String groupDescriptionSet = getGroupDescription();
 
-        if(!GeneralHelper.validateString(groupNameSet)){
-            return false;
-        }
+//        if(!GeneralHelper.validateString(groupNameSet)){
+//            return false;
+//        }
 
         if(groupNameSet != null && !(groupNameSet.isEmpty())){
             if(groupDescriptionSet != null && !(groupDescriptionSet.isEmpty())){

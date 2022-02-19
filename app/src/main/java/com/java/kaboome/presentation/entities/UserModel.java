@@ -16,6 +16,8 @@ public class UserModel implements Serializable {
     String status; //for showing status/state on UI
 
     Long imageUpdateTimestamp;
+    private Boolean userPicUploaded;
+    private Boolean userPicLoadingGoingOn = false;
 
     //Following fields is needed if the user changes profile pic
 
@@ -115,6 +117,22 @@ public class UserModel implements Serializable {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getUserPicUploaded() {
+        return userPicUploaded;
+    }
+
+    public void setUserPicUploaded(Boolean userPicUploaded) {
+        this.userPicUploaded = userPicUploaded;
+    }
+
+    public Boolean getUserPicLoadingGoingOn() {
+        return userPicLoadingGoingOn;
+    }
+
+    public void setUserPicLoadingGoingOn(Boolean userPicLoadingGoingOn) {
+        this.userPicLoadingGoingOn = userPicLoadingGoingOn;
     }
 
     @Override

@@ -93,14 +93,36 @@ public class DataUserGroupRepository implements UserGroupRepository {
         if(action == null || action.isEmpty()){
             return;
         }
-        if(action.equals(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction())){
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_IMAGE.getAction())){
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
                     //update the local UserGroup cache for User Name and Privacy (either could be changed)
-                    userGroupDao.updateUserGroupName(userGroup.getGroupName(), userGroup.getUserId(), userGroup.getGroupId());
-                    userGroupDao.updateUserGroupPrivacy(userGroup.isPrivateGroup(), userGroup.getUserId(), userGroup.getGroupId());
-                    userGroupDao.updateUserGroupImageTS(userGroup.getImageUpdateTimestamp(), userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        userGroupDao.updateUserGroupImageTS(userGroup.getImageUpdateTimestamp(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
+                }
+            });
+
+        }
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction())){
+            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //update the local UserGroup cache for User Name and Privacy (either could be changed)
+                        userGroupDao.updateUserGroupName(userGroup.getGroupName(), userGroup.getUserId(), userGroup.getGroupId());
+                        userGroupDao.updateUserGroupImageLoadingGoingOn(userGroup.getGroupPicLoadingGoingOn(), userGroup.getUserId(), userGroup.getGroupId());
+                        userGroupDao.updateUserGroupImageUploaded(userGroup.getGroupPicUploaded(), userGroup.getUserId(), userGroup.getGroupId());
+//                    userGroupDao.updateUserGroupPrivacy(userGroup.isPrivateGroup(), userGroup.getUserId(), userGroup.getGroupId());
+//                    userGroupDao.updateUserGroupImageTS(userGroup.getImageUpdateTimestamp(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -109,9 +131,14 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    //update the local UserGroup cache for User Name and Privacy (either could be changed)
-                    userGroupDao.updateUserGroupName(userGroup.getGroupName(), userGroup.getUserId(), userGroup.getGroupId());
-                    userGroupDao.updateUserGroupPrivacy(userGroup.isPrivateGroup(), userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        //update the local UserGroup cache for User Name and Privacy (either could be changed)
+                        userGroupDao.updateUserGroupName(userGroup.getGroupName(), userGroup.getUserId(), userGroup.getGroupId());
+                        userGroupDao.updateUserGroupPrivacy(userGroup.isPrivateGroup(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -120,8 +147,13 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                  @Override
                  public void run() {
-                     //update the local UserGroup cache for User Name and Privacy (either could be changed)
-                     userGroupDao.updateUserGroupExpiry(userGroup.getExpiry(), userGroup.getUserId(), userGroup.getGroupId());
+                     try {
+                         //update the local UserGroup cache for User Name and Privacy (either could be changed)
+                         userGroupDao.updateUserGroupExpiry(userGroup.getExpiry(), userGroup.getUserId(), userGroup.getGroupId());
+                     } catch (Exception exception) {
+                         exception.printStackTrace();
+                         Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                     }
                  }
              });
 
@@ -130,8 +162,13 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    //update the local UserGroup cache for group image
-                    userGroupDao.updateUserGroupImageTS(userGroup.getImageUpdateTimestamp(), userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        //update the local UserGroup cache for group image
+                        userGroupDao.updateUserGroupImageTS(userGroup.getImageUpdateTimestamp(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -140,8 +177,13 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    //update the local UserGroup cache for notification level
-                    userGroupDao.updateUserGroupNotify(userGroup.getNotify(), userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        //update the local UserGroup cache for notification level
+                        userGroupDao.updateUserGroupNotify(userGroup.getNotify(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -150,12 +192,17 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    //update the local UserGroup cache for User Role and Alias and Image timestamp (either could be changed)
-                    //here only alias and role need to be updated
-                    //the image ts is only for group user, right now, there is no field for it in the UserGroup
-                    //also, there does not seem to be any need either
-                    //because the image TS it has is only for the group, not the user's group image
-                    userGroupDao.updateUserGroupRoleAndAlias(userGroup.getGroupAdminRole(), userGroup.getAlias(), userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        //update the local UserGroup cache for User Role and Alias and Image timestamp (either could be changed)
+                        //here only alias and role need to be updated
+                        //the image ts is only for group user, right now, there is no field for it in the UserGroup
+                        //also, there does not seem to be any need either
+                        //because the image TS it has is only for the group, not the user's group image
+                        userGroupDao.updateUserGroupRoleAndAlias(userGroup.getGroupAdminRole(), userGroup.getAlias(), userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -185,9 +232,14 @@ public class DataUserGroupRepository implements UserGroupRepository {
             AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    //update the local UserGroup cache for Group deleted
-                    userGroupDao.updateUserGroupIsDeleted(Boolean.TRUE, userGroup.getUserId(), userGroup.getGroupId());
+                    try {
+                        //update the local UserGroup cache for Group deleted
+                        userGroupDao.updateUserGroupIsDeleted(Boolean.TRUE, userGroup.getUserId(), userGroup.getGroupId());
 //                    userGroupDao.deleteUserGroup(userGroup.getUserId(), userGroup.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateUserGroupCachePrivate "+exception.getMessage());
+                    }
                 }
             });
 
@@ -265,8 +317,13 @@ public class DataUserGroupRepository implements UserGroupRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                //update the local UserGroup cache for Group deleted
-                userGroupDao.deleteUserGroup(AppConfigHelper.getUserId(), groupId);
+                try {
+                    //update the local UserGroup cache for Group deleted
+                    userGroupDao.deleteUserGroup(AppConfigHelper.getUserId(), groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in removeUserGroup "+exception.getMessage());
+                }
             }
         });
     }

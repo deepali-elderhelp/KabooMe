@@ -63,6 +63,8 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         }
     }
 
+
+
     private LiveData<DomainResource<List<DomainMessage>>> getGroupMessages(String groupId, Long lastAccessed, Long cacheClearTS, int limit, String scanDirection, String sentTo) {
 
         
@@ -179,8 +181,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.clearMessagesOfGroup(groupId);
-                Log.d(TAG, "run: Messages of the group "+groupId+" are deleted");
+                try {
+                    messageDao.clearMessagesOfGroup(groupId);
+                    Log.d(TAG, "run: Messages of the group "+groupId+" are deleted");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in clearMessagesOfGroup "+exception.getMessage());
+                }
             }
         });
     }
@@ -190,8 +197,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.clearMessagesOfGroupConversation(groupId, otherUserId);
-                Log.d(TAG, "run: Messages of the group "+groupId+" are deleted");
+                try {
+                    messageDao.clearMessagesOfGroupConversation(groupId, otherUserId);
+                    Log.d(TAG, "run: Messages of the group "+groupId+" are deleted");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in clearMessagesOfConversation "+exception.getMessage());
+                }
             }
         });
     }
@@ -319,8 +331,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.updateMessageAttachmentData(messageId, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, mimeType, attachmentUri);
-                Log.d(TAG, "run: message updated for attachments");
+                try {
+                    messageDao.updateMessageAttachmentData(messageId, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, mimeType, attachmentUri);
+                    Log.d(TAG, "run: message updated for attachments");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateMessageAttachmentDetails "+exception.getMessage());
+                }
             }
         });
     }
@@ -330,8 +347,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.updateMessageLoadingProgress(messageId, progress);
-                Log.d(TAG, "run: message attachment loading progress updated progress - "+progress);
+                try {
+                    messageDao.updateMessageLoadingProgress(messageId, progress);
+                    Log.d(TAG, "run: message attachment loading progress updated progress - "+progress);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateMessageLoadingProgress "+exception.getMessage());
+                }
             }
         });
     }
@@ -348,8 +370,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.setLocalMessageToDelete("Message deleted for you", domainMessage.getGroupId(), domainMessage.getSentTo(), domainMessage.getMessageId());
-                Log.d(TAG, "run: set local message to deleted");
+                try {
+                    messageDao.setLocalMessageToDelete("Message deleted for you", domainMessage.getGroupId(), domainMessage.getSentTo(), domainMessage.getMessageId());
+                    Log.d(TAG, "run: set local message to deleted");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteLocalMessage "+exception.getMessage());
+                }
             }
         });
     }
@@ -361,13 +388,18 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                Message existingMessage = messageDao.getMessage(message.getMessageId());
-                if(existingMessage != null){
-                    message.setUnread(existingMessage.getUnread());
-                    message.setAttachmentUri(existingMessage.getAttachmentUri());
+                try {
+                    Message existingMessage = messageDao.getMessage(message.getMessageId());
+                    if(existingMessage != null){
+                        message.setUnread(existingMessage.getUnread());
+                        message.setAttachmentUri(existingMessage.getAttachmentUri());
+                    }
+                    messageDao.insertMessage(message);
+                    Log.d(TAG, "run: Message inserted in cache "+message.getMessageId());
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in insertRemoteMessageIntoCache "+exception.getMessage());
                 }
-                messageDao.insertMessage(message);
-                Log.d(TAG, "run: Message inserted in cache "+message.getMessageId());
             }
         });
     }
@@ -378,8 +410,13 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.insertMessageIfDoesNotExist(message);
-                Log.d(TAG, "run: Message inserted in cache "+message.getMessageId());
+                try {
+                    messageDao.insertMessageIfDoesNotExist(message);
+                    Log.d(TAG, "run: Message inserted in cache "+message.getMessageId());
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in insertLocalMessageIntoCache "+exception.getMessage());
+                }
             }
         });
     }
@@ -511,7 +548,12 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                messageDao.updateMessagesToRead(groupId, sentTo);
+                try {
+                    messageDao.updateMessagesToRead(groupId, sentTo);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateMessagesToRead "+exception.getMessage());
+                }
             }
         });
     }
@@ -576,6 +618,14 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
     //--------------------------------------------------
 
     @Override
+    public DomainMessage getMessage(String messageId) {
+        if(messageId == null) {
+            return null;
+        }
+        return MessageDataDomainMapper.transformFromMessage(messageDao.getMessage(messageId));
+    }
+
+    @Override
     public LiveData<DomainMessage> getLastMessageForWholeGroupFromCacheLiveData(String groupId) {
         return Transformations.map(messageDao.getLastMessageForWholeGroupAsLiveData(groupId), new Function<Message, DomainMessage>() {
             @Override
@@ -592,6 +642,19 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
     @Override
     public LiveData<DomainMessage> getLastMessageForOnlyGroupFromCacheLiveData(String groupId) {
         return Transformations.map(messageDao.getLastMessageForOnlyGroupAsLiveData(groupId), new Function<Message, DomainMessage>() {
+            @Override
+            public DomainMessage apply(Message input) {
+                if(input == null){
+                    return null;
+                }
+                return MessageDataDomainMapper.transformFromMessage(input);
+            }
+        });
+    }
+
+    @Override
+    public LiveData<DomainMessage> getLastMessageForAllConvsFromCacheLiveData(String groupId) {
+        return Transformations.map(messageDao.getLastMessageForAllConvsAsLiveData(groupId), new Function<Message, DomainMessage>() {
             @Override
             public DomainMessage apply(Message input) {
                 if(input == null){
@@ -654,6 +717,22 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
         }
         else {
             Message lastMessage = messageDao.getLastMessageForOnlyGroup(groupId);
+            if (lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
+    }
+
+    @Override
+    public DomainMessage getLastMessageForAllConvsFromCacheSingle(String groupId, boolean includeDeleted) {
+        if(includeDeleted){
+            Message lastMessage = messageDao.getLastMessageForAllConvsIncludingDeleted(groupId);
+            if(lastMessage == null) //there are no messages in the group at all
+                return null;
+            return MessageDataDomainMapper.transformFromMessage(lastMessage);
+        }
+        else {
+            Message lastMessage = messageDao.getLastMessageForAllConvs(groupId);
             if (lastMessage == null) //there are no messages in the group at all
                 return null;
             return MessageDataDomainMapper.transformFromMessage(lastMessage);

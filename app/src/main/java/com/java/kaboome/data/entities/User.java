@@ -44,6 +44,12 @@ public class User implements Serializable {
     @SerializedName("imageUpdateTimestamp")
     private Long imageUpdateTimestamp;
 
+    @SerializedName("userPicUploaded")
+    private Boolean userPicUploaded;
+
+    @SerializedName("userPicLoadingGoingOn")
+    private Boolean userPicLoadingGoingOn = false;
+
 
     public User() {
 
@@ -127,6 +133,22 @@ public class User implements Serializable {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getUserPicUploaded() {
+        return userPicUploaded;
+    }
+
+    public void setUserPicUploaded(Boolean userPicUploaded) {
+        this.userPicUploaded = userPicUploaded;
+    }
+
+    public Boolean getUserPicLoadingGoingOn() {
+        return userPicLoadingGoingOn;
+    }
+
+    public void setUserPicLoadingGoingOn(Boolean userPicLoadingGoingOn) {
+        this.userPicLoadingGoingOn = userPicLoadingGoingOn;
     }
 
     @Override

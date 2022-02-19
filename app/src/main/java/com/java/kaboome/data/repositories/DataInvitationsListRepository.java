@@ -168,7 +168,12 @@ public class DataInvitationsListRepository implements InvitationsListRepository 
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-               invitiationDao.insertInvitation(InvitationDataDomainMapper.transformFromDomain(invitation));
+                try {
+                    invitiationDao.insertInvitation(InvitationDataDomainMapper.transformFromDomain(invitation));
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in addNewInvitation "+exception.getMessage());
+                }
             }
         });
     }
@@ -184,7 +189,12 @@ public class DataInvitationsListRepository implements InvitationsListRepository 
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                invitiationDao.deleteInvitationForGroup(groupId);
+                try {
+                    invitiationDao.deleteInvitationForGroup(groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in rejectInvitationFromCache "+exception.getMessage());
+                }
             }
         });
     }

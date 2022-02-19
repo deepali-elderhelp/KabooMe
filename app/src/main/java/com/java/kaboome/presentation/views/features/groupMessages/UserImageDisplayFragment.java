@@ -3,26 +3,19 @@ package com.java.kaboome.presentation.views.features.groupMessages;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -33,14 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
-import com.java.kaboome.helpers.AppConfigHelper;
-import com.java.kaboome.helpers.NetworkHelper;
-import com.java.kaboome.presentation.entities.GroupUserModel;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.views.features.groupInfo.GroupUserActionsDialog;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -137,7 +123,7 @@ public class UserImageDisplayFragment extends BottomSheetDialogFragment implemen
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.bs_profile);
         ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.MAIN, message.getSentBy(), message.getSentByImageTS(),
                 ImageHelper.getInstance().getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                handler, userImage, null);
+                handler, userImage, null, true);
 
         if(currentUserIsAdmin && "false".equalsIgnoreCase(message.getIsAdmin())){
             makeAdminLink.setVisibility(View.VISIBLE);

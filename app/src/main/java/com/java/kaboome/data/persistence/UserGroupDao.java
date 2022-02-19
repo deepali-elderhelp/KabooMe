@@ -22,6 +22,9 @@ public interface UserGroupDao {
     void insertUserGroup(UserGroup userGroup);
 
     @Query("SELECT * FROM user_groups where userId = :user_id")
+    List<UserGroup> getUserGroupsNonLive(String user_id);
+
+    @Query("SELECT * FROM user_groups where userId = :user_id")
     LiveData<List<UserGroup>> getUserGroups(String user_id);
 
     @Query("SELECT * FROM user_groups where userId = :user_id")
@@ -36,8 +39,11 @@ public interface UserGroupDao {
     @Query("UPDATE user_groups SET lastAccessed = :last_accessed WHERE userId = :user_id and groupId = :group_id")
     void updateUserGroupLastAccessed(Long last_accessed, String user_id, String group_id);
 
-    @Query("UPDATE user_groups SET cacheClearTS = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
-    void updateUserGroupCacheClearTS(Long cache_clear_ts, String user_id, String group_id);
+
+//    @Query("UPDATE user_groups SET cacheClearTS = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
+//    void updateUserGroupCacheClearTS(Long cache_clear_ts, String user_id, String group_id);
+    @Query("UPDATE user_groups SET cacheClearTS = :cache_clear_ts, lastAccessed = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
+    void updateUserGroupCacheClearTSAndLastAccess(Long cache_clear_ts, String user_id, String group_id);
 
 //    @Query("UPDATE user_groups SET lastMessageCacheTS = :last_message_ts WHERE userId = :user_id and groupId = :group_id")
 //    void updateUserGroupLastMessageTS(Long last_message_ts, String user_id, String group_id);
@@ -48,8 +54,16 @@ public interface UserGroupDao {
     @Query("UPDATE user_groups SET adminsLastAccessed = :last_accessed WHERE userId = :user_id and groupId = :group_id")
     void updateUserGroupAdminLastAccessed(Long last_accessed, String user_id, String group_id);
 
-    @Query("UPDATE user_groups SET adminsCacheClearTS = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
-    void updateUserGroupAdminCacheClearTS(Long cache_clear_ts, String user_id, String group_id);
+    //@Query("UPDATE user_groups SET adminsCacheClearTS = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
+    //void updateUserGroupAdminCacheClearTS(Long cache_clear_ts, String user_id, String group_id);
+
+    /**
+     * Setting last access along with cache clear TS because if the user is clearing the cache, he is in the group
+     * So, might as well update the last access as well. Doing the same on the server as well otherwise it creates problems
+     * like the last access is not updated when the cache is cleared...so the next time it causes issues
+     */
+    @Query("UPDATE user_groups SET adminsCacheClearTS = :cache_clear_ts, adminsLastAccessed = :cache_clear_ts WHERE userId = :user_id and groupId = :group_id")
+    void updateUserGroupAdminCacheClearTSAndLastAccess(Long cache_clear_ts, String user_id, String group_id);
 
 //    @Query("UPDATE user_groups SET lastMessageCacheTS = :last_message_ts WHERE userId = :user_id and groupId = :group_id")
 //    void updateUserGroupLastMessageTS(Long last_message_ts, String user_id, String group_id);
@@ -58,6 +72,12 @@ public interface UserGroupDao {
 
     @Query("UPDATE user_groups SET groupName = :group_name WHERE userId = :user_id and groupId = :group_id")
     void updateUserGroupName(String group_name, String user_id, String group_id);
+
+    @Query("UPDATE user_groups SET groupPicLoadingGoingOn = :group_pic_loading_going_on WHERE userId = :user_id and groupId = :group_id")
+    void updateUserGroupImageLoadingGoingOn(Boolean group_pic_loading_going_on, String user_id, String group_id);
+
+    @Query("UPDATE user_groups SET groupPicUploaded = :group_pic_uploaded WHERE userId = :user_id and groupId = :group_id")
+    void updateUserGroupImageUploaded(Boolean group_pic_uploaded, String user_id, String group_id);
 
     @Query("UPDATE user_groups SET privateGroup = :private_group WHERE userId = :user_id and groupId = :group_id")
     void updateUserGroupPrivacy(boolean private_group, String user_id, String group_id);

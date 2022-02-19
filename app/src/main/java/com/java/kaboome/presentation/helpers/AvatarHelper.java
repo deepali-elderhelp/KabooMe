@@ -63,13 +63,17 @@ public class AvatarHelper {
         }
         int size = context.getResources().getDimensionPixelSize(dimensionId);
         Paint painter = new Paint();
-        painter.setColor(randomColorsList.get((int) (Math.random()*19)));
+//        painter.setColor(randomColorsList.get((int) (Math.random()*19)));
+//        painter.setColor(0xECEBEB);
+        painter.setColor(context.getResources().getColor(R.color.greyTransparent30));
 
         float textSize = ((float) (size / 8.125));
 
         TextPaint textPaint = new TextPaint();
         textPaint.setTextSize(textSize * context.getResources().getDisplayMetrics().scaledDensity);
-        textPaint.setColor(Color.WHITE);
+//        textPaint.setColor(Color.WHITE);
+//        textPaint.setColor(0xC5C5C5);
+        textPaint.setColor(context.getResources().getColor(R.color.white));
 
         Rect areaRect = new Rect(0,0, size, size);
 
@@ -81,6 +85,67 @@ public class AvatarHelper {
 //            }
 //            else{
                 finalLetters = words[0].substring(0,1).toUpperCase()+words[1].substring(0,1).toUpperCase();
+//            }
+
+        }
+        else{
+            finalLetters = words[0].substring(0,1).toUpperCase();
+        }
+
+        Bitmap newImage = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(newImage);
+        canvas.drawRect(areaRect, painter);
+
+        RectF bounds = new RectF(areaRect);
+
+        if(finalLetters.length() == 1){
+            bounds.right = textPaint.measureText(finalLetters, 0, 1);
+        }
+        else{
+            bounds.right = textPaint.measureText(finalLetters, 0, 2);
+        }
+
+        bounds.bottom = textPaint.descent() - textPaint.ascent();
+
+        bounds.left += (areaRect.width() - bounds.right) / 2.0f;
+        bounds.top += (areaRect.height() - bounds.bottom) / 2.0f;
+
+        canvas.drawCircle(size / 2, size / 2, size / 2, painter);
+        canvas.drawText(finalLetters, bounds.left, bounds.top - textPaint.ascent(), textPaint);
+        return new BitmapDrawable(context.getResources(), newImage);
+
+    }
+
+    public static Drawable generatePlaceholderAvatar(Context context, Integer dimensionId, String name){
+
+        if(context == null){
+            return null;
+        }
+
+        if(name == null || name.isEmpty()){
+            return context.getResources().getDrawable(R.drawable.account_group_grey);
+        }
+        int size = context.getResources().getDimensionPixelSize(dimensionId);
+        Paint painter = new Paint();
+        painter.setColor(-0x000000);
+
+        float textSize = ((float) (size / 8.125));
+
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(textSize * context.getResources().getDisplayMetrics().scaledDensity);
+        textPaint.setColor(Color.GRAY);
+
+        Rect areaRect = new Rect(0,0, size, size);
+
+        String[] words = name.split(" ");
+        String finalLetters = "";
+        if(words.length > 1){
+//            if(words[1].length() > 1 ){
+//                finalLetters = words[1].substring(0,2).toUpperCase();
+//            }
+//            else{
+            finalLetters = words[0].substring(0,1).toUpperCase()+words[1].substring(0,1).toUpperCase();
 //            }
 
         }

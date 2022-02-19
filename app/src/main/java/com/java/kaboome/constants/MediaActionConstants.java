@@ -4,17 +4,21 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public enum MessageActionConstants {
+public enum MediaActionConstants {
 
     UPLOAD_ATTACHMENT("uploadAttachment"),
-    DOWNLOAD_ATTACHMENT("downloadAttachment");
+    DOWNLOAD_ATTACHMENT("downloadAttachment"),
+    UPLOAD_GROUP_PIC("uploadGroupPic"),
+    UPLOAD_GROUP_USER_PIC("uploadGroupUserPic"),
+    COPY_GROUP_USER_PIC("copyGroupUserPic"),
+    UPLOAD_USER_PROFILE_PIC("uploadUserProfilePic");
 
 
     private String action;
 
-    private static final Map<String, MessageActionConstants> MESSAGE_ACTION_CONSTANTS_MAP;
+    private static final Map<String, MediaActionConstants> MESSAGE_ACTION_CONSTANTS_MAP;
 
-    MessageActionConstants(String value) {
+    MediaActionConstants(String value) {
         this.action = value;
     }
 
@@ -32,14 +36,14 @@ public enum MessageActionConstants {
     // Any Map impl can be used.
 
     static {
-        Map<String, MessageActionConstants> map = new ConcurrentHashMap<String, MessageActionConstants>();
-        for (MessageActionConstants instance : MessageActionConstants.values()) {
+        Map<String, MediaActionConstants> map = new ConcurrentHashMap<String, MediaActionConstants>();
+        for (MediaActionConstants instance : MediaActionConstants.values()) {
             map.put(instance.getAction(),instance);
         }
         MESSAGE_ACTION_CONSTANTS_MAP = Collections.unmodifiableMap(map);
     }
 
-    public static MessageActionConstants get (String name) {
+    public static MediaActionConstants get (String name) {
         return MESSAGE_ACTION_CONSTANTS_MAP.get(name);
     }
 

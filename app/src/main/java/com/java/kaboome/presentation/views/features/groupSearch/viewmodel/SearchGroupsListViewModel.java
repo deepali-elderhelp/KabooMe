@@ -71,7 +71,7 @@ public class SearchGroupsListViewModel extends ViewModel {
         }
     }
 
-    public void searchNextPage(String searchByGroupNameOrId, String searchText,boolean goToServer ){
+    public void searchNextPage(String searchByGroupNameOrId, String searchText,  boolean goToServer ){
         if(!isQueryExhausted && !isPerformingQuery){
             pageNumber++;
             getGroupsBySearchText(searchByGroupNameOrId, searchText, goToServer);

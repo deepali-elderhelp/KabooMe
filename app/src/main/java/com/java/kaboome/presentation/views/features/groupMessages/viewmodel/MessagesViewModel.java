@@ -9,23 +9,26 @@ import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 import androidx.annotation.Nullable;
+import androidx.work.Constraints;
 import androidx.work.Data;
-import androidx.work.ListenableWorker;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
 
 import android.util.Log;
 
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
-import com.java.kaboome.constants.MessageActionConstants;
+import com.java.kaboome.constants.MediaActionConstants;
 import com.java.kaboome.constants.MessageGroupsConstants;
-import com.java.kaboome.constants.UserActionConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.data.mappers.MessageDataDomainMapper;
-import com.java.kaboome.data.persistence.MessageDao;
 import com.java.kaboome.data.repositories.DataGroupMessagesRepository;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
 import com.java.kaboome.data.repositories.DataUserGroupRepository;
 import com.java.kaboome.data.repositories.DataUserGroupsListRepository;
+import com.java.kaboome.data.workers.LoadMediaWorker;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
@@ -55,15 +58,11 @@ import com.java.kaboome.presentation.mappers.IoTDomainMessageMapper;
 import com.java.kaboome.presentation.viewModelProvider.SingleMediatorLiveEvent;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import static com.java.kaboome.data.constants.WorkerConstants.WORK_RESPONSE;
-import static com.java.kaboome.data.constants.WorkerConstants.WORK_RESULT;
-import static com.java.kaboome.data.constants.WorkerConstants.WORK_SUCCESS;
+import java.util.concurrent.ExecutionException;
 
 public class MessagesViewModel extends ViewModel {
 
@@ -91,6 +90,8 @@ public class MessagesViewModel extends ViewModel {
 
     private MediatorLiveData<List<DomainMessage>> unreadAdminMessages =  new MediatorLiveData<>();
     private MediatorLiveData<List<DomainMessage>> unreadAllConvMessages =  new MediatorLiveData<>();
+
+    private HashMap<String, String[]> messageAttachments = new HashMap<>();
 
     public SingleMediatorLiveEvent<DomainUpdateResource> getUploadMessageAttachment() {
         return uploadMessageAttachment;
@@ -164,6 +165,14 @@ public class MessagesViewModel extends ViewModel {
     public LiveData<DomainResource<List<DomainMessage>>> getServerMessages() {
         Log.d(TAG, "getServerMessages: ");
         return serverMessages;
+    }
+
+    public void addToMessageAttachmentMap(String messageId, String[] attachments){
+        messageAttachments.put(messageId, attachments);
+    }
+
+    private void removeMessageFromAttachmentMap(String messageId){
+        messageAttachments.remove(messageId);
     }
 
     public void loadServerMessages(){
@@ -378,11 +387,39 @@ public class MessagesViewModel extends ViewModel {
         }
     }
 
-    public void handleMessageArrival(IoTMessage message) {
-        if(message != null){
-            Log.d(TAG, "handleMessageArrival: message came - "+message);
-            message.setUploadedToServer(true); //message is coming back from server, so it is uploaded to server already
-            addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(IoTDomainMessageMapper.transformFromIoTMessage(message)));
+    public void handleMessageArrival(IoTMessage ioTMessage) {
+        if(ioTMessage != null){
+            Log.d(TAG, "handleMessageArrival: message came - "+ioTMessage);
+            ioTMessage.setUploadedToServer(true); //message is coming back from server, so it is uploaded to server already
+            addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(IoTDomainMessageMapper.transformFromIoTMessage(ioTMessage)));
+
+            //if the message has attachment, and not uploaded, and sent by this user
+            //try to get the attachmentURI from the map, remove it from the map and call
+            //upload media worker
+
+            if(ioTMessage.getHasAttachment() && !ioTMessage.getAttachmentUploaded() && ioTMessage.getSentBy().equals(AppConfigHelper.getUserId())){
+//                Message message = new Message();
+//                message.setMessageId(ioTMessage.getMessageId());
+//                message.setGroupId(group.getGroupId());
+//                message.setSentBy(AppConfigHelper.getUserId());
+//                message.setSentByImageTS(group.getUserImageUpdateTimestamp());
+//                message.setAlias(group.getAlias());
+//                message.setRole(group.getRole());
+//                message.setIsAdmin(group.getIsAdmin());
+//                message.setHasAttachment(true);
+//                message.setAttachmentUploaded(false);
+//                message.setAttachmentMime(ioTMessage.getAttachmentMime());
+//                message.setAttachmentExtension(ioTMessage.getAttachmentExtension());
+//                message.setSentAt(ioTMessage.getSentAt());
+//                message.setSentTo("Group");
+//                message.setNotify(ioTMessage.getNotify());
+//                message.setMessageText(ioTMessage.getMessageText());
+//                message.setTnBlob(ioTMessage.getTnBlob());
+////                message.setAttachmentUri(attachmentURI);
+//                message.setAttachmentLoadingGoingOn(true);
+//                message.setDeleted(false);
+                startUploadingAttachment(ioTMessage.getMessageId(), null);
+            }
 
         }
 
@@ -437,77 +474,153 @@ public class MessagesViewModel extends ViewModel {
 
 
 //    public void startUploadingAttachment(final String messageId, final String groupId, final Long sentAt, final String fileExtension, final String fileMime, final File attachment){
-    public void startUploadingAttachment(final Message message, final File attachment){
-
-//        //first copy to app folder
-//        File attachment = FileUtils.copyAttachmentToApp(filePath, messageId);
-
+//    public void startUploadingAttachment(final Message message, final File attachment){
+//    public void startUploadingAttachment(final Message message, String attachmentPath){
+//    public void startUploadingAttachment(final Message message){
+    public void startUploadingAttachment(final String messageId, String[] attachments){
 
 
             Log.d(TAG, "uploadImage: ");
-//            String key = groupId+"_"+messageId;
-            String key = message.getGroupId()+"_"+message.getMessageId();
-            HashMap<String, Object> userData = new HashMap<>();
-            userData.put("action", MessageActionConstants.UPLOAD_ATTACHMENT);
-            userData.put("message", message);
-            userData.put("attachment", attachment);
-//            Object[] userData = new Object[3];
-//            userData[0] = MessageActionConstants.UPLOAD_ATTACHMENT;
-//            userData[1] = message;
-//            userData[2] = attachment;
-            uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
-
-//            final LiveData<DomainUpdateResource<String>> uploadImageRepositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
-//
-//
-//        uploadMessageAttachment.addSource(uploadImageRepositorySource, new Observer<DomainUpdateResource<String>>() {
-//                @Override
-//                public void onChanged(@Nullable DomainUpdateResource<String> userUpdateDomainResource) {
-//                    Log.d(TAG, "onChanged: upload status changed");
-//                    if (userUpdateDomainResource != null) {
-//
-//
-//                        if (userUpdateDomainResource.status == DomainUpdateResource.Status.SUCCESS) {
-//
-//                            //image upload was successful
-//                            Log.d(TAG, "success uploading image");
-//                            uploadMessageAttachment.setValue(new DomainUpdateResource(DomainUpdateResource.Status.SUCCESS, new MessageTempDataHolder(message.getMessageId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment.getAbsolutePath()), null));
-//                            uploadMessageAttachment.removeSource(uploadImageRepositorySource);
-//
-//                        } else if (userUpdateDomainResource.status == DomainUpdateResource.Status.UPDATING) {
-//                            Log.d(TAG, "updating uploading image");
-//                            uploadMessageAttachment.setValue(new DomainUpdateResource(DomainUpdateResource.Status.UPDATING, new MessageTempDataHolder(message.getMessageId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment.getAbsolutePath()), null));
-//
-//                            updateMessageLoadingProgress(message.getMessageId(), userUpdateDomainResource.data);
-//
-//                        } else if (userUpdateDomainResource.status == DomainUpdateResource.Status.ERROR) {
-//
-//                            Log.d(TAG, "error uploading image");
-//                            uploadMessageAttachment.removeSource(uploadImageRepositorySource);
-//                            uploadMessageAttachment.setValue(new DomainUpdateResource(DomainUpdateResource.Status.ERROR, new MessageTempDataHolder(message.getMessageId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment.getAbsolutePath()), null));
-//                        }
-//                    } else {
-//                        uploadMessageAttachment.removeSource(uploadImageRepositorySource);
-//                    }
-//                }
-//            });
-
+//            String key = message.getGroupId()+"_"+message.getMessageId();
+//            HashMap<String, Object> userData = new HashMap<>();
+//            userData.put("action", MessageActionConstants.UPLOAD_ATTACHMENT);
+//            userData.put("message", message);
+//            userData.put("attachment", attachment);
+//            uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
+        if(attachments == null){
+            //get the attachment URI/path from the map
+            attachments = messageAttachments.get(messageId);
         }
+
+        if(attachments == null){
+            return;
+        }
+        //now remove the attachment path from the map
+        messageAttachments.remove(messageId);
+
+//              call workmanager to start the worker thread for uploading the attachment
+
+
+
+            Data inputData = new Data.Builder()
+                    .putString("messageId", messageId)
+                    .putString("groupId", group.getGroupId())
+                    .putString("action", MediaActionConstants.UPLOAD_ATTACHMENT.getAction())
+                    .putString("attachment_path", attachments[0])
+                    .putString("attachment_uri", attachments[1]) //this is not in the database because it gets overwritten by the message published
+                    .build();
+
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build();
+
+            //now start a worker to do the same in the backend
+            OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                    .Builder(LoadMediaWorker.class)
+                    .addTag("upload_attachment")
+                    .setInputData(inputData)
+                    .setConstraints(constraints)
+                    .build();
+
+
+            final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+            try {
+                resultOfOperation.getResult().addListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        //only comes here for SUCCESS
+                        try {
+                            resultOfOperation.getResult().get();
+                            Log.d(TAG, "Message attachment uploaded successfully");
+
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                            //if the update API gave error, it gets wrapped in ExecutionException
+                            Log.d(TAG, "Message attachment upload failed due to "+e.getCause().getMessage());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "Message attachment upload failed due to "+e.getMessage());
+                        }
+                    }
+                }, AppExecutors2.getInstance().diskIO());
+            } catch (Exception e) {
+                Log.d(TAG, "Message attachment upload failed due to - "+e.getMessage());
+            }
+        }
+
+
+
 
 
 //    public void startDownloadingAttachment(final String messageId, final String groupId, final Long sentAt, final String attachmentExtension, final String filePath, final String fileMime){
     public void startDownloadingAttachment(final Message message, final String filePath){
 
         Log.d(TAG, "downloadAttachment");
-        String key = message.getGroupId()+"_"+message.getMessageId();
 
-        HashMap<String, Object> userData = new HashMap<>();
-        userData.put("action", MessageActionConstants.DOWNLOAD_ATTACHMENT);
-        userData.put("message", message);
-        userData.put("groupName", group.getGroupName());
-        userData.put("filePath", filePath);
+        /**
+         * String messageId = getInputData().getString(MESSAGE_ID);
+         *                     String groupId = getInputData().getString(GROUP_ID);
+         *                     String groupName = getInputData().getString(GROUP_NAME);
+         *                     String attachmentPath = getInputData().getString(ATTACHMENT_PATH);
+         */
 
-        downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), userData));
+        Data inputData = new Data.Builder()
+                .putString("messageId", message.getMessageId())
+                .putString("groupId", message.getGroupId())
+                .putString("groupName", group.getGroupName())
+                .putString("action", MediaActionConstants.DOWNLOAD_ATTACHMENT.getAction())
+                .putString("attachment_path", filePath)
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("download_attachment")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
+
+
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Message attachment downloaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Message attachment download failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Message attachment download failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Message attachment download failed due to - "+e.getMessage());
+        }
+
+
+//        String key = message.getGroupId()+"_"+message.getMessageId();
+//
+//        HashMap<String, Object> userData = new HashMap<>();
+//        userData.put("action", MessageActionConstants.DOWNLOAD_ATTACHMENT);
+//        userData.put("message", message);
+//        userData.put("groupName", group.getGroupName());
+//        userData.put("filePath", filePath);
+//
+//        downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), userData));
 
 //        final LiveData<DomainUpdateResource<String>> downloadAttachmentRepositorySource = downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), userData));
 //        final SingleMediatorLiveEvent<DomainUpdateResource> downloadMessageAttachment = new SingleMediatorLiveEvent<>();
@@ -619,21 +732,26 @@ public class MessagesViewModel extends ViewModel {
         updateMessageAttachmentDetailsUseCase.execute(UpdateMessageAttachmentDetailsUseCase.Params.messageToBeUpdated(messageId, hasAttachment, attachmentUploaded, attachmentLoadingGoingOn, mimeType, attachmentUri));
     }
 
+    public void updateMessageLoadingProgress(){
+
+    }
+
     public void clearMessages() {
         Long cacheClearTime = (new Date()).getTime();
         //update the cache
         UserGroupsListRepository userGroupsListRepository = DataUserGroupsListRepository.getInstance();
-        userGroupsListRepository.updateUserGroupAdminCacheClearTS(group.getGroupId(), cacheClearTime);
+//        userGroupsListRepository.updateUserGroupAdminCacheClearTS(group.getGroupId(), cacheClearTime); ?? why is it here - this is MessagesViewModel
+        userGroupsListRepository.updateUserGroupCacheClearTS(group.getGroupId(), cacheClearTime);
         WorkerBuilderHelper.callUpdateCacheClearTSWorker(group.getGroupId(), (new Date()).getTime(), true, true);
         WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), "Group");
     }
 
-    public void clearMedia() {
-        WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), "Group");
-    }
+//    public void clearMedia() {
+//        WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), "Group");
+//    }
 
 
-    private void updateMessageLoadingProgress(String messageId, String progressStr){
+    public void updateMessageLoadingProgress(String messageId, String progressStr){
         int progress = 0;
         try{
            progress = Integer.parseInt(progressStr);
@@ -643,5 +761,87 @@ public class MessagesViewModel extends ViewModel {
         }
         updateMessageLoadingProgressUseCase.execute(UpdateMessageLoadingProgressUseCase.Params.messageLoadingProgToBeUpdated(messageId, progress));
     }
+
+//    public void handleUploadOrDownloadUpdate(DomainResource<HashMap<String, Object>> domainResource){
+//
+//        //some upload or download changed, see if it relevant to you
+//        Log.d(TAG, "some upload or download changed, see if it relevant to you: ");
+//        HashMap<String, Object> userData = domainResource.data;
+//
+//        if(userData != null){
+//            MessageActionConstants messageActionConstants = (MessageActionConstants) userData.get("action");
+//            final Message messageUpOrDownloaded = (Message) userData.get("message");
+//            File attachment = (File) userData.get("attachment");
+//
+//            if(MessageActionConstants.UPLOAD_ATTACHMENT.equals(messageActionConstants) && messageUpOrDownloaded != null ) {
+//                if (domainResource.status == DomainResource.Status.SUCCESS) {
+//                    DomainMessage message = MessageDataDomainMapper.transformFromMessage(messageUpOrDownloaded);
+//                    final IoTMessage ioTMessage = IoTDomainMessageMapper.transformFromDomain(message);
+//                    ioTMessage.setAttachmentUploaded(true);
+//                    ioTMessage.setAttachmentLoadingGoingOn(false);
+//                    ioTMessage.setAttachmentUri(messageUpOrDownloaded.getAttachmentUri());
+//                    Log.d(TAG, "Upload successful");
+//
+//                    //now delete the file from external folder
+//                    //only for version Q and up because they have a new file created in the directories for them
+//                    //unlike version P and below which is in the external folder and the same has been used as uri
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                        FileUtils.deleteFile(attachment.getPath());
+//                    }
+//
+//                    //publish again - but this time send the old messageId, sentAt and file extension, so that the message is updated not new created
+//                    IoTHelper.getInstance().publishIoTMessage(ioTMessage, AppConfigHelper.getUserId(), new PublishMessageCallback() {
+//                        @Override
+//                        public void publishSuccessful() {
+//                            Log.d(TAG, "publishSuccessful: in update");
+//                            updateMessageForAttachment(ioTMessage.getMessageId(), true, true, false, ioTMessage.getAttachmentMime(), ioTMessage.getAttachmentUri());
+//                        }
+//
+//                        @Override
+//                        public void publishFailed() {
+//                            Log.d(TAG, "publishFailed: ");
+//                        }
+//                    });
+//
+//                }
+//                else if(domainResource.status == DomainResource.Status.LOADING){
+//                    String percent = (String) userData.get("percent");
+//                    Log.d(TAG, "onChanged: - loading - "+percent);
+//                    updateMessageLoadingProgress(messageUpOrDownloaded.getMessageId(), percent);
+//                }
+//            }
+//            else if(MessageActionConstants.DOWNLOAD_ATTACHMENT.equals(messageActionConstants) && messageUpOrDownloaded != null ) {
+//
+//                if (domainResource.status == DomainResource.Status.SUCCESS) {
+//                    String attachmentUri = null;
+//
+//                    String groupName = (String) userData.get("groupName");
+//                    String filePath = (String) userData.get("filePath");
+//
+//                    String newName = messageUpOrDownloaded.getGroupId() + "_Group_" + messageUpOrDownloaded.getMessageId() + messageUpOrDownloaded.getAttachmentExtension();
+//                    attachmentUri = MediaHelper.saveMediaToGallery(AppConfigHelper.getContext(), AppConfigHelper.getContext().getContentResolver(), filePath, newName, messageUpOrDownloaded.getAttachmentMime(), groupName);
+//
+//                    //now delete the file from external folder
+//                    //only deleting for the build Q and up since in those builds, the image is copied to the new directory
+//                    //for older releases, just the path is attached to the uri, but the file is in the same place
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                        FileUtils.deleteFile(filePath);
+//                    }
+////                    }
+//
+//                    //just a dummy update call, does nothing really, but updates the cache, so a refresh is forced
+//                    updateMessageForAttachment(messageUpOrDownloaded.getMessageId(), true, true, false, messageUpOrDownloaded.getAttachmentMime(), attachmentUri);
+//
+//                }
+//                else if(domainResource.status == DomainResource.Status.LOADING){
+//                    String percent = (String) userData.get("percent");
+//                    Log.d(TAG, "onChanged: - loading - "+percent);
+//                    updateMessageLoadingProgress(messageUpOrDownloaded.getMessageId(), percent);
+//                }
+//            }
+//
+//        }
+//
+//    }
 
 }

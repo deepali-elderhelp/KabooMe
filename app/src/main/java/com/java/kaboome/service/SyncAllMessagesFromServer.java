@@ -125,6 +125,12 @@ public class SyncAllMessagesFromServer extends IntentService {
                             GetConversationLastMessageCache getConversationLastMessageCache = new GetConversationLastMessageCache(DataGroupMessagesRepository.getInstance());
                             final DomainMessage lastAdminMessage = getConversationLastMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(userGroup.getGroupId(), AppConfigHelper.getUserId(), true));
                             lastAccessed.set((lastAdminMessage != null && lastAdminMessage.getSentAt() != null)? lastAdminMessage.getSentAt() : userGroup.getAdminsLastAccessed() != null? userGroup.getAdminsLastAccessed() : (new Date()).getTime());
+                            if(groupId.equals("0091d9e3-f4fe-4968-a043-ae4278079086")){
+                                Log.d(TAG, "Last Access - "+lastAccessed.get());
+                                Log.d(TAG, "Last Message sent at - "+(lastAdminMessage != null? lastAdminMessage.getSentAt(): 0));
+                                Log.d(TAG, "User Group last accessed admin - "+userGroup.getAdminsLastAccessed());
+
+                            }
                             getMessagesFromServer(groupId, userGroup.getAdminsCacheClearTS() != null? userGroup.getAdminsCacheClearTS() : (new Date()).getTime(), limit, scanDirection, AppConfigHelper.getUserId());
                         }
                         else{ //user is an admin, so now, get all the conversations and then their messages after last access one by one

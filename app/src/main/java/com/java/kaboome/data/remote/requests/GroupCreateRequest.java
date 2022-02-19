@@ -43,6 +43,9 @@ public class GroupCreateRequest implements Serializable {
         @SerializedName("deviceId")
         private String deviceId;
 
+        @SerializedName("unicastGroup")
+        private Boolean unicastGroup;
+
 
     public GroupCreateRequest(Group group) {
         this.groupId = group.getGroupId();
@@ -55,37 +58,38 @@ public class GroupCreateRequest implements Serializable {
         this.expiry = group.getExpiry();
         this.notify = group.getNotify();
         this.privateGroup = group.isPrivateGroup();
+        this.unicastGroup = group.getUnicastGroup();
         this.deviceId = AppConfigHelper.getDeviceId();
     }
 
-    public GroupCreateRequest(String groupId, String groupName, String groupDescription, String createdBy, String groupCreatorAlias, String groupCreatorRole, String createdOn, Long expiry, String notify, Boolean privateGroup) {
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupDescription = groupDescription;
-        this.createdBy = createdBy;
-        this.groupCreatorAlias = groupCreatorAlias;
-        this.groupCreatorRole = groupCreatorRole;
-        this.createdOn = createdOn;
-        this.expiry = expiry;
-        this.notify = notify;
-        this.privateGroup = privateGroup;
-        this.deviceId = AppConfigHelper.getDeviceId();
-    }
-
-    public GroupCreateRequest(String groupId, String groupName, String groupDescription, String createdBy, String groupCreatorAlias, String groupCreatorRole, String createdOn, Long expiry, String notify, Boolean privateGroup, String deviceId) {
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupDescription = groupDescription;
-        this.createdBy = createdBy;
-        this.groupCreatorAlias = groupCreatorAlias;
-        this.groupCreatorRole = groupCreatorRole;
-        this.createdOn = createdOn;
-        this.expiry = expiry;
-        this.notify = notify;
-        this.privateGroup = privateGroup;
-        this.deviceId = deviceId;
-        this.deviceId = AppConfigHelper.getDeviceId();
-    }
+//    public GroupCreateRequest(String groupId, String groupName, String groupDescription, String createdBy, String groupCreatorAlias, String groupCreatorRole, String createdOn, Long expiry, String notify, Boolean privateGroup) {
+//        this.groupId = groupId;
+//        this.groupName = groupName;
+//        this.groupDescription = groupDescription;
+//        this.createdBy = createdBy;
+//        this.groupCreatorAlias = groupCreatorAlias;
+//        this.groupCreatorRole = groupCreatorRole;
+//        this.createdOn = createdOn;
+//        this.expiry = expiry;
+//        this.notify = notify;
+//        this.privateGroup = privateGroup;
+//        this.deviceId = AppConfigHelper.getDeviceId();
+//    }
+//
+//    public GroupCreateRequest(String groupId, String groupName, String groupDescription, String createdBy, String groupCreatorAlias, String groupCreatorRole, String createdOn, Long expiry, String notify, Boolean privateGroup, String deviceId) {
+//        this.groupId = groupId;
+//        this.groupName = groupName;
+//        this.groupDescription = groupDescription;
+//        this.createdBy = createdBy;
+//        this.groupCreatorAlias = groupCreatorAlias;
+//        this.groupCreatorRole = groupCreatorRole;
+//        this.createdOn = createdOn;
+//        this.expiry = expiry;
+//        this.notify = notify;
+//        this.privateGroup = privateGroup;
+//        this.deviceId = deviceId;
+//        this.deviceId = AppConfigHelper.getDeviceId();
+//    }
 
     public String getGroupId() {
         return groupId;
@@ -173,6 +177,14 @@ public class GroupCreateRequest implements Serializable {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public Boolean getUnicastGroup() {
+        return unicastGroup;
+    }
+
+    public void setUnicastGroup(Boolean unicastGroup) {
+        this.unicastGroup = unicastGroup;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.java.kaboome.data.workers;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -20,6 +21,7 @@ import java.io.File;
 public class DeleteGroupAttachmentsWorker extends Worker {
 
 
+    private static final String TAG = "KMDeleteGroupAttmsW";
     public static final String GROUP_NAME = "groupName";
     public static final String SENT_TO = "sentTo";
 
@@ -62,13 +64,16 @@ public class DeleteGroupAttachmentsWorker extends Worker {
         File imageDirectory = FileUtils.getAppDirForMime("image", groupName, sentTo,false);
         if(imageDirectory != null){
             if (imageDirectory.exists()) {
-                imageDirectory.delete();
+                deleteFilesInsideIt(imageDirectory);
+                boolean deleteWorked = imageDirectory.delete();
+                Log.d(TAG, "delete worked - "+deleteWorked);
             }
         }
 
         File videoDirectory = FileUtils.getAppDirForMime("video", groupName, sentTo, false);
         if(videoDirectory != null){
             if (videoDirectory.exists()) {
+                deleteFilesInsideIt(videoDirectory);
                 videoDirectory.delete();
             }
         }
@@ -76,6 +81,7 @@ public class DeleteGroupAttachmentsWorker extends Worker {
         File audioDirectory = FileUtils.getAppDirForMime("audio", groupName, sentTo, false);
         if(audioDirectory != null){
             if (audioDirectory.exists()) {
+                deleteFilesInsideIt(audioDirectory);
                 audioDirectory.delete();
             }
         }
@@ -112,7 +118,13 @@ public class DeleteGroupAttachmentsWorker extends Worker {
         return Result.success();
     }
 
-
+    private void deleteFilesInsideIt(File imageDirectory) {
+        File[] files = imageDirectory.listFiles();
+                for (int i = 0; i < files.length; ++i) {
+                   boolean fileDeleted =  files[i].delete();
+                    Log.d(TAG, "fileDeleted - "+fileDeleted);
+                }
+    }
 
 
 }

@@ -2,7 +2,6 @@ package com.java.kaboome.presentation.views.features.groupMessages.viewers;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -23,12 +22,8 @@ import android.widget.TextView;
 
 import com.java.kaboome.R;
 import com.java.kaboome.data.entities.Message;
-import com.java.kaboome.presentation.helpers.FileUtils;
-import com.java.kaboome.presentation.helpers.GeneralHelper;
-import com.java.kaboome.presentation.helpers.MediaHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 
-import java.io.File;
 import java.io.IOException;
 
 /**

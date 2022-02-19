@@ -40,6 +40,8 @@ public class GroupDataDomainMapper {
         domainGroup.setDeleted(group.getDeleted());
         domainGroup.setCurrentUserStatusForGroup(group.getCurrentUserStatusForGroup());
         domainGroup.setImageUpdateTimestamp(group.getImageUpdateTimestamp());
+        domainGroup.setGroupPicLoadingGoingOn(group.getGroupPicLoadingGoingOn());
+        domainGroup.setGroupPicUploaded(group.getGroupPicUploaded());
 
 //        List<GroupUser> groupUsers = group.getUsersJoined();
 //        if(groupUsers != null && groupUsers.size() > 0){
@@ -74,6 +76,8 @@ public class GroupDataDomainMapper {
         group.setDeleted(domainGroup.getDeleted());
         group.setCurrentUserStatusForGroup(domainGroup.getCurrentUserStatusForGroup());
         group.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
+        group.setGroupPicLoadingGoingOn(domainGroup.getGroupPicLoadingGoingOn());
+        group.setGroupPicUploaded(domainGroup.getGroupPicUploaded());
 
 
         return group;
@@ -103,8 +107,10 @@ public class GroupDataDomainMapper {
         }
         if("updateGroupNamePrivacyImage".equals(action)){
             group.setGroupName(domainGroup.getGroupName());
-            group.setPrivateGroup(domainGroup.isPrivateGroup());
-            group.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
+            group.setGroupPicLoadingGoingOn(domainGroup.getGroupPicLoadingGoingOn());
+            group.setGroupPicUploaded(domainGroup.getGroupPicUploaded());
+//            group.setPrivateGroup(domainGroup.isPrivateGroup());
+//            group.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
         }
         if("updateGroupRequestsSetting".equals(action)){
             group.setOpenToRequests(domainGroup.getOpenToRequests());

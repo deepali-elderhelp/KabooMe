@@ -188,9 +188,12 @@
         <action
             android:id="@+id/action_groupInfoFragment_to_editGroupAddAdminFragment"
             app:destination="@id/editGroupAddAdminFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_groupInfoFragment_to_inviteContactsFragment"-->
+<!--            app:destination="@id/inviteContactsFragment" />-->
         <action
-            android:id="@+id/action_groupInfoFragment_to_inviteContactsFragment"
-            app:destination="@id/inviteContactsFragment" />
+            android:id="@+id/action_groupInfoFragment_to_inviteContactsDialog"
+            app:destination="@id/inviteContactsDialog" />
         <action
             android:id="@+id/action_groupInfoFragment_to_groupUserPicDisplayFragment"
             app:destination="@id/groupUserPicDisplayFragment"
@@ -254,7 +257,16 @@
     <dialog
         android:id="@+id/drawerBottomSheetFragment"
         android:name="com.java.kaboome.presentation.views.features.home.DrawerBottomSheetFragment"
-        tools:layout="@layout/drawer_bottom_sheet" />
+        tools:layout="@layout/drawer_bottom_sheet" >
+    </dialog>
+    <dialog
+        android:id="@+id/inviteContactsDialog"
+        android:name="com.java.kaboome.presentation.views.features.inviteContacts.InviteContactsDialog"
+        tools:layout="@layout/dialog_invite_contacts" >
+        <action
+            android:id="@+id/action_inviteContactsDialog_to_inviteContactsMessageDialog"
+            app:destination="@id/inviteContactsMessageDialog" />
+    </dialog>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.java.kaboome.presentation.views.features.profile.ProfileFragment"
@@ -344,8 +356,8 @@
             android:id="@+id/action_groupMessagesFragment_to_audioViewerFragment"
             app:destination="@id/audioViewerFragment" />
         <action
-            android:id="@+id/action_groupMessagesFragment_to_inviteContactsFragment"
-            app:destination="@id/inviteContactsFragment" />
+            android:id="@+id/action_groupMessagesFragment_to_inviteContactsDialog"
+            app:destination="@id/inviteContactsDialog" />
         <action
             android:id="@+id/action_groupMessagesFragment_to_userImageDisplayFragment"
             app:destination="@id/userImageDisplayFragment" />
@@ -431,8 +443,8 @@
             android:id="@+id/action_groupUserAdminMessagesFragment_to_audioViewerFragment"
             app:destination="@id/audioViewerFragment" />
         <action
-            android:id="@+id/action_groupUserAdminMessagesFragment_to_inviteContactsFragment"
-            app:destination="@id/inviteContactsFragment" />
+            android:id="@+id/action_groupUserAdminMessagesFragment_to_inviteContactsDialog"
+            app:destination="@id/inviteContactsDialog" />
         <action
             android:id="@+id/action_groupUserAdminMessagesFragment_to_userImageDisplayFragment"
             app:destination="@id/userImageDisplayFragment" />
@@ -466,8 +478,8 @@
             android:id="@+id/action_groupAdminUserMessagesFragment_to_audioViewerFragment"
             app:destination="@id/audioViewerFragment" />
         <action
-            android:id="@+id/action_groupAdminUserMessagesFragment_to_inviteContactsFragment"
-            app:destination="@id/inviteContactsFragment" />
+            android:id="@+id/action_groupAdminUserMessagesFragment_to_inviteContactsDialog"
+            app:destination="@id/inviteContactsDialog" />
         <action
             android:id="@+id/action_groupAdminUserMessagesFragment_to_userImageDisplayFragment"
             app:destination="@id/userImageDisplayFragment" />

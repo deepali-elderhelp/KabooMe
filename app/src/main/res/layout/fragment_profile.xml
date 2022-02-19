@@ -65,14 +65,16 @@
             android:id="@+id/profile_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:src="@drawable/account"
+            />
 
         <ProgressBar
             android:id="@+id/profile_image_progress"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
-            android:layout_height="match_parent"
-            android:indeterminateDrawable="@drawable/custom_progress_bar"
+            android:indeterminateDrawable="@drawable/progress"
             android:indeterminateDuration="1000"
             android:visibility="gone"/>
     </FrameLayout>

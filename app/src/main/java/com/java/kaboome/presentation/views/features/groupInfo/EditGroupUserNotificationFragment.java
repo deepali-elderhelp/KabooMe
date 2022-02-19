@@ -2,11 +2,13 @@ package com.java.kaboome.presentation.views.features.groupInfo;
 
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -20,11 +22,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.java.kaboome.R;
+import com.java.kaboome.constants.UserGroupStatusConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
+import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.GroupModel;
 import com.java.kaboome.presentation.entities.GroupUserModel;
+import com.java.kaboome.presentation.helpers.MessageDeleteCheckHelper;
+import com.java.kaboome.presentation.views.features.groupMessages.GroupMessagesFragment;
+import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +50,7 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
     Button saveButton;
     private RadioGroup notifyGroup;
     ImageView closeButton;
+    private int currentNotificationLevel;
 
     public EditGroupUserNotificationFragment() {
         // Required empty public constructor
@@ -96,28 +105,46 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
         notifyGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                saveButton.setEnabled(true);
+
                 if(checkedId == R.id.edit_group_notifications_group_urgent){
                     //set the active urgent icon and others non-active
                     radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent_active), null);
                     radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all), null);
                     radio_none.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_off), null);
+                    if(!groupModel.getNotifications().equals(NotificationLevels.ONLY_URGENT)){
+                        saveButton.setEnabled(true);
+                    }
+                    else{
+                        saveButton.setEnabled(false);
+                    }
                 }
                 if(checkedId == R.id.edit_group_notifications_group_all){
                     //set the active all icon and others non-active
                     radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent), null);
                     radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all_active), null);
                     radio_none.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_off), null);
+                    if(!groupModel.getNotifications().equals(NotificationLevels.ALL_MESSAGES)){
+                        saveButton.setEnabled(true);
+                    }
+                    else{
+                        saveButton.setEnabled(false);
+                    }
                 }
                 if(checkedId == R.id.edit_group_notifications_group_none){
                     //set the active none icon and others non-active
                     radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent), null);
                     radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all), null);
                     radio_none.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_off_active), null);
+                    if(!groupModel.getNotifications().equals(NotificationLevels.NONE)){
+                        saveButton.setEnabled(true);
+                    }
+                    else{
+                        saveButton.setEnabled(false);
+                    }
                 }
             }
         });
-        
+
 
         //display existing notification level
         selectExistingNotificationLevel();
@@ -125,7 +152,8 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 //validate
-                GroupUserModel groupModelTemp = new GroupUserModel();
+
+                final GroupUserModel groupModelTemp = new GroupUserModel();
                 groupModelTemp.setUserId(AppConfigHelper.getUserId()); //notification level of current user
                 groupModelTemp.setGroupId(groupModel.getGroupId());
                 groupModelTemp.setNotify(getNewSelectedNotification());
@@ -134,11 +162,49 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
 //                groupViewModel.updateGroupUser(groupModelTemp, GroupActionConstants.UPDATE_GROUP_USER_NOTIFICATION.getAction());
 //                dismiss();
 
-                NavController navController = NavHostFragment.findNavController(EditGroupUserNotificationFragment.this);
+                if (groupModel.getCurrentUserGroupStatus().equals(UserGroupStatusConstants.ADMIN_MEMBER) &&
+                        Integer.parseInt(groupModelTemp.getNotify()) < currentNotificationLevel)
+//                        (groupModelTemp.getNotify().equals("1") || groupModelTemp.getNotify().equals("0"))){
+                {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                    alertDialogBuilder.setTitle("Are you sure?");
+                    alertDialogBuilder.setMessage("You are an Admin. Admins of the group are expected to keep notifications for 'All Messages' to help them with monitoring the group");
 
-                navController.getPreviousBackStackEntry().getSavedStateHandle().set("groupUserNotification", groupModelTemp);
-                navController.popBackStack();
-                dismiss();
+                    alertDialogBuilder.setPositiveButton("Yes, I am sure",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    NavController navController = NavHostFragment.findNavController(EditGroupUserNotificationFragment.this);
+
+                                    navController.getPreviousBackStackEntry().getSavedStateHandle().set("groupUserNotification", groupModelTemp);
+                                    navController.popBackStack();
+                                    dismiss();
+                                }
+                            });
+
+                    alertDialogBuilder.setNegativeButton("No, keep the old settings", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectExistingNotificationLevel();
+                            saveButton.setEnabled(false);
+                            dialog.dismiss();
+
+                        }
+                    });
+
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+                else{
+                    NavController navController = NavHostFragment.findNavController(EditGroupUserNotificationFragment.this);
+
+                    navController.getPreviousBackStackEntry().getSavedStateHandle().set("groupUserNotification", groupModelTemp);
+                    navController.popBackStack();
+                    dismiss();
+                }
+
+
             }
         });
 
@@ -161,7 +227,7 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
     private String getNewSelectedNotification(){
 
 
-        
+
         int checkedRadioButtonId = notifyGroup.getCheckedRadioButtonId();
         RadioButton radioButton = (RadioButton) notifyGroup.findViewById(checkedRadioButtonId);
         String notify = "1";
@@ -182,6 +248,7 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
         if(groupModel.getNotifications() != null){
             if(groupModel.getNotifications().equals(NotificationLevels.ONLY_URGENT)){
                 //select urgent only
+                currentNotificationLevel = 1;
                 radio_only_high.setChecked(true);
                 radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent_active), null);
                 radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all), null);
@@ -190,6 +257,7 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
             }
             if(groupModel.getNotifications().equals(NotificationLevels.ALL_MESSAGES)){
                 //select all messages
+                currentNotificationLevel = 2;
                 radio_all.setChecked(true);
                 radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent), null);
                 radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all_active), null);
@@ -198,6 +266,7 @@ public class EditGroupUserNotificationFragment extends DialogFragment {
             }
             if(groupModel.getNotifications().equals(NotificationLevels.NONE)){
                 //select none
+                currentNotificationLevel = 0;
                 radio_none.setChecked(true);
                 radio_only_high.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_urgent), null);
                 radio_all.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.notification_all), null);

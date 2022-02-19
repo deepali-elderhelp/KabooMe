@@ -1,45 +1,28 @@
 package com.java.kaboome.presentation.views.features.groupMessages.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.os.Handler;
-import androidx.annotation.Nullable;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.util.TypedValue;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
-import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.DateHelper;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.helpers.FileUtils;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.images.ImageLinkHandler;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
-import com.java.kaboome.presentation.images.S3LoadingHelper;
-import com.java.kaboome.presentation.images.glide.GlideUrlWithQueryParameter;
-import com.java.kaboome.presentation.images.glide.IntegerVersionSignature;
 import com.java.kaboome.presentation.views.widgets.MessagesListStyle;
 
 import java.io.File;
-import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

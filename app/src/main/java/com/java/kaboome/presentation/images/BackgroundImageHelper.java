@@ -17,15 +17,11 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.helpers.AppConfigHelper;
@@ -46,19 +42,19 @@ import java.util.concurrent.ExecutionException;
  * showing up. That is the strategy that I am using, only placeholder, not error bitmaps.
  *
  */
-public class ImageHelper {
+public class BackgroundImageHelper {
 
     private static final String TAG = "KMImageHelper";
-    private static ImageHelper instance;
+    private static BackgroundImageHelper instance;
 
-    private ImageHelper() {
+    private BackgroundImageHelper() {
 
 
     }
 
-    public static ImageHelper getInstance(){
+    public static BackgroundImageHelper getInstance(){
         if(instance == null){
-            instance = new ImageHelper();
+            instance = new BackgroundImageHelper();
         }
         return instance;
     }
@@ -339,6 +335,46 @@ public class ImageHelper {
 //                .transition(BitmapTransitionOptions.withCrossFade())
 //                .thumbnail(0.1f)
                 .into(imageView);
+    }
+
+    public Bitmap loadBackgroundMainImage(final RequestManager requestManager,  String sourceUrl, final int signatureKey, URL cachedUrl) {
+
+        try {
+            return requestManager.applyDefaultRequestOptions(new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .signature(new IntegerVersionSignature(signatureKey)))
+                    .asBitmap()
+                    .addListener(new RequestListener<Bitmap>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                            Log.e(TAG, "Error loading groupImage from cache, going to server");
+
+//                            handler.post(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    loadImageFromServer(imageName, signatureKey, requestManager, thumbRequest, errorBitmap, imageView, progressBar);
+//                                }
+//                            });
+
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            Log.d(TAG, "Loaded groupImage successfully from cache");
+                            return false;
+                        }
+                    })
+                    .load(new GlideUrlWithQueryParameter(sourceUrl, cachedUrl))
+    //                .transition(BitmapTransitionOptions.withCrossFade())
+    //                .thumbnail(0.1f)
+                    .submit().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

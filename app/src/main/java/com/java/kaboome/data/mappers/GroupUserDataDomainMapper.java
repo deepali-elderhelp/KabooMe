@@ -14,7 +14,8 @@ public class GroupUserDataDomainMapper {
     public static DomainGroupUser transformFromGroup(GroupUser groupUser){
 
         if (groupUser == null) {
-            throw new IllegalArgumentException("Cannot transformFromGroup a null value");
+//            throw new IllegalArgumentException("Cannot transformFromGroup a null value");
+            return null;
         }
 
         DomainGroupUser domainGroupUser = new DomainGroupUser();
@@ -30,6 +31,8 @@ public class GroupUserDataDomainMapper {
         domainGroupUser.setIsCreator(groupUser.getIsCreator());
         domainGroupUser.setDeviceId(groupUser.getDeviceId());
         domainGroupUser.setImageUpdateTimestamp(groupUser.getImageUpdateTimestamp());
+        domainGroupUser.setGroupUserPicLoadingGoingOn(groupUser.getGroupUserPicLoadingGoingOn());
+        domainGroupUser.setGroupUserPicUploaded(groupUser.getGroupUserPicUploaded());
 
         return domainGroupUser;
     }
@@ -54,6 +57,8 @@ public class GroupUserDataDomainMapper {
         groupUser.setIsCreator(domainGroupUser.getIsCreator());
         groupUser.setDeviceId(domainGroupUser.getDeviceId());
         groupUser.setImageUpdateTimestamp(domainGroupUser.getImageUpdateTimestamp());
+        groupUser.setGroupUserPicLoadingGoingOn(domainGroupUser.getGroupUserPicLoadingGoingOn());
+        groupUser.setGroupUserPicUploaded(domainGroupUser.getGroupUserPicUploaded());
 
         return groupUser;
     }
@@ -91,6 +96,8 @@ public class GroupUserDataDomainMapper {
             groupUser.setUserName(domainGroupUser.getUserName());
             groupUser.setRole(domainGroupUser.getRole());
             groupUser.setImageUpdateTimestamp(domainGroupUser.getImageUpdateTimestamp());
+            groupUser.setGroupUserPicLoadingGoingOn(domainGroupUser.getGroupUserPicLoadingGoingOn());
+            groupUser.setGroupUserPicUploaded(domainGroupUser.getGroupUserPicUploaded());
         }
         //this action has been moved to Group level
         //because we do it for all the users together

@@ -3,7 +3,6 @@ package com.java.kaboome.presentation.views.features.profile;
 
 import android.app.Dialog;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -32,9 +31,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.UserModel;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;

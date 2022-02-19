@@ -46,7 +46,6 @@ import com.java.kaboome.constants.MessageGroupsConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
-import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.ContactModel;
@@ -70,7 +69,6 @@ import com.java.kaboome.presentation.views.features.groupMessages.adapter.Upload
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.UserImageClickListener;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.WelcomeMessageClickListener;
 import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.AdminMessagesViewModel;
-import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.MessageTempDataHolder;
 import com.java.kaboome.presentation.views.widgets.MessageInput;
 import com.java.kaboome.presentation.views.widgets.MessagesList;
 import com.paginate.Paginate;
@@ -84,7 +82,10 @@ import java.util.UUID;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-
+/**
+ * This class is for the Group User to see the messages sent to him by Admins of the group
+ * This User is not an Admin
+ */
 public class GroupUserAdminMessagesFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks, MessageInput.InputListener, MessageInput.TypingListener, MessageInput.AttachmentsListener,
     MessageListViewAdapter.OnMessageLongClickListener<Message>, MessageListViewAdapter.OnMessageClickListener,
     MediaPlayClickListener, WelcomeMessageClickListener, UserImageClickListener,
@@ -104,6 +105,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         private boolean urgentChecked = false;
         private NavController navController;
         private boolean firstLoad = true;
+        private boolean connectionEstablished = false;
         private FrameLayout newMessagesFlashIcon;
         private boolean alreadyThere = false;
         private static final int REQUEST_READ_EXTERNAL_STORAGE = 101;
@@ -178,14 +180,14 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                 }
             });
 
-            clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
-            clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    messagesViewModel.clearMedia();
-                    return true;
-                }
-            });
+//            clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
+//            clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    messagesViewModel.clearMedia();
+//                    return true;
+//                }
+//            });
 
 
             groupChat = mainToolbar.getMenu().findItem(R.id.group_chat);
@@ -200,6 +202,10 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
             groupChatLit = mainToolbar.getMenu().findItem(R.id.group_chat_lit);
             groupChatLit.setVisible(false);
             groupChatLit.setActionView(R.layout.new_message_count);
+
+            MenuItem inviteMembers = mainToolbar.getMenu().findItem(R.id.group_message_invite);
+            inviteMembers.setVisible(false);
+
             View menu_messages_action_bar = groupChatLit.getActionView();
             numberOfNewMessages = (TextView) menu_messages_action_bar.findViewById(R.id.new_messages);
             menu_messages_action_bar.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +312,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                     if (o != null) { //it could be null if coming from Viewers
 
                         Attachment[] attachments = (Attachment[]) o;
-
+                        if(NetworkHelper.isOnline() && connectionEstablished){
                         //TODO: right now only one attachment, handle more than one
                         final Attachment attachment = attachments[0];
                         Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
@@ -408,35 +414,38 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                             }
                         }
 
+                        messagesViewModel.addToMessageAttachmentMap(messageId, new String[]{attachmentPath, attachmentURI});
+
                         messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, MessageGroupsConstants.USER_ADMIN_MESSAGES, AppConfigHelper.getUserId(), new PublishMessageCallback() {
 
                             @Override
                             public void publishSuccessful() {
 
-                                Message message = new Message();
-                                message.setMessageId(messageId);
-                                message.setGroupId(group.getGroupId());
-                                message.setSentBy(AppConfigHelper.getUserId());
-                                message.setSentByImageTS(group.getUserImageUpdateTimestamp());
-                                message.setAlias(group.getAlias());
-                                message.setRole(group.getRole());
-                                message.setIsAdmin(group.getIsAdmin());
-                                message.setHasAttachment(true);
-                                message.setAttachmentUploaded(false);
-                                message.setAttachmentMime(fileMime);
-                                message.setAttachmentExtension(fileExtension);
-                                message.setSentAt(sentAt);
-                                message.setSentTo(AppConfigHelper.getUserId());
-                                message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
-                                message.setMessageText(String.valueOf(caption));
-                                message.setTnBlob(thumbnailString);
-                                message.setAttachmentUri(attachmentURI);
-                                message.setAttachmentLoadingGoingOn(true);
-                                message.setDeleted(false);
-//                            handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
-//                            handleUploadAttachment(message, new File(attachmentPath));
-                                messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
-//                                handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
+//                                Message message = new Message();
+//                                message.setMessageId(messageId);
+//                                message.setGroupId(group.getGroupId());
+//                                message.setSentBy(AppConfigHelper.getUserId());
+//                                message.setSentByImageTS(group.getUserImageUpdateTimestamp());
+//                                message.setAlias(group.getAlias());
+//                                message.setRole(group.getRole());
+//                                message.setIsAdmin(group.getIsAdmin());
+//                                message.setHasAttachment(true);
+//                                message.setAttachmentUploaded(false);
+//                                message.setAttachmentMime(fileMime);
+//                                message.setAttachmentExtension(fileExtension);
+//                                message.setSentAt(sentAt);
+//                                message.setSentTo(AppConfigHelper.getUserId());
+//                                message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
+//                                message.setMessageText(String.valueOf(caption));
+//                                message.setTnBlob(thumbnailString);
+//                                message.setAttachmentUri(attachmentURI);
+//                                message.setAttachmentLoadingGoingOn(true);
+//                                message.setDeleted(false);
+////                            handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
+////                            handleUploadAttachment(message, new File(attachmentPath));
+////                                messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
+//                                messagesViewModel.startUploadingAttachment(message, attachmentPath);
+////                                handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
 
                             }
 
@@ -449,7 +458,10 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 
 
                         });
-
+                        } //if connection and internet
+                        else{
+                            Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -603,6 +615,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 //                            IoTHelper.getInstance().subscribeToGroup(group.getGroupId());
                             IoTHelper.getInstance().subscribeToGroup(messagesViewModel.getTopicName());
                             messageInput.getButton().setEnabled(true);
+                            connectionEstablished = true;
                         } catch (Exception e) {
                             if(messagesViewModel.connectionErrorToBeDisplayed(e)){
                                 Toast.makeText(getContext(), "Could not connect to network, please check", Toast.LENGTH_LONG).show();
@@ -612,6 +625,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                     }
                     else{
                         messageInput.getButton().setEnabled(false);
+                        connectionEstablished = false;
                     }
                 }
             });
@@ -729,7 +743,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         public boolean onSubmit(CharSequence input) {
             firstLoad = false;
             //check if the connection is there
-            if(NetworkHelper.isOnline()){
+            if(NetworkHelper.isOnline() && connectionEstablished){
                 messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, MessageGroupsConstants.USER_ADMIN_MESSAGES, AppConfigHelper.getUserId(), new PublishMessageCallback() {
                     @Override
                     public void publishSuccessful() {
@@ -1168,11 +1182,14 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 //            message.setAttachmentUri(galleryImageUri);
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachmentFile);
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-                messagesViewModel.startUploadingAttachment(message, attachment);
+//                messagesViewModel.startUploadingAttachment(message, attachment);
+                messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{attachment.getPath()});
             }
             else{
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-                messagesViewModel.startUploadingAttachment(message, attachment);
+//                messagesViewModel.startUploadingAttachment(message, attachment);
+                messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{attachment.getPath()});
+
             }
         }
 
@@ -1192,7 +1209,8 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                 return;
             }
 //            handleUploadAttachment(message, fileToUpload);
-            messagesViewModel.startUploadingAttachment(message, fileToUpload);
+//            messagesViewModel.startUploadingAttachment(message, fileToUpload);
+            messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{fileToUpload.getPath()});
         }
 
         @Override
@@ -1222,15 +1240,6 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         public void onLoginSuccess() {
             Log.d(TAG, "onLoginSuccess: ");
 
-            if(alreadyThere)
-                return;
-
-//            initRecyclerView();
-//            subscribeObservers();
-
-            messagesViewModel.loadServerMessages();
-            messagesViewModel.startOnlyGroupUnreadMessages();
-
             /**
              * sometimes when the user is on messages for a long time, the cognito session is expired
              * when user comes back, onResume() happens which starts the process of getting credentials
@@ -1240,6 +1249,17 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
              */
 //            IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
             IoTHelper.getInstance().connectToIoT(messagesViewModel.getTopicName(), false); //this will trigger onChanged() for connectionEstablished
+
+
+            if(alreadyThere)
+                return;
+
+//            initRecyclerView();
+//            subscribeObservers();
+
+            messagesViewModel.loadServerMessages();
+            messagesViewModel.startOnlyGroupUnreadMessages();
+
 
             alreadyThere = true;
         }
@@ -1310,7 +1330,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
             //this is a welcome message
             Bundle args = new Bundle();
             args.putSerializable("group", group);
-            navController.navigate(R.id.action_groupUserAdminMessagesFragment_to_inviteContactsFragment, args);
+            navController.navigate(R.id.action_groupUserAdminMessagesFragment_to_inviteContactsDialog, args);
             return;
         }
 

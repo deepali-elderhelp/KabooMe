@@ -45,7 +45,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.java.kaboome.R;
@@ -61,6 +64,7 @@ import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.helpers.DateFormatter;
 import com.java.kaboome.presentation.helpers.DialogHelper;
 import com.java.kaboome.presentation.helpers.FileUtils;
+import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.helpers.PrintHelper;
 import com.java.kaboome.presentation.helpers.QRCodeHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
@@ -110,6 +114,7 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     private RecyclerView groupAdminsRecyclerView;
     private RecyclerView groupMembersRecyclerView;
     private ProgressBar nameAndImageUpdateProgressBar;
+    private ProgressBar aroundImageProgressBar;
     private ProgressBar editGroupDetailsProgressBar;
     private ProgressBar editGroupMembersProgressBar;
     private ProgressBar editQRCodeProgressBar;
@@ -120,12 +125,13 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     private Toolbar mainToolbar;
     private WebView mWebView;
     private TextView leaveAndDeleteGroup;
-    private SwitchCompat acceptingRequest;
+    private SwitchCompat doNotAcceptRequest;
     private ImageView privateImage;
     private ImageView unicastImage;
 
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 102;
     private ImageView networkOffImageView;
+//    private boolean alreadyThere = false;
 
     public GroupInfoFragment() {
         // Required empty public constructor
@@ -133,12 +139,13 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
 
         group = (UserGroupModel)getArguments().getSerializable("group");
 
         groupViewModel = ViewModelProviders.of(this, new CustomViewModelProvider(group.getGroupId())).get(GroupViewModel.class);
-
+//        alreadyThere = false;
 
 
     }
@@ -147,7 +154,11 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView: ");
         super.onCreateView(inflater, container, savedInstanceState);
+
+//        if(alreadyThere)
+//            return rootView;
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_group_info, container, false);
@@ -156,13 +167,14 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
         groupMembersRecyclerView = rootView.findViewById(R.id.group_info_members_recycler);
 
         nameAndImageUpdateProgressBar = rootView.findViewById(R.id.group_info_edit_image_card_progress_bar);
+        aroundImageProgressBar = rootView.findViewById(R.id.group_info_edit_image_card_progress_bar_bigger);
         editGroupDetailsProgressBar = rootView.findViewById(R.id.group_info_edit_details_card_progress_bar);
         editGroupMembersProgressBar = rootView.findViewById(R.id.group_info_members_card_progress_bar);
         editQRCodeProgressBar = rootView.findViewById(R.id.group_info_edit_qr_code_card_progress_bar);
         fullProgressBar = rootView.findViewById(R.id.group_info_full_progress_bar);
 
         groupImage = rootView.findViewById(R.id.group_info_image);
-        acceptingRequest = rootView.findViewById(R.id.group_info_accept_requests);
+        doNotAcceptRequest = rootView.findViewById(R.id.group_info_accept_requests);
 //        groupImageProgressBar = rootView.findViewById(R.id.group_info_image_progress);
         qrCodeImage = rootView.findViewById(R.id.group_info_qr_image);
 
@@ -253,6 +265,9 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+//        if(alreadyThere)
+//            return;
         // We use a String here, but any type that can be put in a Bundle is supported
         MutableLiveData groupDescLiveData = navController.getCurrentBackStackEntry()
                 .getSavedStateHandle()
@@ -426,7 +441,20 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     }
 
     @Override
+    public void onPause() {
+        Log.d(TAG, "onPause: ");
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: ");
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
+        Log.d(TAG, "onDestroyView: ");
         super.onDestroyView();
 
         //not really sure why the following code was there in the first place
@@ -455,7 +483,7 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
             bundle.putSerializable("group", userGroupModel);
 
-            navController.navigate(R.id.action_groupInfoFragment_to_inviteContactsFragment, bundle);
+            navController.navigate(R.id.action_groupInfoFragment_to_inviteContactsDialog, bundle);
         }
     };
 
@@ -603,58 +631,123 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
         });
     }
 
-    private void handleUpdatingGroup(GroupModel groupModel, String action){
+    private void handleUpdatingGroup(final GroupModel groupModelPassed, final String action){
         groupViewModel.getGroupEditActionUpdate().observe(getViewLifecycleOwner(), new Observer<GroupEditDetails>() {
             @Override
             public void onChanged(GroupEditDetails groupEditDetails) {
+
                 if(groupEditDetails != null && (groupEditDetails.getStatus() == GroupEditDetails.Status.UPDATING)){
+                    Log.d(TAG, "updating - loading");
                     showHideProgressBar(groupEditDetails.getAction(), true);
+                    //if group pic has been changed, show the pic from the image path till it is being loaded to the server
+                    if(groupEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE &&
+                            groupEditDetails.getImagePath() != null){
+                        groupModel.setImagePath(groupEditDetails.getImagePath());
+                        //also update image to new
+                        Glide.with(groupImage)
+                                .load(groupModel.getImagePath())
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .dontAnimate()
+                                .into(new SimpleTarget<Drawable>() {
+                                    @Override
+                                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                                        Bitmap mIcon = ImagesUtilHelper.drawableToBitmap(resource);
+                                        groupImage.setImageBitmap(mIcon);
+                                    }
+                                });
+                    }
                     uploadInProgress = true;
                 }
                 else if(groupEditDetails != null && (groupEditDetails.getStatus() == GroupEditDetails.Status.SUCCESS)){
+                    Log.d(TAG, "updating - success");
                     showHideProgressBar(groupEditDetails.getAction(), false);
                     uploadInProgress = false;
                     groupViewModel.getGroupEditActionUpdate().removeObservers(getViewLifecycleOwner());
+                    if(groupEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE &&
+                            groupEditDetails.getImagePath() != null) {
+                        groupModel.setImagePath(groupEditDetails.getImagePath());
+                        //also update image to new
+                        Glide.with(groupImage)
+                                .load(groupModel.getImagePath())
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .dontAnimate()
+                                .into(new SimpleTarget<Drawable>() {
+                                    @Override
+                                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                                        Bitmap mIcon = ImagesUtilHelper.drawableToBitmap(resource);
+                                        groupImage.setImageBitmap(mIcon);
+                                    }
+                                });
+
+                    }
                 }
                 else if(groupEditDetails != null && (groupEditDetails.getStatus() == GroupEditDetails.Status.ERROR)){
+                    Log.d(TAG, "updating - error");
                     showHideProgressBar(groupEditDetails.getAction(), false);
                     Toast.makeText(getContext(), "Sorry, update to the group failed, please try again", Toast.LENGTH_SHORT).show();
                     uploadInProgress = false;
                     groupViewModel.getGroupEditActionUpdate().removeObservers(getViewLifecycleOwner());
+                    if(groupEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE) {
+                        groupModel.setImagePath(null);
+                        //Also, now set the image to old image
+                        ImageHelper.getInstance().loadGroupImage(groupModelPassed.getGroupId(), ImageTypeConstants.MAIN, groupModelPassed.getImageUpdateTimestamp(),
+                                ImageHelper.getInstance().getRequestManager(groupImage), null, null,
+                                handler, groupImage, null, true);
+                    }
                 }
 
             }
         });
         uploadInProgress = true;
-        groupViewModel.updateGroup(groupModel, action);
+        groupViewModel.updateGroup(groupModelPassed, action);
     }
 
-    private void handleUpdatingGroupUser(GroupUserModel groupUserModel, String action){
+    private void handleUpdatingGroupUser(final GroupUserModel groupUserModelPassed, String action){
         groupViewModel.getGroupUserEditActionUpdate().observe(getViewLifecycleOwner(), new Observer<GroupEditDetails>() {
             @Override
             public void onChanged(GroupEditDetails groupUserEditDetails) {
                 if(groupUserEditDetails != null && (groupUserEditDetails.getStatus() == GroupEditDetails.Status.UPDATING)){
                     showHideProgressBar(groupUserEditDetails.getAction(), true);
+//                    if(groupUserEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS &&
+//                            groupUserModelPassed.getImagePath() != null){
+//                        adminAdapter.updateCurrentGroupUserImagePath(groupUserModelPassed.getImagePath());
+//                        memberAdapter.updateCurrentGroupUserImagePath(groupUserModelPassed.getImagePath());
+//                    }
                     uploadInProgress = true;
                 }
                 else if(groupUserEditDetails != null && (groupUserEditDetails.getStatus() == GroupEditDetails.Status.SUCCESS)){
                     showHideProgressBar(groupUserEditDetails.getAction(), false);
                     //not sure if the user is member or admin
+//                    if(groupUserEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS &&
+//                                groupUserModelPassed.getImagePath() != null){
+//                            adminAdapter.updateCurrentGroupUserImagePath(groupUserModelPassed.getImagePath());
+//                            memberAdapter.updateCurrentGroupUserImagePath(groupUserModelPassed.getImagePath());
+//                    }
                     groupViewModel.getGroupUserEditActionUpdate().removeObservers(getViewLifecycleOwner());
-                    adminAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
-                    memberAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
+                    //commenting the below two lines reason being
+                    //now the image update happens through worker and that worker updates the image TS too
+//                    adminAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
+//                    memberAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
                     uploadInProgress = false;
                 }
                 else if(groupUserEditDetails != null && (groupUserEditDetails.getStatus() == GroupEditDetails.Status.ERROR)){
                     showHideProgressBar(groupUserEditDetails.getAction(), false);
                     Toast.makeText(getContext(), "Sorry, update to the group user failed, please try again", Toast.LENGTH_SHORT).show();
+//                    if(groupUserEditDetails.getAction() == GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS &&
+//                            groupUserModelPassed.getImagePath() != null){
+//                        groupUserModelPassed.setImagePath(null);
+//                        adminAdapter.updateCurrentGroupUserImagePath(null);
+//                        memberAdapter.updateCurrentGroupUserImagePath(null);
+//                    }
                     groupViewModel.getGroupUserEditActionUpdate().removeObservers(getViewLifecycleOwner());
                     uploadInProgress = false;
                 }
             }
         });
         uploadInProgress = true;
-        groupViewModel.updateGroupUser(groupUserModel, action);
+        groupViewModel.updateGroupUser(groupUserModelPassed, action);
     }
 
     //TODO: fix it - this is not updating single group user
@@ -675,8 +768,8 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                     showHideProgressBar(groupUserEditDetails.getAction(), false);
                     //not sure if the user is member or admin
                     groupViewModel.getGroupUserEditActionUpdate().removeObservers(getViewLifecycleOwner());
-                    adminAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
-                    memberAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
+//                    adminAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
+//                    memberAdapter.updateCurrentGroupUserImageTS(groupUserEditDetails.getImageUpdatedTimestamp());
                     uploadInProgress = false;
 
 
@@ -886,7 +979,14 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                 //call methods to update the group and to update the recycler view
 //                Log.d(TAG, "onChanged: GroupModel received is "+groupModelReturned);
                 Log.d(TAG, "onChanged: ");
+
+                String imagePathToBeCopied = null;
+                if(groupModel != null){
+                    imagePathToBeCopied = groupModel.getImagePath();
+                }
+
                 groupModel = groupModelReturned;
+                groupModel.setImagePath(imagePathToBeCopied);
                 renderData(groupModel);
             }
         });
@@ -956,6 +1056,9 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     private void showHideProgressBar(GroupActionConstants groupActionConstants, boolean b) {
         if(groupActionConstants == null){ return; }
 
+        if(groupActionConstants == GroupActionConstants.UPDATE_GROUP_IMAGE){
+            aroundImageProgressBar.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+        }
         if(groupActionConstants == GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE){
             nameAndImageUpdateProgressBar.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
         }
@@ -986,16 +1089,17 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
     }
 
-    private void renderData(GroupModel groupModel){
+    private void renderData(GroupModel groupModelPassed){
 
         //some changes in the render data are being done when there is an absence of data
         //there could be case that no data comes from server - network is off and also
         //cache is empty for some reason. In that case, empty data comes from the server
 
+        Log.d(TAG, "renderData: ");
 
         TextView groupName = rootView.findViewById(R.id.group_info_name);
-        if(groupModel.getGroupName() != null && !groupModel.getGroupName().isEmpty()){
-            groupName.setText(groupModel.getGroupName());
+        if(groupModelPassed.getGroupName() != null && !groupModelPassed.getGroupName().isEmpty()){
+            groupName.setText(groupModelPassed.getGroupName());
         }
         else{
             groupName.setText(group.getGroupName());
@@ -1003,8 +1107,8 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
 
         TextView groupMemberNumber = rootView.findViewById(R.id.group_info_members_number);
-        if(groupModel.getNumberOfMembers() > 0){
-            groupMemberNumber.setText(groupModel.getNumberOfMembers()+" members");
+        if(groupModelPassed.getNumberOfMembers() > 0){
+            groupMemberNumber.setText(groupModelPassed.getNumberOfMembers()+" members");
         }
         else{
             groupMemberNumber.setText("");
@@ -1012,67 +1116,101 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 
 
         TextView groupDescription = rootView.findViewById(R.id.group_info_description);
-        groupDescription.setText(groupModel.getGroupDescription());
+        groupDescription.setText(groupModelPassed.getGroupDescription());
 
         TextView groupExpiration = rootView.findViewById(R.id.group_info_expiration);
 
-        if(groupModel.getExpiryDate() == null || groupModel.getExpiryDate() == 0){
+        if(groupModelPassed.getExpiryDate() == null || groupModelPassed.getExpiryDate() == 0){
             groupExpiration.setText("Manual");
         }
         else{
-            groupExpiration.setText(DateFormatter.getDateFormattedPretty(groupModel.getExpiryDate()));
+            groupExpiration.setText(DateFormatter.getDateFormattedPretty(groupModelPassed.getExpiryDate()));
         }
 
-        acceptingRequest.setOnCheckedChangeListener(null);
-        if(groupModel.getOpenToRequests() == null || groupModel.getOpenToRequests()){
-            acceptingRequest.setChecked(false);
+        if(group.getPrivate()) {
+
+            doNotAcceptRequest.setOnCheckedChangeListener(null);
+            if (groupModelPassed.getOpenToRequests() == null || groupModelPassed.getOpenToRequests()) {
+                doNotAcceptRequest.setChecked(false);
+            } else {
+                doNotAcceptRequest.setChecked(true);
+            }
+
+            doNotAcceptRequest.setOnCheckedChangeListener(requestChangeListener);
+            if (groupModelPassed.getCurrentUserGroupStatus() == null || !groupModelPassed.getCurrentUserGroupStatus().equals(UserGroupStatusConstants.ADMIN_MEMBER)) {
+                doNotAcceptRequest.setEnabled(false);
+            }
+            else{
+                doNotAcceptRequest.setEnabled(true);
+            }
         }
         else{
-            acceptingRequest.setChecked(true);
-        }
-
-        acceptingRequest.setOnCheckedChangeListener(requestChangeListener);
-        if(groupModel.getCurrentUserGroupStatus() == null || !groupModel.getCurrentUserGroupStatus().equals(UserGroupStatusConstants.ADMIN_MEMBER)){
-            acceptingRequest.setEnabled(false);
+            doNotAcceptRequest.setEnabled(false);
+            doNotAcceptRequest.setChecked(false);
         }
 
         TextView notification = rootView.findViewById(R.id.group_info_notifications);
-        notification.setText(groupModel.getNotifications());
+        notification.setText(groupModelPassed.getNotifications());
 
         TextView groupAdminLabel = rootView.findViewById(R.id.group_info_group_admins);
-        groupAdminLabel.setText("Group Admins ("+groupModel.getNumberOfAdmins()+")");
+        groupAdminLabel.setText("Group Admins ("+groupModelPassed.getNumberOfAdmins()+")");
 
         TextView membersLabel = rootView.findViewById(R.id.group_info_group_members);
-        membersLabel.setText("Members ("+groupModel.getNumberOfRegularMembers()+")");
+        membersLabel.setText("Members ("+groupModelPassed.getNumberOfRegularMembers()+")");
 
-        adminAdapter.setGroupUsers(groupModel.getAdmins());
-        memberAdapter.setGroupUsers(groupModel.getRegularMembers());
+        adminAdapter.setGroupUsers(groupModelPassed.getAdmins());
+        memberAdapter.setGroupUsers(groupModelPassed.getRegularMembers());
 
         TextView seeAllMembers = rootView.findViewById(R.id.group_info_see_all_member);
-        if(groupModel.getNumberOfRegularMembers() > 10){
+        if(groupModelPassed.getNumberOfRegularMembers() > 10){
             seeAllMembers.setVisibility(View.VISIBLE);
         }
         else{
             seeAllMembers.setVisibility(View.GONE);
         }
 
-        //render image again if changed
-        if(groupModel.getImageUpdateTimestamp() != null && group.getImageUpdateTimestamp() != null && (groupModel.getImageUpdateTimestamp() > group.getImageUpdateTimestamp())){
-            //        ImageHelper.loadGroupImage(groupModel.getGroupId(), groupModel.getImageUpdateTimestamp(), ImageHelper.getRequestManager(getContext(), R.drawable.account_group_grey, R.drawable.account_group_grey), handler, groupImage, null);
-            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, groupModel.getGroupName());
-            ImageHelper.getInstance().loadGroupImage(groupModel.getGroupId(), ImageTypeConstants.MAIN, groupModel.getImageUpdateTimestamp(),
-                    ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+        if(groupModelPassed.getGroupPicLoadingGoingOn()){
+            showHideProgressBar(GroupActionConstants.UPDATE_GROUP_IMAGE, true);
+        }
+        else{
+            showHideProgressBar(GroupActionConstants.UPDATE_GROUP_IMAGE, false);
+        }
+        if(groupModelPassed.getImagePath() != null) {
+            Log.d(TAG, "renderData: render from image path");
+
+            Glide
+                    .with(groupImage)
+                    .load(groupModel.getImagePath())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .dontAnimate()
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                            Bitmap mIcon = ImagesUtilHelper.drawableToBitmap(resource);
+                            groupImage.setImageBitmap(mIcon);
+                        }
+                    });
+
+        }
+        else{
+            Log.d(TAG, "renderData: render from ImageHelper");
+            Drawable imageError = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
+            Drawable imagePlaceHolder = AvatarHelper.generatePlaceholderAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
+            ImageHelper.getInstance().loadGroupImage(groupModelPassed.getGroupId(), ImageTypeConstants.MAIN, groupModelPassed.getImageUpdateTimestamp(),
+                    ImageHelper.getInstance().getRequestManager(groupImage), imagePlaceHolder, imageError,
+                    handler, groupImage, null, true);
         }
 
-        if(groupModel.getGroupPrivate() != null && groupModel.getGroupPrivate()) {
+
+        if(groupModelPassed.getGroupPrivate() != null && groupModelPassed.getGroupPrivate()) {
             privateImage.setVisibility(View.VISIBLE);
         }
         else{
             privateImage.setVisibility(View.GONE);
         }
 
-        if(groupModel.getUnicastGroup() != null && groupModel.getUnicastGroup()){
+        if(groupModelPassed.getUnicastGroup() != null && groupModelPassed.getUnicastGroup()){
             unicastImage.setVisibility(View.VISIBLE);
         }
         else{
@@ -1230,15 +1368,30 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
     @Override
     public void onLoginSuccess() {
 
+        Log.d(TAG, "onLoginSuccess: ");
+//        if(alreadyThere) {
+//            Log.d(TAG, "it is already there");
+//            return;
+//        }
+        Log.d(TAG, "NOT already there");
+
         if(getContext() != null) {
-            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
-            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
+//            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
+//            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
+//            Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account);
 //        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
 //                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
 //                handler, groupImage, null);
-            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
-                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+
+//            Drawable imageErrorholder = getContext().getResources().getDrawable(R.drawable.active_dots);
+//            Drawable imagePlaceholder = getContext().getResources().getDrawable(R.drawable.bs_help);
+//            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+//                    requestManagerForGroupImage, imagePlaceholder, imageErrorholder,
+//                    handler, groupImage, null);
+
+//            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+//                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+//                    handler, groupImage, null);
         }
 
 //        loadQRImage();
@@ -1246,20 +1399,35 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
 //        addEditListeners();
 //        initRecyclerViews();
 //        subscribeObservers();
-        initiateLoading();
+
+//        initiateLoading();
+//        alreadyThere = true;
     }
 
     @Override
     public void whileLoginInProgress() {
+        Log.d(TAG, "whileLoginInProgress: ");
+//        if(alreadyThere){
+//            Log.d(TAG, "it is already there");
+//            return;
+//        }
         if(getContext() != null) {
-            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
-            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
+//            RequestManager requestManagerForGroupImage = Glide.with(groupImage);
+//            Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, group.getGroupName());
+//            Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account);
 //        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
 //                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
 //                handler, groupImage, null);
-            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
-                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+//            Drawable imageErrorholder = getContext().getResources().getDrawable(R.drawable.account_128);
+//            Drawable imagePlaceholder = getContext().getResources().getDrawable(R.drawable.gear_outlined_symbol);
+//
+//            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+//                    requestManagerForGroupImage, imagePlaceholder, imageErrorholder,
+//                    handler, groupImage, null);
+
+//            ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
+//                    requestManagerForGroupImage, imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+//                    handler, groupImage, null);
 
 
             loadQRImage();
@@ -1348,9 +1516,9 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                         }, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                acceptingRequest.setOnCheckedChangeListener(null);
-                                acceptingRequest.setChecked(false);
-                                acceptingRequest.setOnCheckedChangeListener(requestChangeListener);
+                                doNotAcceptRequest.setOnCheckedChangeListener(null);
+                                doNotAcceptRequest.setChecked(false);
+                                doNotAcceptRequest.setOnCheckedChangeListener(requestChangeListener);
                                 dialog.dismiss();
                             }
                         });
@@ -1377,9 +1545,9 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                         }, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                acceptingRequest.setOnCheckedChangeListener(null);
-                                acceptingRequest.setChecked(true);
-                                acceptingRequest.setOnCheckedChangeListener(requestChangeListener);
+                                doNotAcceptRequest.setOnCheckedChangeListener(null);
+                                doNotAcceptRequest.setChecked(true);
+                                doNotAcceptRequest.setOnCheckedChangeListener(requestChangeListener);
                                 dialog.dismiss();
                             }
                         });

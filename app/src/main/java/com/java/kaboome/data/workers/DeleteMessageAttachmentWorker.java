@@ -32,7 +32,6 @@ import static com.java.kaboome.data.constants.WorkerConstants.WORK_SUCCESS;
 /**
  * This worker class is called to delete the attachment
  * of the message if it exists locally/downloaded by the user
- * * This action is only allowed when network is on
  */
 public class DeleteMessageAttachmentWorker extends Worker {
 

@@ -8,30 +8,37 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
 
 import com.java.kaboome.constants.ImageTypeConstants;
+import com.java.kaboome.constants.MediaActionConstants;
 import com.java.kaboome.constants.UserActionConstants;
+import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
 import com.java.kaboome.data.repositories.DataUserRepository;
+import com.java.kaboome.data.workers.LoadMediaWorker;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.domain.entities.DomainUser;
 import com.java.kaboome.domain.repositories.ImageUploadRepository;
 import com.java.kaboome.domain.repositories.UserRepository;
 import com.java.kaboome.domain.usecases.GetUserUseCase;
+import com.java.kaboome.domain.usecases.UpdateUserCacheUseCase;
 import com.java.kaboome.domain.usecases.UpdateUserUseCase;
 import com.java.kaboome.domain.usecases.UploadImageSingleUseCase;
 import com.java.kaboome.domain.usecases.UploadImageUseCase;
 import com.java.kaboome.helpers.AppConfigHelper;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.entities.UserModel;
 import com.java.kaboome.presentation.mappers.UserActionConstantsMapper;
 import com.java.kaboome.presentation.mappers.UserModelMapper;
 import com.java.kaboome.presentation.views.features.profile.UserEditDetails;
 
-import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 
 public class ProfileViewModel extends ViewModel {
@@ -39,6 +46,7 @@ public class ProfileViewModel extends ViewModel {
     private static final String TAG = "KMProfileViewModel";
     private GetUserUseCase getUserUseCase;
     private UpdateUserUseCase updateUserUseCase;
+    private UpdateUserCacheUseCase updateUserCacheUseCase;
     private UploadImageUseCase uploadImageUseCase;
     private UploadImageSingleUseCase uploadImageSingleUseCase;
     private ImageUploadRepository imageUploadRepository;
@@ -60,6 +68,7 @@ public class ProfileViewModel extends ViewModel {
         userRepository = DataUserRepository.getInstance();
         getUserUseCase = new GetUserUseCase(userRepository);
         updateUserUseCase = new UpdateUserUseCase(userRepository);
+        updateUserCacheUseCase = new UpdateUserCacheUseCase(userRepository);
         imageUploadRepository = DataImageUploadRepository.getInstance();
         uploadImageUseCase = new UploadImageUseCase(imageUploadRepository);
         uploadImageSingleUseCase = new UploadImageSingleUseCase(imageUploadRepository);
@@ -209,7 +218,17 @@ public class ProfileViewModel extends ViewModel {
 
     public void uploadUserImage(final UserModel userModel) {
 
-        Log.d(TAG, "uploadImage: ");
+        //set cache to uploading to true
+        //then call worker to upload the image
+        userModel.setUserPicUploaded(false);
+        userModel.setUserPicLoadingGoingOn(true);
+        updateUserCacheUseCase.execute(UpdateUserCacheUseCase.Params.forUser(UserModelMapper.transformFromModelToDomain(userModel), UserActionConstants.UPDATE_USER_PROFILE_IMAGE_NO_TS.getAction()));
+
+        uploadUserImage(ImageTypeConstants.THUMBNAIL, userModel.getThumbnailPath());
+        uploadUserImage(ImageTypeConstants.MAIN, userModel.getImagePath());
+
+
+   /*     Log.d(TAG, "uploadImage: ");
         String key = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN);
         final String tnKey = ImagesUtilHelper.getUserProfilePicName(AppConfigHelper.getUserId(), ImageTypeConstants.THUMBNAIL);
         HashMap<String, Object> userData = new HashMap<>();
@@ -261,12 +280,58 @@ public class ProfileViewModel extends ViewModel {
                 }
             }
         });
+        */
+
 
     }
 
+    private void uploadUserImage(ImageTypeConstants imageType, String pathOfImage) {
+        //here you should call the worker to upload the group image
+        Data inputData = new Data.Builder()
+                .putString("userId", AppConfigHelper.getUserId())
+                .putString("imageType", imageType.getType())
+                .putString("action", MediaActionConstants.UPLOAD_USER_PROFILE_PIC.getAction())
+                .putString("attachment_path", pathOfImage)
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("upload_User_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
 
 
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
 
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "User Pic Uploaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "User Pic upload failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "User Pic upload failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "User Pic upload failed due to - "+e.getMessage());
+        }
+    }
 
 
     @Override

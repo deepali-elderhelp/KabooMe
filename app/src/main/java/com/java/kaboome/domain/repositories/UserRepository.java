@@ -12,9 +12,11 @@ public interface UserRepository {
 
     LiveData<DomainResource<DomainUser>> getUser(String userId);
 
+    DomainUser getUserFromCache(String userId);
 
     LiveData<DomainUpdateResource<String>> updateUser(DomainUser user, String action);
 
     void updateUserInCache(DomainUser user);
 
+    void updateUserInCache(DomainUser user, String action);
 }

@@ -1,9 +1,7 @@
 package com.java.kaboome.presentation.views.features.groupMessages.adapter;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -12,27 +10,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.RequestOptions;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.helpers.DateHelper;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.FileUtils;
 import com.java.kaboome.presentation.helpers.GeneralHelper;
+import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.helpers.MediaHelper;
-import com.java.kaboome.presentation.images.BlurTransformation;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.images.ImageLinkHandler;
 import com.java.kaboome.presentation.images.S3LoadingHelper;
 
-import java.io.File;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -110,9 +102,9 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
 //                handler, profileImage, null);
 
         Drawable imageErrorAndPlaceholder = itemView.getContext().getResources().getDrawable(R.drawable.bs_profile);
-        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.THUMBNAIL,message.getSentBy(), message.getSentByImageTS(),
+        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.MAIN,message.getSentBy(), message.getSentByImageTS(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, profileImage, null);
+                handler, profileImage, null, false);
 
         if (showNewMessageHeader) {
             newMessageHeader.setVisibility(View.VISIBLE);
@@ -467,7 +459,7 @@ public class VideoRcvdMessageHolder extends RecyclerView.ViewHolder {
     }
 
     private void getS3Url(String messageId, String groupId) {
-        String key = groupId+"_"+messageId;
+        String key = ImagesUtilHelper.getMessageAttachmentKeyName(groupId, messageId);
         S3LoadingHelper.getPresignedImageLink(key, new ImageLinkHandler() {
             @Override
             public void onImageLinkReady(URL url) {

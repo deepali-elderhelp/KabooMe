@@ -10,11 +10,19 @@ public class GroupEditDetails {
     private GroupActionConstants action;
     private Status status;
     private Long imageUpdatedTimestamp;
+    private String imagePath;
 
     public GroupEditDetails(GroupActionConstants action, Status status, Long imageUpdatedTimestamp) {
         this.action = action;
         this.status = status;
         this.imageUpdatedTimestamp = imageUpdatedTimestamp;
+    }
+
+    public GroupEditDetails(GroupActionConstants action, Status status, Long imageUpdatedTimestamp, String imagePath) {
+        this.action = action;
+        this.status = status;
+        this.imageUpdatedTimestamp = imageUpdatedTimestamp;
+        this.imagePath = imagePath;
     }
 
     public GroupActionConstants getAction() {
@@ -39,6 +47,14 @@ public class GroupEditDetails {
 
     public void setImageUpdatedTimestamp(Long imageUpdatedTimestamp) {
         this.imageUpdatedTimestamp = imageUpdatedTimestamp;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public enum Status { SUCCESS, ERROR, UPDATING}

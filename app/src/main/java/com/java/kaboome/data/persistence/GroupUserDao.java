@@ -29,8 +29,23 @@ public interface GroupUserDao {
     @Query("SELECT * FROM group_users WHERE userId = :user_id and groupId = :group_id")
     LiveData<GroupUser> getGroupUsers(String user_id, String group_id);
 
+    @Query("SELECT * FROM group_users WHERE userId = :user_id and groupId = :group_id")
+    GroupUser getGroupUserFromCache(String user_id, String group_id);
+
     @Query("UPDATE group_users SET notify = :notify WHERE userId = :userId and groupId = :groupId")
     void updateGroupUserNotification(String userId, String groupId, String notify);
+
+    @Query("UPDATE group_users SET groupUserPicUploaded = :group_user_pic_uploaded WHERE userId = :userId and groupId = :group_id")
+    void updateGroupUserImageUploaded(String userId, String group_id, Boolean group_user_pic_uploaded);
+
+    @Query("UPDATE group_users SET groupUserPicUploaded = :group_user_pic_uploaded, groupUserPicLoadingGoingOn = :group_user_pic_loading_going_on WHERE userId = :userId and groupId = :group_id")
+    void updateGroupUserImageUploadingData(String userId, String group_id, Boolean group_user_pic_uploaded, Boolean group_user_pic_loading_going_on);
+
+    @Query("UPDATE group_users SET userName = :alias, role = :role, groupUserPicUploaded = :group_user_pic_uploaded, groupUserPicLoadingGoingOn = :group_user_pic_loading_going_on, imageUpdateTimestamp = :image_update_timestamp WHERE userId = :userId and groupId = :group_id")
+    void updateGroupUserAliasRoleAndmageUploadingData(String userId, String group_id, String alias, String role, Boolean group_user_pic_uploaded, Boolean group_user_pic_loading_going_on, Long image_update_timestamp);
+
+    @Query("UPDATE group_users SET userName = :alias, role = :role, groupUserPicUploaded = :group_user_pic_uploaded, groupUserPicLoadingGoingOn = :group_user_pic_loading_going_on WHERE userId = :userId and groupId = :group_id")
+    void updateGroupUserAliasRoleAndmageUploadingDataNoTS(String userId, String group_id, String alias, String role, Boolean group_user_pic_uploaded, Boolean group_user_pic_loading_going_on);
 
     @Query("UPDATE group_users SET userName = :alias, role = :role, imageUpdateTimestamp = :image_update_timestamp WHERE userId = :userId and groupId = :groupId")
     void updateGroupUserAliasAndRole(String userId, String groupId, String alias, String role, Long image_update_timestamp);

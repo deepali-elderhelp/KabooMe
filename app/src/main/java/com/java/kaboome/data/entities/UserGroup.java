@@ -118,6 +118,12 @@ public class UserGroup implements Serializable {
     @SerializedName("adminsCacheClearTS")
     private Long adminsCacheClearTS;
 
+    @SerializedName("groupPicUploaded")
+    private Boolean groupPicUploaded;
+
+    @SerializedName("groupPicLoadingGoingOn")
+    private Boolean groupPicLoadingGoingOn = false;
+
 
 //    @ColumnInfo(name = "numberOfRequests")
 //    @SerializedName("numberOfRequests")
@@ -326,7 +332,21 @@ public class UserGroup implements Serializable {
         this.cacheClearTS = cacheClearTS;
     }
 
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
+    }
 
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
+    }
+
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
+    }
+
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
+    }
 
     //    public int getNumberOfRequests() {
 //        return numberOfRequests;

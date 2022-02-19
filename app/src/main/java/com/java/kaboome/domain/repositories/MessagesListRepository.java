@@ -13,6 +13,8 @@ public interface MessagesListRepository {
 //    LiveData<DomainResource<List<DomainMessage>>> getGroupMessages(String groupId, Long lastAccessed, Long cacheClearTS, int limit, String scanDirection);
     LiveData<DomainResource<List<DomainMessage>>> getGroupMessages(String groupId, Long lastAccessed, Long cacheClearTS, int limit, String scanDirection, MessageGroupsConstants messageGroupsConstants, String userId);
 
+    DomainMessage getMessage(String messageId);
+
 //    LiveData<List<DomainMessage>> getGroupMessagesSentAfterLastAccess(String groupId, Long lastAccessedTime);
 
 //    LiveData<List<DomainMessage>> getNetUnreadGroupMessages(String groupId);
@@ -61,17 +63,20 @@ public interface MessagesListRepository {
 
     void updateMessagesToRead(String groupId, String sentTo);
 
+
 //    LiveData<Integer> refreshGroupMessages(String groupId, Long lastAccessed, int limit);
 
 
     //last message from cache as livedata
     LiveData<DomainMessage> getLastMessageForWholeGroupFromCacheLiveData(String groupId);
     LiveData<DomainMessage> getLastMessageForOnlyGroupFromCacheLiveData(String groupId);
+    LiveData<DomainMessage> getLastMessageForAllConvsFromCacheLiveData(String groupId);
     LiveData<DomainMessage> getLastMessageForConvFromCacheLiveData(String groupId, String userId);
 
     //last message from cache single
     DomainMessage getLastMessageForWholeGroupFromCacheSingle(String groupId, boolean includeDeleted);
     DomainMessage getLastMessageForOnlyGroupFromCacheSingle(String groupId, boolean includeDeleted);
+    DomainMessage getLastMessageForAllConvsFromCacheSingle(String groupId, boolean includeDeleted);
     DomainMessage getLastMessageForConvFromCacheSingle(String groupId, String userId, boolean includeDeleted);
 
     //unread messages since last access from cache as LiveData

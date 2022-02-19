@@ -40,6 +40,8 @@ public class UserGroupDataDomainMapper {
         domainUserGroup.setLastHigh(userGroup.getLastHigh());
         domainUserGroup.setLastRegular(userGroup.getLastRegular());
         domainUserGroup.setImageUpdateTimestamp(userGroup.getImageUpdateTimestamp());
+        domainUserGroup.setGroupPicUploaded(userGroup.getGroupPicUploaded());
+        domainUserGroup.setGroupPicLoadingGoingOn(userGroup.getGroupPicLoadingGoingOn());
         domainUserGroup.setUserImageUpdateTimestamp(userGroup.getUserImageUpdateTimestamp());
 //        domainUserGroup.setLastMessageCacheTS(userGroup.getLastMessageCacheTS());
         domainUserGroup.setCacheClearTS(userGroup.getCacheClearTS());
@@ -73,6 +75,8 @@ public class UserGroupDataDomainMapper {
         userGroup.setLastHigh(domainUserGroup.getLastHigh());
         userGroup.setLastRegular(domainUserGroup.getLastRegular());
         userGroup.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
+        userGroup.setGroupPicUploaded(domainUserGroup.getGroupPicUploaded());
+        userGroup.setGroupPicLoadingGoingOn(domainUserGroup.getGroupPicLoadingGoingOn());
         userGroup.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
         userGroup.setCacheClearTS(domainUserGroup.getCacheClearTS());
 //        userGroup.setLastMessageCacheTS(domainUserGroup.getLastMessageCacheTS());

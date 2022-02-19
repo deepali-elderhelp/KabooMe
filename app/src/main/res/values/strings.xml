@@ -73,7 +73,7 @@
     <string name="edit_group_notifications_off">Off</string>
     <string name="group_aliasAndRoler_hint">Your Alias in this group</string>
     <string name="group_role_hint">Role</string>
-    <string name="leave_group_delete_message">This group will be deleted for you and all members</string>
+    <string name="leave_group_delete_message">Since you are the only Admin, this group will be deleted for you and all members</string>
     <string name="leave_group_message">If you leave this group you will stop receiving related messages</string>
     <string name="invite_members">Invite Members</string>
     <string name="see_all_members">See all members</string>
@@ -125,9 +125,9 @@
     <string name="try_again">Try again?</string>
     <string name="go_back">Go Back</string>
     <string name="no_members_regular">All members are Admin already</string>
-    <string name="group_private_alert">This group is private, no one can join it without your permission. You will get a request from them which you can then approve or reject.</string>
+    <string name="group_private_alert">This group is private, no one can join it without your permission. You will get a request from them which you can then approve or reject.This setting cannot be changed once a group is created.</string>
     <string name="group_private_message">This group is private, no one can join it without admins permission. Admin will get a request which they can then approve or reject.</string>
-    <string name="group_public_alert">This group is open, anybody who is interested can join it.</string>
+    <string name="group_public_alert">This group is open, anybody who is interested can join it.This setting cannot be changed once a group is created.</string>
     <string name="group_requests_close">This group will be closed to  public. No one will be able to send any requests to join the group.</string>
     <string name="group_requests_open">This group will be open to accepting new requests.</string>
     <string name="save_picture">Looks Good! Save It</string>
@@ -182,8 +182,8 @@
     <string name="enter_group_alias_text">Alias is name this Group will know you by. For example - \'Alias - John\'s Mom\'</string>
     <string name="new_group_uni_switch_label">Unicast&#160;&#160;&#160;</string>
     <string name="new_group_only_admin_switch_label">Announcements Only&#160;&#160;&#160;</string>
-    <string name="announcement_only_alert">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed.</string>
-    <string name="everyone_posts_alert">This Group allows everyone to post in the Group Message Board. Members can also send private messages to Admin if needed.</string>
+    <string name="announcement_only_alert">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed. This setting cannot be changed once a group is created.</string>
+    <string name="everyone_posts_alert">This Group allows everyone to post in the Group Message Board. Members can also send private messages to Admin if needed.This setting cannot be changed once a group is created.</string>
     <string name="announcements_only_help">This Group only allows Admins to post in the Group Message Board. Members can always send private messages to Admin if needed.</string>
     <string name="send_private_message">Send a private message to the Admins</string>
     <string name="user_left_message">User is not member of the group anymore</string>
@@ -193,5 +193,7 @@
     <string name="feedback_contact">Can we contact you?</string>
     <string name="send_feedback">Send Feedback</string>
     <string name="drawer_feedback_help">Help/Feedback</string>
+    <string name="edit_group_expiry_date">On this day group will be automatically deleted</string>
+    <string name="edit_group_expiry_manual">This Group has no expiry date</string>
 
 </resources>

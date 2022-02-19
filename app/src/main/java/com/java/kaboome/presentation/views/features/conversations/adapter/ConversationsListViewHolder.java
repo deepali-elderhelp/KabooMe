@@ -99,7 +99,7 @@ public class ConversationsListViewHolder extends RecyclerView.ViewHolder {
         //        this.requestManager = ImageHelper.getRequestManager(context, null, avatarHelper.generateAvatar(60, conversation.getGroupName()));
 
 //        ImageHelper.loadGroupImage(conversation.getGroupId(), conversation.getImageUpdateTimestamp(), requestManager,  handler, groupImage, null);
-        ImageHelper.getInstance().loadGroupUserImage(conversation.getGroupId(), ImageTypeConstants.MAIN,conversation.getOtherUserId(), conversation.getImageUpdateTimestamp(), requestManager,  imageErrorAndPlaceholder,imageErrorAndPlaceholder, handler, conversationImage, null);
+        ImageHelper.getInstance().loadGroupUserImage(conversation.getGroupId(), ImageTypeConstants.MAIN,conversation.getOtherUserId(), conversation.getImageUpdateTimestamp(), requestManager,  imageErrorAndPlaceholder,imageErrorAndPlaceholder, handler, conversationImage, null, true);
         //set the transition property on the groupImage
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             conversationImage.setTransitionName(conversation.getOtherUserId());

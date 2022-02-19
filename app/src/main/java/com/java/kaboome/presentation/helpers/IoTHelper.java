@@ -299,6 +299,7 @@ public class IoTHelper {
                             try {
 
                                 String messageText = new String(data, "UTF-8");
+                                Log.d(TAG, "onMessageArrived: Message Text - "+messageText);
                                 //get the message object from the json received
 
                                 IoTMessage messageObject = new Gson().fromJson(messageText, IoTMessage.class);
@@ -385,7 +386,8 @@ public class IoTHelper {
         try {
             if(mqttManager != null){
 //                mqttManager.publishString(message_json, topic, AWSIotMqttQos.QOS0);
-                mqttManager.publishString(message_json, topicName, AWSIotMqttQos.QOS0, new AWSIotMqttMessageDeliveryCallback() {
+//                mqttManager.publishString(message_json, topicName, AWSIotMqttQos.QOS0, new AWSIotMqttMessageDeliveryCallback() {
+                mqttManager.publishString(message_json, topicName, AWSIotMqttQos.QOS1, new AWSIotMqttMessageDeliveryCallback() {
                     @Override
                     public void statusChanged(MessageDeliveryStatus status, Object userData) {
                         if(status == MessageDeliveryStatus.Success){

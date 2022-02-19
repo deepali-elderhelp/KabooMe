@@ -15,12 +15,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Environment;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
@@ -517,16 +519,56 @@ public class PictureDialog extends DialogFragment {
 
     private void createThumbnailFromUri(Context context, Uri uri, String imageId){
 
-        Bitmap bitmap = null;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            saveThumbnail(imageId, bytes);
+        Bitmap thumbnail = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                CancellationSignal ca = new CancellationSignal();
+              //  thumbnail = context.getContentResolver().loadThumbnail(uri, new Size(20, 20), ca);
+                thumbnail = ThumbnailUtils.createImageThumbnail (new File(pathToProfilePic),
+                        new Size(20, 20),
+                        ca);
+            } catch (IOException e) {
+                Log.d(TAG, "exception on thumbnail; generation - " + e.getMessage());
+                e.printStackTrace();
+            }
+            if (thumbnail == null) {
+                //somehow bitmap is null, put default
+                Drawable d = context.getResources().getDrawable(R.drawable.account_group_white);
+                thumbnail = ImagesUtilHelper.drawableToBitmap(d);
+            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+//            thumbnail = FileUtils.getThumbnail(context, uri, FileUtils.getMimeType(context, uri));
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                thumbnail = ThumbnailUtils.extractThumbnail(bitmap,20,20);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (thumbnail == null) {
+                //somehow bitmap is null, put default
+                Drawable d = context.getResources().getDrawable(R.drawable.account_group_white);
+                thumbnail = ImagesUtilHelper.drawableToBitmap(d);
+            }
         }
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        saveThumbnail(imageId, bytes);
+
+
+
+//        Bitmap bitmap = null;
+//        try {
+//
+//            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//            saveThumbnail(imageId, bytes);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 //        Cursor cursor = context.getContentResolver( ).query(uri, null, null, null, null);
 //        if (cursor.moveToFirst()) {

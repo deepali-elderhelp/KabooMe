@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/group_info_group_users_parent_layout"
-    android:layout_marginTop="13dp"
+
+    android:layout_marginBottom="10dp"
     >
 
     <FrameLayout
@@ -13,12 +14,16 @@
         android:layout_height="@dimen/group_user_list_image_height"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="10dp"
+
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/group_info_group_users_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:src="@drawable/account_128"
             />
 
         <ProgressBar
@@ -49,6 +54,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginLeft="10dp"
+        android:maxLength="15"
+        android:ellipsize="end"
         style="@style/GroupInfoLabelsSmall"
         android:text="Kate Business"/>
 
@@ -60,6 +67,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginLeft="10dp"
+        android:maxLength="15"
+        android:ellipsize="end"
         style="@style/GroupInfoLabelsSmall"
         android:text="Manager"/>
 
@@ -89,11 +98,12 @@
 
     <ImageView
         android:id="@+id/group_info_group_users_divider_line"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="@drawable/group_info_line_divider"
+        android:layout_marginTop="13dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/group_info_group_users_image_frame"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

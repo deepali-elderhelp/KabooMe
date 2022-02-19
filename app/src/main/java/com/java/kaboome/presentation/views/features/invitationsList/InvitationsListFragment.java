@@ -30,10 +30,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.java.kaboome.R;
-import com.java.kaboome.constants.UserActionConstants;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.InvitationModel;
-import com.java.kaboome.presentation.entities.UserModel;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.views.features.BaseFragment;
 import com.java.kaboome.presentation.views.features.invitationsList.viewmodel.InvitationsListViewModel;
@@ -41,7 +39,6 @@ import com.java.kaboome.presentation.views.features.invitationsList.adapter.Invi
 import com.java.kaboome.presentation.views.features.invitationsList.adapter.InvitationGroupRejectClickListener;
 import com.java.kaboome.presentation.views.features.invitationsList.adapter.InvitationsListViewAdapter;
 import com.java.kaboome.presentation.views.features.invitationsList.adapter.JoinInvitedGroupClickListener;
-import com.java.kaboome.presentation.views.features.profile.ProfileFragment;
 
 import java.util.List;
 

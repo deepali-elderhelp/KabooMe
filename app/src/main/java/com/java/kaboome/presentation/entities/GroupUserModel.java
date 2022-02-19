@@ -1,5 +1,7 @@
 package com.java.kaboome.presentation.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class GroupUserModel implements Serializable {
@@ -23,6 +25,10 @@ public class GroupUserModel implements Serializable {
     Long imageUpdateTimestamp; //users's image's time stamp
 
     Boolean isCheckedToBeAdmin = false; //needed for add admin screen checkbox
+
+    private Boolean groupUserPicUploaded;
+
+    private Boolean groupUserPicLoadingGoingOn = false;
 
     //Following fields is needed if the user changes profile pic
 
@@ -137,6 +143,22 @@ public class GroupUserModel implements Serializable {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getGroupUserPicUploaded() {
+        return groupUserPicUploaded;
+    }
+
+    public void setGroupUserPicUploaded(Boolean groupUserPicUploaded) {
+        this.groupUserPicUploaded = groupUserPicUploaded;
+    }
+
+    public Boolean getGroupUserPicLoadingGoingOn() {
+        return groupUserPicLoadingGoingOn;
+    }
+
+    public void setGroupUserPicLoadingGoingOn(Boolean groupUserPicLoadingGoingOn) {
+        this.groupUserPicLoadingGoingOn = groupUserPicLoadingGoingOn;
     }
 
     public String getImagePath() {

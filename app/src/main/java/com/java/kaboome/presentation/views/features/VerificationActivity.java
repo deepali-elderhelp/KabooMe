@@ -126,7 +126,7 @@ public class VerificationActivity extends AppCompatActivity {
             else if(e instanceof UserNotFoundException){
                 //wrong login, take them to signup
 
-                showDialogMessage("Not registered", "User not registered, please make sure phone number entered is right");
+                showDialogMessage("Not registered", "User not registered, please make sure phone number entered is right. If not a user, please go back and register.");
 //                Toast.makeText(VerificationActivity.this, "User not registered, please sign up", Toast.LENGTH_SHORT).show();
 
             }

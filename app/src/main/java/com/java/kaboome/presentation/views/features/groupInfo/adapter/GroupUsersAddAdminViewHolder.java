@@ -1,6 +1,5 @@
 package com.java.kaboome.presentation.views.features.groupInfo.adapter;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.View;
@@ -11,12 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.presentation.entities.GroupUserModel;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -70,7 +66,7 @@ public class GroupUsersAddAdminViewHolder extends RecyclerView.ViewHolder {
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.bs_profile);
         ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.THUMBNAIL, user.getUserId(), user.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                handler, groupUserImage, null);
+                handler, groupUserImage, null, false);
 
         groupUserAlias.setText(user.getAlias());
         groupUserRole.setText(user.getRole() != null ? user.getRole() : "");

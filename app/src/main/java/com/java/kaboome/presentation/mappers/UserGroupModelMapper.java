@@ -51,6 +51,8 @@ public class UserGroupModelMapper {
                 userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
                 userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                 userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
+                userGroupModel.setGroupPicUploaded(domainUserGroup.getGroupPicUploaded());
+                userGroupModel.setGroupPicLoadingGoingOn(domainUserGroup.getGroupPicLoadingGoingOn());
                 userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                 userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
                 userGroupModel.setAdminsLastAccessed(domainUserGroup.getAdminsLastAccessed());
@@ -114,6 +116,8 @@ public class UserGroupModelMapper {
                 userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
                 userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                 userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
+                userGroupModel.setGroupPicLoadingGoingOn(domainUserGroup.getGroupPicLoadingGoingOn());
+                userGroupModel.setGroupPicUploaded(domainUserGroup.getGroupPicUploaded());
                 userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                 userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
                 userGroupModel.setAdminsLastAccessed(domainUserGroup.getAdminsLastAccessed());
@@ -178,6 +182,8 @@ public class UserGroupModelMapper {
                     userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
                     userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
                     userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
+                    userGroupModel.setGroupPicUploaded(domainUserGroup.getGroupPicUploaded());
+                    userGroupModel.setGroupPicLoadingGoingOn(domainUserGroup.getGroupPicLoadingGoingOn());
                     userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
                     userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
                     userGroupModel.setLastAccessed(domainUserGroup.getLastAccessed());
@@ -251,6 +257,8 @@ public class UserGroupModelMapper {
         domainUserGroup.setPrivateGroup(userGroupModel.getPrivate());
         domainUserGroup.setUnicastGroup(userGroupModel.getUnicastGroup());
         domainUserGroup.setImageUpdateTimestamp(userGroupModel.getImageUpdateTimestamp());
+        domainUserGroup.setGroupPicUploaded(userGroupModel.getGroupPicUploaded());
+        domainUserGroup.setGroupPicLoadingGoingOn(userGroupModel.getGroupPicLoadingGoingOn());
         domainUserGroup.setUserImageUpdateTimestamp(userGroupModel.getUserImageUpdateTimestamp());
         domainUserGroup.setCacheClearTS(userGroupModel.getCacheClearTS());
         domainUserGroup.setLastAccessed(userGroupModel.getLastAccessed());
@@ -275,6 +283,8 @@ public class UserGroupModelMapper {
         userGroupModel.setPrivate(domainUserGroup.getPrivateGroup());
         userGroupModel.setUnicastGroup(domainUserGroup.getUnicastGroup());
         userGroupModel.setImageUpdateTimestamp(domainUserGroup.getImageUpdateTimestamp());
+        userGroupModel.setGroupPicUploaded(domainUserGroup.getGroupPicUploaded());
+        userGroupModel.setGroupPicLoadingGoingOn(domainUserGroup.getGroupPicLoadingGoingOn());
         userGroupModel.setUserImageUpdateTimestamp(domainUserGroup.getUserImageUpdateTimestamp());
         userGroupModel.setCacheClearTS(domainUserGroup.getCacheClearTS());
         userGroupModel.setLastAccessed(domainUserGroup.getLastAccessed());

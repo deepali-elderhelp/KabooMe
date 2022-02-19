@@ -10,6 +10,7 @@ public class UserEditDetails {
     private UserActionConstants action;
     private Status status;
     private Long imageUpdatedTimestamp;
+    private String imagePath;
 
     public UserEditDetails(UserActionConstants action, Status status, Long imageUpdatedTimestamp) {
         this.action = action;
@@ -39,6 +40,14 @@ public class UserEditDetails {
 
     public void setImageUpdatedTimestamp(Long imageUpdatedTimestamp) {
         this.imageUpdatedTimestamp = imageUpdatedTimestamp;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public enum Status { SUCCESS, ERROR, UPDATING}

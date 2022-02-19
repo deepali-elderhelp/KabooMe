@@ -1,6 +1,5 @@
 package com.java.kaboome.presentation.views.features.invitationsList.adapter;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
@@ -77,7 +76,7 @@ public class InvitationsListViewHolder extends RecyclerView.ViewHolder {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(itemView.getContext(),R.dimen.user_group_list_image_width, invitation.getGroupName());
         ImageHelper.getInstance().loadGroupImage(invitation.getGroupId(), ImageTypeConstants.MAIN,null,
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
         groupName.setText(invitation.getGroupName());
 

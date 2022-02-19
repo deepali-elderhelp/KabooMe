@@ -9,7 +9,7 @@
 <!--        <item name="android:windowActionBarOverlay">true</item>-->
 <!--        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/grey</item>-->
         <item name="android:windowFullscreen">false</item>-->
-<!--        <item name="inputBackground">@color/input_message_background</item>-->
+<!--        <item name="inputBackground">@color/input_message_backgrounxd</item>-->
         <item name="inputBackground">@color/white</item>
     </style>
 
@@ -244,7 +244,7 @@
             <item name="android:textColor">#243E45</item>
             <item name="android:textStyle">bold</item>
 <!--            <item name="android:fontFamily">sans-serif-medium</item>-->
-<!--            <item name="android:fontFamily">@font/roboto_bold</item>-->
+<!--            <item name="android:fontFamily">@font/biryani_bold</item>-->
             <item name="android:fontFamily">@font/biryani</item>
 
 
@@ -279,7 +279,7 @@
             <item name="android:textSize">12sp</item>
             <item name="android:textColor">#7C8990</item>
             <!--            <item name="android:fontFamily">sans-serif-medium</item>-->
-<!--            <item name="android:fontFamily">@font/roboto_medium</item>-->
+<!--            <item name="android:fontFamily">@font/biryani</item>-->
             <item name="android:fontFamily">@font/biryani_light</item>
         </style>
 
@@ -292,7 +292,7 @@
             <item name="android:textColor">
                 #243E45
             </item>
-<!--            <item name="android:fontFamily">@font/roboto_bold</item>-->
+<!--            <item name="android:fontFamily">@font/biryani_bold</item>-->
             <item name="android:fontFamily">@font/biryani_bold</item>
 
         </style>
@@ -369,6 +369,14 @@
         <item name="android:lineSpacingMultiplier">1.12</item>
         <item name="android:fontFamily">@font/biryani</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupActionsLabelsVerySmall">
+        <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">10sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">top</item>
     </style>
@@ -461,6 +469,13 @@
 
     <style name="GroupInfoLabelsSmall">
         <item name="android:lineSpacingMultiplier">1.12</item>
+        <item name="android:fontFamily">@font/biryani</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="GroupUserInfoLabelsSmall">
         <item name="android:fontFamily">@font/biryani</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>

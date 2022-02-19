@@ -11,9 +11,15 @@ import androidx.lifecycle.ViewModel;
 import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
 
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
-import com.java.kaboome.constants.MessageActionConstants;
+import com.java.kaboome.constants.MediaActionConstants;
 import com.java.kaboome.constants.MessageGroupsConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.data.executors.AppExecutors2;
@@ -21,6 +27,7 @@ import com.java.kaboome.data.mappers.MessageDataDomainMapper;
 import com.java.kaboome.data.repositories.DataGroupMessagesRepository;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
 import com.java.kaboome.data.repositories.DataUserGroupsListRepository;
+import com.java.kaboome.data.workers.LoadMediaWorker;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
@@ -41,19 +48,23 @@ import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.WorkerBuilderHelper;
 import com.java.kaboome.presentation.entities.IoTMessage;
 import com.java.kaboome.presentation.entities.UserGroupModel;
-import com.java.kaboome.presentation.helpers.GeneralHelper;
 import com.java.kaboome.presentation.helpers.IoTHelper;
 import com.java.kaboome.presentation.helpers.MessageGroupsHelper;
 import com.java.kaboome.presentation.mappers.IoTDomainMessageMapper;
 import com.java.kaboome.presentation.viewModelProvider.SingleMediatorLiveEvent;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
+/**
+ * This viewmodel is used to show admin messages messages to the user
+ * This is the private line of messages between the user and the admins
+ * This user is not admin
+ */
 public class AdminMessagesViewModel extends ViewModel {
 
     private static final String TAG = "KMAdminMessViewModel";
@@ -78,6 +89,8 @@ public class AdminMessagesViewModel extends ViewModel {
     private MediatorLiveData<DomainResource<List<DomainMessage>>> serverMessages =  new MediatorLiveData<>();
     private MediatorLiveData<List<DomainMessage>> groupUnreadMessages =  new MediatorLiveData<>();
 
+    private HashMap<String, String[]> messageAttachments = new HashMap<>();
+
     public SingleMediatorLiveEvent<DomainUpdateResource> getUploadMessageAttachment() {
         return uploadMessageAttachment;
     }
@@ -90,6 +103,14 @@ public class AdminMessagesViewModel extends ViewModel {
 
     public MediatorLiveData<List<DomainMessage>> getGroupUnreadMessages() {
         return groupUnreadMessages;
+    }
+
+    public void addToMessageAttachmentMap(String messageId, String[] attachments){
+        messageAttachments.put(messageId, attachments);
+    }
+
+    private void removeMessageFromAttachmentMap(String messageId){
+        messageAttachments.remove(messageId);
     }
 
     private SingleMediatorLiveEvent<DomainUpdateResource> downloadMessageAttachment = new SingleMediatorLiveEvent<>();
@@ -177,6 +198,7 @@ public class AdminMessagesViewModel extends ViewModel {
                         if (listDomainResource.status == DomainResource.Status.SUCCESS) {
 
                             if (listDomainResource.data != null) {
+                                Log.d(TAG, "New messages - "+listDomainResource.data.size());
                                 if(listDomainResource.data.size() == 0){
                                     //there were only 15 records
                                     isLoading = false;
@@ -283,6 +305,7 @@ public class AdminMessagesViewModel extends ViewModel {
                 DomainMessage lastMessageInCache = getUserGroupLastConvMessageCache.execute(GetConversationLastMessageCache.Params.forGroupConversation(group.getGroupId(), AppConfigHelper.getUserId(), true));
 //                DomainMessage lastMessageInCache = messagesListRepository.getLastMessageForConvFromCacheSingle(group.getGroupId(), AppConfigHelper.getUserId());
                 if(lastMessageInCache != null && (lastMessageInCache.getSentAt() != null)){
+                    Log.d(TAG, "Last message is there and that is the last access time");
                     Long lastAccessed = lastMessageInCache.getSentAt();
 
                     //update the UserGroup DAO with the new lastAccessed for this group admin messages
@@ -293,6 +316,9 @@ public class AdminMessagesViewModel extends ViewModel {
                     //directly calling the worker which will update the last seen TS to the server
                     WorkerBuilderHelper.callUpdateLastSeenTSWorker(group.getGroupId(), null, lastAccessed, false);
                 }
+                //if there is no last message - the user cleared his cache, then in that case, the cache clear time is already set as the
+                //last access time, so should be good
+
             }
         });
     }
@@ -309,11 +335,15 @@ public class AdminMessagesViewModel extends ViewModel {
         }
     }
 
-    public void handleMessageArrival(IoTMessage message) {
-        if(message != null){
-            Log.d(TAG, "handleMessageArrival: message came - "+message);
-            message.setUploadedToServer(true); //message is coming back from server, so it is uploaded to server already
-            addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(IoTDomainMessageMapper.transformFromIoTMessage(message)));
+    public void handleMessageArrival(IoTMessage ioTMessage) {
+        if(ioTMessage != null){
+            Log.d(TAG, "handleMessageArrival: message came - "+ioTMessage);
+            ioTMessage.setUploadedToServer(true); //message is coming back from server, so it is uploaded to server already
+            addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(IoTDomainMessageMapper.transformFromIoTMessage(ioTMessage)));
+
+            if(ioTMessage.getHasAttachment() && !ioTMessage.getAttachmentUploaded() && ioTMessage.getSentBy().equals(AppConfigHelper.getUserId())){
+                startUploadingAttachment(ioTMessage.getMessageId(), null);
+            }
 
         }
 
@@ -371,20 +401,79 @@ public class AdminMessagesViewModel extends ViewModel {
 
 
 //    public void startUploadingAttachment(final String messageId, final String groupId, final Long sentAt, final String fileExtension, final String fileMime, final File attachment){
-public void startUploadingAttachment(final Message message, final File attachment){
+//public void startUploadingAttachment(final Message message, final File attachment){
+//public void startUploadingAttachment(final Message message, final String attachmentPath){
 //        //first copy to app folder
 //        File attachment = FileUtils.copyAttachmentToApp(filePath, messageId);
 
-
+    public void startUploadingAttachment(final String messageId, String[] attachments){
 
             Log.d(TAG, "uploadImage: ");
-            String key = message.getGroupId()+"_"+message.getMessageId();
-            HashMap<String, Object> userData = new HashMap<>();
-            userData.put("action", MessageActionConstants.UPLOAD_ATTACHMENT);
-            userData.put("message", message);
-            userData.put("attachment", attachment);
-//            final LiveData<DomainUpdateResource<String>> uploadImageRespositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
-            uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
+
+        if(attachments == null){
+            //get the attachment URI/path from the map
+            attachments = messageAttachments.get(messageId);
+        }
+
+        if(attachments == null){
+            return;
+        }
+        //now remove the attachment path from the map
+        messageAttachments.remove(messageId);
+
+        Data inputData = new Data.Builder()
+                .putString("messageId", messageId)
+                .putString("groupId", group.getGroupId())
+                .putString("action", MediaActionConstants.UPLOAD_ATTACHMENT.getAction())
+                .putString("attachment_path", attachments[0])
+                .putString("attachment_uri", attachments[1]) //this is not in the database because it gets overwritten by the message published
+                .build();
+
+    Constraints constraints = new Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build();
+
+    //now start a worker to do the same in the backend
+    OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+            .Builder(LoadMediaWorker.class)
+            .addTag("upload_attachment")
+            .setInputData(inputData)
+            .setConstraints(constraints)
+            .build();
+
+
+    final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+    try {
+        resultOfOperation.getResult().addListener(new Runnable() {
+            @Override
+            public void run() {
+                //only comes here for SUCCESS
+                try {
+                    Log.d(TAG, "Message attachment uploaded successfully");
+                    resultOfOperation.getResult().get();
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                    //if the update API gave error, it gets wrapped in ExecutionException
+                    Log.d(TAG, "Message attachment upload failed due to "+e.getCause().getMessage());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "Message attachment upload failed due to "+e.getMessage());
+                }
+            }
+        }, AppExecutors2.getInstance().diskIO());
+    } catch (Exception e) {
+        Log.d(TAG, "Message attachment upload failed due to - "+e.getMessage());
+    }
+
+//            String key = message.getGroupId()+"_"+message.getMessageId();
+//            HashMap<String, Object> userData = new HashMap<>();
+//            userData.put("action", MessageActionConstants.UPLOAD_ATTACHMENT);
+//            userData.put("message", message);
+//            userData.put("attachment", attachment);
+////            final LiveData<DomainUpdateResource<String>> uploadImageRespositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
+//            uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(attachment, key, MessageActionConstants.UPLOAD_ATTACHMENT.getAction(), userData));
 
 
 //        uploadMessageAttachment.addSource(uploadImageRespositorySource, new Observer<DomainUpdateResource<String>>() {
@@ -425,14 +514,67 @@ public void startUploadingAttachment(final Message message, final File attachmen
 public void startDownloadingAttachment(final Message message, final String filePath){
 
         Log.d(TAG, "downloadAttachment");
-        String key = message.getGroupId()+"_"+message.getMessageId();
-        HashMap<String, Object> userData = new HashMap<>();
-        userData.put("action", MessageActionConstants.DOWNLOAD_ATTACHMENT);
-        userData.put("message", message);
-        userData.put("groupName", group.getGroupName());
-        userData.put("filePath", filePath);
+    /**
+     * String messageId = getInputData().getString(MESSAGE_ID);
+     *                     String groupId = getInputData().getString(GROUP_ID);
+     *                     String groupName = getInputData().getString(GROUP_NAME);
+     *                     String attachmentPath = getInputData().getString(ATTACHMENT_PATH);
+     */
 
-        downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), userData));
+    Data inputData = new Data.Builder()
+            .putString("messageId", message.getMessageId())
+            .putString("groupId", message.getGroupId())
+            .putString("groupName", group.getGroupName())
+            .putString("action", MediaActionConstants.DOWNLOAD_ATTACHMENT.getAction())
+            .putString("attachment_path", filePath)
+            .build();
+
+    Constraints constraints = new Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build();
+
+    //now start a worker to do the same in the backend
+    OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+            .Builder(LoadMediaWorker.class)
+            .addTag("download_attachment")
+            .setInputData(inputData)
+            .setConstraints(constraints)
+            .build();
+
+
+    final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+    try {
+        resultOfOperation.getResult().addListener(new Runnable() {
+            @Override
+            public void run() {
+                //only comes here for SUCCESS
+                try {
+                    Log.d(TAG, "Message attachment downloaded successfully");
+                    resultOfOperation.getResult().get();
+
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                    //if the update API gave error, it gets wrapped in ExecutionException
+                    Log.d(TAG, "Message attachment download failed due to "+e.getCause().getMessage());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "Message attachment download failed due to "+e.getMessage());
+                }
+            }
+        }, AppExecutors2.getInstance().diskIO());
+    } catch (Exception e) {
+        Log.d(TAG, "Message attachment download failed due to - "+e.getMessage());
+    }
+
+//        String key = message.getGroupId()+"_"+message.getMessageId();
+//        HashMap<String, Object> userData = new HashMap<>();
+//        userData.put("action", MessageActionConstants.DOWNLOAD_ATTACHMENT);
+//        userData.put("message", message);
+//        userData.put("groupName", group.getGroupName());
+//        userData.put("filePath", filePath);
+//
+//        downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), userData));
 
 
 //        final LiveData<DomainUpdateResource<String>> downloadAttachmentRespositorySource = downloadAttachmentUseCase.execute(DownloadAttachmentUseCase.Params.downloadAttachment(new File(filePath), key, MessageActionConstants.DOWNLOAD_ATTACHMENT.getAction(), null));
@@ -521,6 +663,8 @@ public void startDownloadingAttachment(final Message message, final String fileP
     }
 
     public void clearMessages() {
+
+
         Long cacheClearTime = (new Date()).getTime();
         //update the cache
         UserGroupsListRepository userGroupsListRepository = DataUserGroupsListRepository.getInstance();
@@ -530,9 +674,9 @@ public void startDownloadingAttachment(final Message message, final String fileP
         WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), AppConfigHelper.getUserId());
     }
 
-    public void clearMedia() {
-        WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), AppConfigHelper.getUserId());
-    }
+//    public void clearMedia() {
+//        WorkerBuilderHelper.callDeleteGroupAttachmentsWorker(group.getGroupName(), AppConfigHelper.getUserId());
+//    }
 
 
     private void updateMessageLoadingProgress(String messageId, String progressStr){

@@ -5,9 +5,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,20 +16,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,6 +69,8 @@ import com.java.kaboome.presentation.views.features.groupMessages.adapter.Messag
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.UploadClickListener;
 import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.MessagesViewModel;
+import com.java.kaboome.presentation.views.features.home.HomeActivity;
+import com.java.kaboome.presentation.views.features.home.viewmodel.HomeViewModel;
 import com.java.kaboome.presentation.views.widgets.MessageInput;
 import com.java.kaboome.presentation.views.widgets.MessagesList;
 import com.paginate.Paginate;
@@ -101,6 +97,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
     private static final String TAG = "KMIoTGroupMessagesFrag";
     private MessagesViewModel messagesViewModel;
+    private HomeViewModel homeViewModel;
     private View rootView;
     private Toolbar mainToolbar;
     private ImageView networkOffImageView;
@@ -147,25 +144,35 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
         this.group = (UserGroupModel)getArguments().getSerializable("group");
         messagesViewModel = ViewModelProviders.of(this, new CustomViewModelProvider(group)).get(MessagesViewModel.class);
+        homeViewModel = ViewModelProviders.of(requireActivity()).get(HomeViewModel.class);
         alreadyThere = false;
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.d(TAG, "onDestroy: ");
+        ((HomeActivity)getActivity()).resetToolbarBackButton();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        Log.d(TAG, "onCreateView: ");
         //toolbar needs to be set again since it was reset by other viewer fragments
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         mainToolbar = act.findViewById(R.id.mainToolbar);
 
-        mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavigationUI.navigateUp(navController, (DrawerLayout) null);
-            }
-        });
+//        mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onClick: line 169");
+//                NavigationUI.navigateUp(navController, (DrawerLayout) null);
+//            }
+//        });
         mainToolbar.getMenu().clear(); //clearing old menu if any
         networkOffImageView = act.findViewById(R.id.mainToolbarNetworkOff);
 
@@ -188,14 +195,14 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             }
         });
 
-        clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
-        clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                messagesViewModel.clearMedia();
-                return true;
-            }
-        });
+//        clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
+//        clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                messagesViewModel.clearMedia();
+//                return true;
+//            }
+//        });
 
 
         inviteMembers = mainToolbar.getMenu().findItem(R.id.group_message_invite);
@@ -336,18 +343,25 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
+                Log.d(TAG, "handleOnBackPressed: ");
                 messagesViewModel.onBackPressed();
                 navController.popBackStack(R.id.groupsListFragment, false);
             }
         });
 
-        //for toolbar back button
+//        //for toolbar back button
         mainToolbar = act.findViewById(R.id.mainToolbar);
         mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messagesViewModel.onBackPressed();
-                navController.popBackStack(R.id.groupsListFragment, false);
+                Log.d(TAG, "onClick: current id is - "+navController.getCurrentDestination().toString());
+                if(navController.getCurrentDestination().getId() == R.id.groupMessagesFragment ) {
+                    messagesViewModel.onBackPressed();
+                    navController.popBackStack(R.id.groupsListFragment, false);
+                }
+                else{
+                    navController.popBackStack();
+                }
             }
         });
 
@@ -359,6 +373,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        Log.d(TAG, "onViewCreated: ");
         if(alreadyThere)
             return;
 
@@ -373,14 +388,16 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
                     Attachment[] attachments = (Attachment[]) o;
 
-                    //TODO: right now only one attachment, handle more than one
-                    final Attachment attachment = attachments[0];
-                    Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
-                    final String caption = attachment.getAttachmentCaption();
-                    final String attachmentURI = attachment.getAttachmentURI();
-                    final String attachmentPath = attachment.getAttachmentPath();
+                    //first check if there is a connection and it is well subscribed
+                    if(NetworkHelper.isOnline() && connectionEstablished){
+                        //TODO: right now only one attachment, handle more than one
+                        final Attachment attachment = attachments[0];
+                        Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
+                        final String caption = attachment.getAttachmentCaption();
+                        final String attachmentURI = attachment.getAttachmentURI();
+                        final String attachmentPath = attachment.getAttachmentPath();
 
-                    //start observing image upload first, before publishing the message
+                        //start observing image upload first, before publishing the message
 //                    messagesViewModel.getUploadMessageAttachment().observe(getViewLifecycleOwner(), new Observer<DomainUpdateResource>() {
 //                        @Override
 //                        public void onChanged(DomainUpdateResource domainUpdateResource) {
@@ -402,121 +419,87 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 //
 //                        }
 //                    });
-                    //user has selected the attachment, now create a message for it and send it
+                        //user has selected the attachment, now create a message for it and send it
 //                    final String fileExtension = FileUtils.getExtension(Uri.parse(attachmentURI), getContext());
 //                    final String fileMime = FileUtils.getMimeType(getContext(), Uri.parse(attachmentURI));
 //                    final String messageId = UUID.randomUUID().toString();
 //                    final Long sentAt = (new Date()).getTime();
 
-                    final String fileExtension = FileUtils.getExtension(attachmentPath);
-                    final String fileMime = FileUtils.getMimeType(fileExtension);
-                    final String messageId = UUID.randomUUID().toString();
-                    final Long sentAt = (new Date()).getTime();
+                        final String fileExtension = FileUtils.getExtension(attachmentPath);
+                        final String fileMime = FileUtils.getMimeType(fileExtension);
+                        final String messageId = UUID.randomUUID().toString();
+                        final Long sentAt = (new Date()).getTime();
 
-                    //save the selected or created media in the proper folder
+                        //save the selected or created media in the proper folder
 //                    String newName = group.getGroupId()+"_Group_"+messageId+fileExtension;
 //                    final String galleryImageUri = MediaHelper.saveMediaToGallery(getActivity().getContentResolver(), attachmentPath, newName, fileMime, group.getGroupName());
 
 
-                    //if the message is type image or video, get a thumbnail of the image
-                    //add that to the message and publish
-                    if(fileMime.contains("image") || fileMime.contains("video")) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            try {
-                                Bitmap thumbnail = getActivity().getContentResolver().loadThumbnail(Uri.parse(attachmentURI), new Size(20,20), null);
+                        //if the message is type image or video, get a thumbnail of the image
+                        //add that to the message and publish
+                        if(fileMime.contains("image") || fileMime.contains("video")) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                Bitmap thumbnail = ImagesUtilHelper.getThumbnailBitmap(getContext(), attachmentURI, attachmentPath, fileMime);
                                 thumbnailString = GeneralHelper.bitmapToBase64(thumbnail);
-                            } catch (IOException e) {
-                                Log.d(TAG, "exception on thumbnail; generation - "+e.getMessage());
-                                e.printStackTrace();
                             }
-
-                        } else {
-                            Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
-                            Bitmap exifedBitmap = thumbnail;
-                            if(thumbnail == null){
-                                //somehow bitmap is null, put default
-                                Drawable d = getResources().getDrawable(R.drawable.attachment_default);
-                                thumbnail = ImagesUtilHelper.drawableToBitmap(d);
+                            else {
+                                Bitmap thumbnail = ImagesUtilHelper.getThumbnailBitmap(getContext(), attachmentURI, attachmentPath, fileMime);
+                                Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(thumbnail, 20, 20, true);
+                                thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                             }
-                            try {
-                                //sometimes for the older versions, the exif is coming off by 90 degrees
-                                //hence rotating it
-                                int angle = 0;
-                                ExifInterface oldExif = new ExifInterface(attachmentPath);
-                                int orientation = oldExif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                        ExifInterface.ORIENTATION_UNDEFINED);
-                                switch(orientation) {
-                                    case ExifInterface.ORIENTATION_ROTATE_90:
-                                        angle = 90;
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_ROTATE_180:
-                                        angle = 180;
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_ROTATE_270:
-                                        angle = 270;
-                                        break;
-
-                                    case ExifInterface.ORIENTATION_NORMAL:
-                                    default:
-                                        angle=0;
-                                }
-
-                                Matrix matrix = new Matrix();
-                                matrix.postRotate(angle);
-                                exifedBitmap = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(),
-                                        matrix, true);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(exifedBitmap, 20, 20, true);
-                            thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                         }
-                    }
+                        messagesViewModel.addToMessageAttachmentMap(messageId, new String[]{attachmentPath, attachmentURI});
 
 //                    messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, galleryImageUri, new PublishMessageCallback() {
-                    messagesViewModel.publishIoTMessage(messageId, group.getGroupId(), AppConfigHelper.getUserId(), group.getUserImageUpdateTimestamp(), group.getAlias(), group.getRole(),group.getIsAdmin(), String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, new PublishMessageCallback() {
+                        messagesViewModel.publishIoTMessage(messageId, group.getGroupId(), AppConfigHelper.getUserId(), group.getUserImageUpdateTimestamp(), group.getAlias(), group.getRole(),group.getIsAdmin(), String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, new PublishMessageCallback() {
 
-                        @Override
-                        public void publishSuccessful() {
+                            @Override
+                            public void publishSuccessful() {
 
-                            Message message = new Message();
-                            message.setMessageId(messageId);
-                            message.setGroupId(group.getGroupId());
-                            message.setSentBy(AppConfigHelper.getUserId());
-                            message.setSentByImageTS(group.getUserImageUpdateTimestamp());
-                            message.setAlias(group.getAlias());
-                            message.setRole(group.getRole());
-                            message.setIsAdmin(group.getIsAdmin());
-                            message.setHasAttachment(true);
-                            message.setAttachmentUploaded(false);
-                            message.setAttachmentMime(fileMime);
-                            message.setAttachmentExtension(fileExtension);
-                            message.setSentAt(sentAt);
-                            message.setSentTo("Group");
-                            message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
-                            message.setMessageText(String.valueOf(caption));
-                            message.setTnBlob(thumbnailString);
-                            message.setAttachmentUri(attachmentURI);
-                            message.setAttachmentLoadingGoingOn(true);
-                            message.setDeleted(false);
+//                            Message message = new Message();
+//                            message.setMessageId(messageId);
+//                            message.setGroupId(group.getGroupId());
+//                            message.setSentBy(AppConfigHelper.getUserId());
+//                            message.setSentByImageTS(group.getUserImageUpdateTimestamp());
+//                            message.setAlias(group.getAlias());
+//                            message.setRole(group.getRole());
+//                            message.setIsAdmin(group.getIsAdmin());
+//                            message.setHasAttachment(true);
+//                            message.setAttachmentUploaded(false);
+//                            message.setAttachmentMime(fileMime);
+//                            message.setAttachmentExtension(fileExtension);
+//                            message.setSentAt(sentAt);
+//                            message.setSentTo("Group");
+//                            message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
+//                            message.setMessageText(String.valueOf(caption));
+//                            message.setTnBlob(thumbnailString);
+//                            message.setAttachmentUri(attachmentURI);
+//                            message.setAttachmentLoadingGoingOn(true);
+//                            message.setDeleted(false);
+
 //                            handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
 //                            handleUploadAttachment(message, new File(attachmentPath));
-                            messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
+//                            messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
+                                // messagesViewModel.startUploadingAttachment(message, attachmentPath);
 
-                        }
 
-                        @Override
-                        public void publishFailed() {
-                            //show alert that the message sent failed
+                            }
+
+                            @Override
+                            public void publishFailed() {
+                                //show alert that the message sent failed
 //                            IoTHelper.getInstance().setLastMessage(null);
-                            Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
-                        }
+                                Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                            }
 
 
-                    });
+                        });
+
+                    } //if connection and internet
+                    else{
+                        Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                    }
+
 
                 }
             }
@@ -544,6 +527,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     @Override
     public void onResume() {
 
+        Log.d(TAG, "onResume: ");
         mainToolbar.setTitle(group.getGroupName());
         mainToolbar.setSubtitle("Group Messages");
         //the following is needed because when waking up after screen change on something, the old value comes up
@@ -763,6 +747,18 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             });
         }
 
+//        //subscribe the home view model for upload/download updates
+//        homeViewModel.getCentralUpOrDownLoadLiveData().observe(getViewLifecycleOwner(), new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> domainResource) {
+//                Log.d(TAG, "onChanged: something changed");
+//                messagesViewModel.handleUploadOrDownloadUpdate(domainResource);
+//            }
+//        });
+
+
+
+
 
 
 
@@ -844,6 +840,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         //check if the connection is there
         //also check if subscription has happened
         if(NetworkHelper.isOnline() && connectionEstablished){
+            Log.d(TAG, "onSubmit: tried with online and connection");
             messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, new PublishMessageCallback() {
                 @Override
                 public void publishSuccessful() {
@@ -855,6 +852,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                 public void publishFailed() {
                     //show message that it failed, connection issue could be there, try again
                     Toast.makeText(getContext(), "There seems to be some network problem...still trying", Toast.LENGTH_SHORT).show();
+
                 }
             });
         }
@@ -1023,6 +1021,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
     @Override
     public void onDestroyView() {
+        Log.d(TAG, "onDestroyView: ");
         super.onDestroyView();
 
 //        mainToolbar.getMenu().clear();
@@ -1242,66 +1241,66 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     }
 
 
-    private void handleUploadAttachment(final Message message, final File attachment){
-
-        //start observing image upload first, before publishing the message
-//        messagesViewModel.getUploadMessageAttachment().observe(this, new Observer<DomainUpdateResource>() {
-//            @Override
-//            public void onChanged(DomainUpdateResource domainUpdateResource) {
-//                /**
-//                 * two things need to happen here -
-//                 * If status is success, that means that the image is uploaded, now -
-//                 * 1. publish the message again - messageId is same, so new record should not be created
-//                 */
-//                Log.d(TAG, "Upload happening");
-//                if(DomainUpdateResource.Status.SUCCESS == domainUpdateResource.status){
-//                    Log.d(TAG, "Upload successful");
-//                    messagesViewModel.getUploadMessageAttachment().removeObservers(GroupMessagesFragment.this);
+//    private void handleUploadAttachment(final Message message, final File attachment){
 //
-//                    //now delete the file from external folder
-//                    //only for version Q and up because they have a new file created in the directories for them
-//                    //unlike version P and below which is in the external folder and the same has been used as uri
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                        FileUtils.deleteFile(attachment.getPath());
-//                    }
-////                            Log.d(TAG, "type - : "+ getContext().getContentResolver().getType(Uri.fromFile(new File(attachment.getAttachmentURI()))));
-//                    //view model call to update the cache use case
-//                    final MessageTempDataHolder messageTempDataHolder  = (MessageTempDataHolder) domainUpdateResource.data;
+//        //start observing image upload first, before publishing the message
+////        messagesViewModel.getUploadMessageAttachment().observe(this, new Observer<DomainUpdateResource>() {
+////            @Override
+////            public void onChanged(DomainUpdateResource domainUpdateResource) {
+////                /**
+////                 * two things need to happen here -
+////                 * If status is success, that means that the image is uploaded, now -
+////                 * 1. publish the message again - messageId is same, so new record should not be created
+////                 */
+////                Log.d(TAG, "Upload happening");
+////                if(DomainUpdateResource.Status.SUCCESS == domainUpdateResource.status){
+////                    Log.d(TAG, "Upload successful");
+////                    messagesViewModel.getUploadMessageAttachment().removeObservers(GroupMessagesFragment.this);
+////
+////                    //now delete the file from external folder
+////                    //only for version Q and up because they have a new file created in the directories for them
+////                    //unlike version P and below which is in the external folder and the same has been used as uri
+////                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+////                        FileUtils.deleteFile(attachment.getPath());
+////                    }
+//////                            Log.d(TAG, "type - : "+ getContext().getContentResolver().getType(Uri.fromFile(new File(attachment.getAttachmentURI()))));
+////                    //view model call to update the cache use case
+////                    final MessageTempDataHolder messageTempDataHolder  = (MessageTempDataHolder) domainUpdateResource.data;
+////
+////                    //publish again - but this time send the old messageId, sentAt and file extension, so that the message is updated not new created
+////                    messagesViewModel.publishIoTMessage(messageTempDataHolder.getMessageId(), String.valueOf(message.getMessageText()), messageTempDataHolder.getSentAt(), message.getNotify(), true, true, false, messageTempDataHolder.getFileExtension(), messageTempDataHolder.getFileMime(), false, message.getTnBlob(), message.getAttachmentUri(), new PublishMessageCallback() {
+////                        @Override
+////                        public void publishSuccessful() {
+////                            messagesViewModel.updateMessageForAttachment(messageTempDataHolder.getMessageId(), true, true, false, messageTempDataHolder.getFileMime(), message.getAttachmentUri());
+////                        }
+////
+////                        @Override
+////                        public void publishFailed() {
+////                            Toast.makeText(getContext(), "There seems to be some problem uploading, please try again after sometime", Toast.LENGTH_SHORT).show();
+////                        }
+////                    });
+////
+////
+////                }
+////
+////            }
+////        });
 //
-//                    //publish again - but this time send the old messageId, sentAt and file extension, so that the message is updated not new created
-//                    messagesViewModel.publishIoTMessage(messageTempDataHolder.getMessageId(), String.valueOf(message.getMessageText()), messageTempDataHolder.getSentAt(), message.getNotify(), true, true, false, messageTempDataHolder.getFileExtension(), messageTempDataHolder.getFileMime(), false, message.getTnBlob(), message.getAttachmentUri(), new PublishMessageCallback() {
-//                        @Override
-//                        public void publishSuccessful() {
-//                            messagesViewModel.updateMessageForAttachment(messageTempDataHolder.getMessageId(), true, true, false, messageTempDataHolder.getFileMime(), message.getAttachmentUri());
-//                        }
+//        //first copy to app folder
+//        if(!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)) {
+////            File attachmentFile = FileUtils.copyAttachmentToApp(FileUtils.getUri(attachment), "Group", message.getMessageId(), message.getGroupId(), getContext());
+////            String galleryImageUri = MediaHelper.saveMediaToGallery(getContext(), getActivity().getContentResolver(), attachmentFile.getAbsolutePath(), message.getMessageId()+"-"+message.getGroupId(), "image/*", group.getGroupName());
+////            message.setAttachmentUri(galleryImageUri);
+////            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachmentFile);
+////            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
+//            messagesViewModel.startUploadingAttachment(message, attachment);
+//        }
+//        else{
+////            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
+//            messagesViewModel.startUploadingAttachment(message, attachment);
+//        }
 //
-//                        @Override
-//                        public void publishFailed() {
-//                            Toast.makeText(getContext(), "There seems to be some problem uploading, please try again after sometime", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-//
-//                }
-//
-//            }
-//        });
-
-        //first copy to app folder
-        if(!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)) {
-//            File attachmentFile = FileUtils.copyAttachmentToApp(FileUtils.getUri(attachment), "Group", message.getMessageId(), message.getGroupId(), getContext());
-//            String galleryImageUri = MediaHelper.saveMediaToGallery(getContext(), getActivity().getContentResolver(), attachmentFile.getAbsolutePath(), message.getMessageId()+"-"+message.getGroupId(), "image/*", group.getGroupName());
-//            message.setAttachmentUri(galleryImageUri);
-//            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachmentFile);
-//            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-            messagesViewModel.startUploadingAttachment(message, attachment);
-        }
-        else{
-//            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-            messagesViewModel.startUploadingAttachment(message, attachment);
-        }
-
-    }
+//    }
 
     @Override
     public void onDownloadClicked(Message message) {
@@ -1319,7 +1318,9 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             return;
         }
 //        handleUploadAttachment(message, fileToUpload);
-        messagesViewModel.startUploadingAttachment(message, fileToUpload);
+//        messagesViewModel.startUploadingAttachment(message, fileToUpload);
+//        messagesViewModel.startUploadingAttachment(message, fileToUpload.getPath());
+        messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{fileToUpload.getPath()});
 
     }
 
@@ -1350,6 +1351,21 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     public void onLoginSuccess() {
         Log.d(TAG, "onLoginSuccess: ");
 
+        //moving it here - commented the one below - reason being -
+        //when the user moves away from the page to admin and comes back,
+        //alreadyThere is true, so it returns but the connection established is false
+        //as set in the onResume()
+        //so it is important that this connectToIoT happens even when alreadyThere is true
+        //hence moving it here
+
+        /**
+         * sometimes when the user is on messages for a long time, the cognito session is expired
+         * when user comes back, onResume() happens which starts the process of getting credentials
+         * but the connectToIoT is called before waiting for the new token. So, basically, connectToIoT is called
+         * before the session is established and hence credentials needed for IoT fail and the connection is not formed
+         * so, we need to make the IoT connection only after login is successful
+         */
+        IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
 
 
         if(alreadyThere)
@@ -1363,14 +1379,14 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         messagesViewModel.startNetUnreadGroupAllConversationMessagesUseCase();
 
 
-        /**
-         * sometimes when the user is on messages for a long time, the cognito session is expired
-         * when user comes back, onResume() happens which starts the process of getting credentials
-         * but the connectToIoT is called before waiting for the new token. So, basically, connectToIoT is called
-         * before the session is established and hence credentials needed for IoT fail and the connection is not formed
-         * so, we need to make the IoT connection only after login is successful
-         */
-        IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
+//        /**
+//         * sometimes when the user is on messages for a long time, the cognito session is expired
+//         * when user comes back, onResume() happens which starts the process of getting credentials
+//         * but the connectToIoT is called before waiting for the new token. So, basically, connectToIoT is called
+//         * before the session is established and hence credentials needed for IoT fail and the connection is not formed
+//         * so, we need to make the IoT connection only after login is successful
+//         */
+//        IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
 
         alreadyThere = true;
     }
@@ -1457,7 +1473,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         //this is a welcome message
         Bundle args = new Bundle();
         args.putSerializable("group", group);
-        navController.navigate(R.id.action_groupMessagesFragment_to_inviteContactsFragment, args);
+        navController.navigate(R.id.action_groupMessagesFragment_to_inviteContactsDialog, args);
         return;
     }
 

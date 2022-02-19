@@ -2,28 +2,19 @@ package com.java.kaboome.presentation.views.features.help;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.text.Html;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.gson.Gson;
 import com.java.kaboome.R;
-import com.java.kaboome.presentation.views.features.groupList.viewmodel.UserGroupsListViewModel;
-import com.java.kaboome.presentation.views.features.groupMessages.GroupMessagesFragment;
 import com.java.kaboome.presentation.views.features.help.viewmodel.HelpViewModel;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 /**
  * A simple {@link Fragment} subclass.

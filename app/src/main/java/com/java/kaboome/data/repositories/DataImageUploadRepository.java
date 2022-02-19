@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -17,12 +18,9 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.java.kaboome.constants.AWSConstants;
-import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.data.executors.AppExecutors2;
-import com.java.kaboome.data.mappers.MessageDataDomainMapper;
 import com.java.kaboome.data.mappers.ResourceDomainResourceMapper;
 import com.java.kaboome.data.mappers.UpdateResourceDomainResourceMapper;
-import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.domain.entities.DomainUpdateResource;
 import com.java.kaboome.domain.repositories.ImageUploadRepository;
@@ -32,7 +30,6 @@ import com.java.kaboome.helpers.CredentialsHandler;
 import com.java.kaboome.presentation.images.ImageHelper;
 
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 
 public class DataImageUploadRepository implements ImageUploadRepository {
@@ -112,8 +109,13 @@ public class DataImageUploadRepository implements ImageUploadRepository {
                     AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
-                            CopyObjectRequest copyObjRequest = new CopyObjectRequest(AWSConstants.S3_BUCKET_NAME.toString(), toBeCopiedKey, AWSConstants.S3_BUCKET_NAME.toString(), newKey);
-                            s3Client.copyObject(copyObjRequest);
+                            try {
+                                CopyObjectRequest copyObjRequest = new CopyObjectRequest(AWSConstants.S3_BUCKET_NAME.toString(), toBeCopiedKey, AWSConstants.S3_BUCKET_NAME.toString(), newKey);
+                                s3Client.copyObject(copyObjRequest);
+                            } catch (AmazonClientException e) {
+                                e.printStackTrace();
+                                Log.d(TAG, "Exception in startBackgroundCopyImage "+e.getMessage());
+                            }
                         }
                     });
 

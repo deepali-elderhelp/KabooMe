@@ -1,17 +1,13 @@
 package com.java.kaboome.presentation.views.features.groupList.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,29 +15,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.DateHelper;
 import com.java.kaboome.presentation.entities.UserGroupModel;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.images.ImageLinkHandler;
-import com.java.kaboome.presentation.images.S3LoadingHelper;
-import com.java.kaboome.presentation.images.glide.GlideUrlWithQueryParameter;
-import com.java.kaboome.presentation.images.glide.IntegerVersionSignature;
-import com.java.kaboome.presentation.views.widgets.EllipsizingTextView;
 //import com.java.kaboome.presentation.views.adapters.RecyclerViewPayloads.GroupNewUnreadCountPayload;
-import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +32,7 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
 
     ConstraintLayout parentLayout;
     CircleImageView groupImage;
+//    GlideImageView groupImage;
     TextView groupName;
     TextView lastMessage;
     TextView lastMessageDay;
@@ -63,6 +45,7 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
     FrameLayout newRequestsLayout;
     TextView newRequestsCount;
     ImageView privacyImage;
+    ImageView unicastImage;
 //    LinearLayout groupDetails;
     RequestManager requestManager;
     UserGroupImageClickListener userGroupImageClickListener;
@@ -79,7 +62,7 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
         this.context = context;
         parentLayout = itemView.findViewById(R.id.gr_li_fr_list_item_parent_layout);
         groupImage = itemView.findViewById(R.id.gr_li_fr_list_item_group_image);
-//        groupImageLoadingProgress = itemView.findViewById(R.id.gr_li_fr_list_item_group_image_progress);
+        groupImageLoadingProgress = itemView.findViewById(R.id.gr_li_fr_list_item_group_image_progress);
         groupName = itemView.findViewById(R.id.gr_li_fr_list_item_group_name);
         lastMessage = itemView.findViewById(R.id.gr_li_fr_list_item_group_message);
         lastMessageDay = itemView.findViewById(R.id.gr_li_fr_list_item_message_day);
@@ -92,6 +75,7 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
         newRequestsLayout = itemView.findViewById(R.id.gr_li_fr_list_item_group_requests);
         newRequestsCount = itemView.findViewById(R.id.gr_li_fr_list_item_group_requests_count);
         privacyImage = itemView.findViewById(R.id.gr_li_fr_list_item_privacy);
+        unicastImage = itemView.findViewById(R.id.gr_li_fr_list_item_unicast);
 //        this.requestManager = requestManager;
         this.userGroupImageClickListener = userGroupImageClickListener;
         this.userGroupMessagesClickListener = userGroupMessagesClickListener;
@@ -99,11 +83,11 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void onBind(final UserGroupModel group, Handler handler){
+    public void onBind(final UserGroupModel group, Handler handlerPassed){
 
         Log.d(TAG, "Group - "+group.getGroupName()+" requests count "+group.getNumberOfRequests());
 
-        this.handler = handler;
+        this.handler = handlerPassed;
         //disable the request button for now
         //enable after implementation
        // newRequestsImage.setVisibility(View.GONE);
@@ -119,13 +103,45 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
 
 //        requestManager.clear(groupImage);
 //        groupImage.setImageDrawable(null);
-        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(context,R.dimen.user_group_list_image_width, group.getGroupName());
-        requestManager = ImageHelper.getInstance().getRequestManager(itemView.getContext(), imageErrorAndPlaceholder, imageErrorAndPlaceholder);
+        final Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(context,R.dimen.user_group_list_image_width, group.getGroupName());
+        //no placeholder - looks ugly
+        requestManager = ImageHelper.getInstance().getRequestManager(itemView.getContext(), null, imageErrorAndPlaceholder);
 //        requestManager = ImageHelper.getInstance().getRequestManager(itemView.getContext(), imageErrorAndPlaceholder, imageErrorAndPlaceholder);
         //        this.requestManager = ImageHelper.getRequestManager(context, null, avatarHelper.generateAvatar(60, group.getGroupName()));
 
 //        ImageHelper.loadGroupImage(group.getGroupId(), group.getImageUpdateTimestamp(), requestManager,  handler, groupImage, null);
-        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN,group.getImageUpdateTimestamp(), requestManager,  imageErrorAndPlaceholder,imageErrorAndPlaceholder, handler, groupImage, null);
+
+//        final String imageName = ImagesUtilHelper.getGroupImageName(group.getGroupId(), ImageTypeConstants.MAIN);
+//        final String sourceUrl = S3LoadingHelper.getBaseUrlOfImage(imageName);
+//        final int signatureKey = AppConfigHelper.getImageSignature(imageName, group.getImageUpdateTimestamp());
+//        final URL cachedUrl = S3LoadingHelper.getCachedImageLink(imageName);
+//        Log.d(TAG, "loadGroupMNImage - "+imageName+" signature key "+signatureKey);
+//
+//        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                final Bitmap image = BackgroundImageHelper.getInstance().loadBackgroundMainImage(requestManager,  sourceUrl, signatureKey, cachedUrl);
+//                if(image != null){
+//                    AppExecutors2.getInstance().mainThread().execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            groupImage.setImageBitmap(image);
+//                        }
+//                    });
+//                }
+//            }
+//        });
+
+        if(group.getGroupPicLoadingGoingOn()){
+            groupImageLoadingProgress.setVisibility(View.VISIBLE);
+        }
+        else{
+            groupImageLoadingProgress.setVisibility(View.GONE);
+        }
+
+        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN,group.getImageUpdateTimestamp(), requestManager,  imageErrorAndPlaceholder,imageErrorAndPlaceholder, handler, groupImage, null, true);
+//        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.THUMBNAIL,group.getImageUpdateTimestamp(), requestManager,  imageErrorAndPlaceholder,imageErrorAndPlaceholder, handler, groupImage, null);
         //set the transition property on the groupImage
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             groupImage.setTransitionName(group.getGroupId());
@@ -147,6 +163,13 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
         }
         else{
             privacyImage.setVisibility(View.INVISIBLE);
+        }
+
+        if(group.getUnicastGroup() != null && group.getUnicastGroup()){
+            unicastImage.setVisibility(View.VISIBLE);
+        }
+        else{
+            unicastImage.setVisibility(View.INVISIBLE);
         }
 
         if(group.getUnreadCount() <= 0){

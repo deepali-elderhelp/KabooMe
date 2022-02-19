@@ -8,6 +8,7 @@ import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
+import com.java.kaboome.constants.GroupActionConstants;
 import com.java.kaboome.data.entities.Group;
 import com.java.kaboome.data.entities.GroupUser;
 import com.java.kaboome.data.executors.AppExecutors2;
@@ -83,6 +84,36 @@ public class DataGroupsUsersRepository implements GroupsUsersRepository {
 
     }
 
+    @Override
+    public void updateGroupUserCache(final DomainGroupUser groupUser, String action) {
+        if(action == null || action.isEmpty()){
+            return;
+        }
+        //only implementing this one action right now, will add more as needed
+        //only image upload finish comes back later from a worker thread
+        //hence calling it separate
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS.getAction())){
+            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //update the local Group cache for Group Name and Loading status (either could be changed)
+                        groupUserDao.updateGroupUserAliasRoleAndmageUploadingData(groupUser.getUserId(), groupUser.getGroupId(), groupUser.getUserName(), groupUser.getRole(), groupUser.getGroupUserPicUploaded(), groupUser.getGroupUserPicLoadingGoingOn(), groupUser.getImageUpdateTimestamp());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateGroupUserCache "+exception.getMessage());
+                    }
+                }
+            });
+
+        }
+    }
+
+    @Override
+    public DomainGroupUser getGroupUserFromCache(String groupId, String userId) {
+        return GroupUserDataDomainMapper.transformFromGroup(groupUserDao.getGroupUserFromCache(userId, groupId));
+    }
+
     private LiveData<UpdateResource<String>>  updateGroupUserToServerAndLocal(final GroupUser groupUser, final String action) {
 
         return new NewNetworkBoundUpdateRes<String, Void>(AppExecutors2.getInstance()) {
@@ -104,7 +135,8 @@ public class DataGroupsUsersRepository implements GroupsUsersRepository {
                     groupUserDao.updateGroupUserNotification(groupUser.getUserId(), groupUser.getGroupId(), groupUser.getNotify());
                 }
                 if (action != null && "updateGroupUserRoleAndAlias".equals(action)) {
-                    groupUserDao.updateGroupUserAliasAndRole(groupUser.getUserId(), groupUser.getGroupId(), groupUser.getUserName(), groupUser.getRole(), groupUser.getImageUpdateTimestamp());
+//                    groupUserDao.updateGroupUserAliasAndRole(groupUser.getUserId(), groupUser.getGroupId(), groupUser.getUserName(), groupUser.getRole(), groupUser.getImageUpdateTimestamp());
+                    groupUserDao.updateGroupUserAliasRoleAndmageUploadingDataNoTS(groupUser.getUserId(), groupUser.getGroupId(), groupUser.getUserName(), groupUser.getRole(), groupUser.getGroupUserPicUploaded(), groupUser.getGroupUserPicLoadingGoingOn());
                 }
                 //this action has been moved to the Group level
                 //because we do it for all users made admins together

@@ -25,6 +25,7 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.Chal
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.continuations.MultiFactorAuthenticationContinuation;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.exceptions.CognitoInternalErrorException;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.AuthenticationHandler;
+import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.AuthenticationCallback;
 import com.java.kaboome.helpers.CognitoAuthenticationHandler;
@@ -33,6 +34,8 @@ import com.java.kaboome.helpers.CredentialsHandler;
 import com.java.kaboome.helpers.FirebaseTokenHelper;
 import com.java.kaboome.helpers.LoginHandler;
 import com.java.kaboome.helpers.NetworkHandler;
+
+import java.util.HashMap;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -185,6 +188,29 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
     }
 
 
+    private void subscribeObservers() {
+
+        Log.d(TAG, "subscribeObservers: ");
+
+//        homeViewModel.getObserveUpload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
+//                Log.d(TAG, "onChanged: from homeactivity - upload");
+//            }
+//        });
+//
+//        homeViewModel.getObserveDownload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
+//                Log.d(TAG, "onChanged: from homeactivity - download");
+//            }
+//        });
+
+
+    }
+
+
+
 //    @Override
 //    public void onLoginSuccess() {
 //        //some cleanup
@@ -206,6 +232,7 @@ public abstract class BaseFragment extends Fragment implements LoginHandler, Net
     @Override
     public void whileLoginInProgress() {
         Log.d(TAG, "whileLoginInProgress: ");
+//        homeViewModel.startObservingUploadAndDownload();
     }
 
     //    private void findCurrent() {

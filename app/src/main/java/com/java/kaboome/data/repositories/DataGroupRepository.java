@@ -12,6 +12,7 @@ import com.java.kaboome.constants.GroupActionConstants;
 import com.java.kaboome.constants.UserGroupStatusConstants;
 import com.java.kaboome.data.entities.Group;
 import com.java.kaboome.data.entities.GroupUser;
+import com.java.kaboome.data.entities.UserGroup;
 import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.data.mappers.GroupDataDomainMapper;
 import com.java.kaboome.data.mappers.GroupUserDataDomainMapper;
@@ -150,6 +151,7 @@ public class DataGroupRepository implements GroupRepository {
             @NonNull
             @Override
             protected LiveData<ApiResponse<GroupUser>> createCall() {
+                Log.d(TAG, "createCall: unicast setting - "+group.getUnicastGroup());
                 return AppConfigHelper.getBackendApiServiceProvider().createGroup(AppConfigHelper.getUserId(), new GroupCreateRequest(group));
             }
 
@@ -198,9 +200,12 @@ public class DataGroupRepository implements GroupRepository {
                     groupDao.updateGroupImageTS(group.getImageUpdateTimestamp(), group.getGroupId());
                 }
                 else if(action != null && "updateGroupNamePrivacyImage".equals(action)){
-                    groupDao.updateGroupName(group.getGroupName(), group.getGroupId());
-                    groupDao.updateGroupPrivacy(group.isPrivateGroup(), group.getGroupId());
-                    groupDao.updateGroupImageTS(group.getImageUpdateTimestamp(), group.getGroupId());
+//                    groupDao.updateGroupName(group.getGroupName(), group.getGroupId());
+//                    groupDao.updateGroupImageLoadingGoingOn(group.getGroupPicLoadingGoingOn(), group.getGroupId());
+//                    groupDao.updateGroupImageUploaded(group.getGroupPicUploaded(), group.getGroupId());
+                    groupDao.updateGroupINameAndmageUploadingData(group.getGroupName(), group.getGroupPicUploaded(), group.getGroupPicLoadingGoingOn(), group.getGroupId());
+////                    groupDao.updateGroupPrivacy(group.isPrivateGroup(), group.getGroupId());
+//                    groupDao.updateGroupImageTS(group.getImageUpdateTimestamp(), group.getGroupId());
                 }
                 else if(action != null && "updateGroupRequestsSetting".equals(action)){
                     groupDao.updateGroupOpenToRequests(group.getOpenToRequests(), group.getGroupId());
@@ -303,6 +308,8 @@ public class DataGroupRepository implements GroupRepository {
         });
     }
 
+
+
     @Override
     public LiveData<DomainUpdateResource<String>> deleteGroup(String groupId, String action) {
         return Transformations.map(deleteGroupOrUserToServerAndLocal(groupId, AppConfigHelper.getUserId(), null, action), new Function<UpdateResource<String>, DomainUpdateResource<String>>() {
@@ -334,7 +341,12 @@ public class DataGroupRepository implements GroupRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupDao.setGroupToDeleted(true, groupId);
+                try {
+                    groupDao.setGroupToDeleted(true, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteGroupFromCache "+exception.getMessage());
+                }
             }
         });
     }
@@ -347,7 +359,12 @@ public class DataGroupRepository implements GroupRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupDao.deleteGroup(groupId);
+                try {
+                    groupDao.deleteGroup(groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in removeGroupFromCache "+exception.getMessage());
+                }
             }
         });
     }
@@ -361,8 +378,13 @@ public class DataGroupRepository implements GroupRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupUserDao.updateGroupUserIsDeleted(true, groupUserId, groupId);
+                try {
+                    groupUserDao.updateGroupUserIsDeleted(true, groupUserId, groupId);
 //                groupDao.deleteGroup(groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteGroupUserFromCache "+exception.getMessage());
+                }
             }
         });
     }
@@ -457,4 +479,61 @@ public class DataGroupRepository implements GroupRepository {
         }.getAsLiveData();
 
     }
+
+    @Override
+    public void updateGroupCache(final DomainGroup group, final String action){
+        if(action == null || action.isEmpty()){
+            return;
+        }
+        //only implementing this one action right now, will add more as needed
+        //only image upload finish comes back later from a worker thread
+        //hence calling it separate
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction())){
+            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //update the local Group cache for Group Name and Loading status (either could be changed)
+//                    groupDao.updateGroupName(group.getGroupName(), group.getGroupId());
+//                    groupDao.updateGroupImageLoadingGoingOn(group.getGroupPicLoadingGoingOn(), group.getGroupId());
+//                    groupDao.updateGroupImageUploaded(group.getGroupPicUploaded(), group.getGroupId());
+                        groupDao.updateGroupINameAndmageUploadingData(group.getGroupName(),group.getGroupPicUploaded(), group.getGroupPicLoadingGoingOn(), group.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateGroupCache "+exception.getMessage());
+                    }
+                }
+            });
+
+        }
+        else if(action.equals(GroupActionConstants.UPDATE_GROUP_CURRENT_STATUS.getAction())){
+            AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        //update the local Group cache for Group Name and Loading status (either could be changed)
+//                    groupDao.updateGroupName(group.getGroupName(), group.getGroupId());
+//                    groupDao.updateGroupImageLoadingGoingOn(group.getGroupPicLoadingGoingOn(), group.getGroupId());
+//                    groupDao.updateGroupImageUploaded(group.getGroupPicUploaded(), group.getGroupId());
+                        groupDao.updateCurrentUserStatusForGroup(group.getCurrentUserStatusForGroup(), group.getGroupId());
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        Log.d(TAG, "Exception in updateGroupCache "+exception.getMessage());
+                    }
+                }
+            });
+
+        }
+    }
+
+//    @Override
+//    public void updateGroupPicUploadingFields(final Boolean picUploaded, final Boolean picUploadingGoingOn, final String groupId) {
+//        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                //update the local Group cache for Group Name and Loading status (either could be changed)
+//                groupDao.updateGroupImageUploadingData(picUploaded, picUploadingGoingOn, groupId);
+//            }
+//        });
+//    }
 }

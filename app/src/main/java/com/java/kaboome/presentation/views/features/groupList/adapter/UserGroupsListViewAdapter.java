@@ -306,6 +306,8 @@ public class UserGroupsListViewAdapter extends RecyclerView.Adapter<RecyclerView
         if(currentUserGroup.getUnreadPMCount() == newUserGroup.getUnreadPMCount()){
             return;
         }
+        Log.d(TAG, "currentUserGroup.getUnreadPMCount() - "+currentUserGroup.getUnreadPMCount());
+        Log.d(TAG, "newUserGroup.getUnreadPMCount() - "+newUserGroup.getUnreadPMCount());
         currentUserGroup.setUnreadPMCount(newUserGroup.getUnreadPMCount());
     }
 

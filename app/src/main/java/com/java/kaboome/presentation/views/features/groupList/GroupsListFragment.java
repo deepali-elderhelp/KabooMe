@@ -40,6 +40,7 @@ import com.java.kaboome.presentation.views.features.groupList.adapter.UserGroupM
 import com.java.kaboome.presentation.views.features.groupList.adapter.UserGroupRequestsClickListener;
 import com.java.kaboome.presentation.views.features.groupList.adapter.UserGroupsListViewAdapter;
 import com.java.kaboome.presentation.views.features.groupList.viewmodel.UserGroupsListViewModel;
+import com.java.kaboome.presentation.views.features.home.viewmodel.HomeViewModel;
 
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
     private RecyclerView recyclerView;
     private ImageView splashScreen;
     private UserGroupsListViewModel userGroupsListViewModel;
+    private HomeViewModel homeViewModel;
     private UserGroupsListViewAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean alreadyThere = false;
@@ -93,6 +95,7 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
         super.onCreate(savedInstanceState);
 
         userGroupsListViewModel = ViewModelProviders.of(this).get(UserGroupsListViewModel.class);
+        homeViewModel = ViewModelProviders.of(requireActivity()).get(HomeViewModel.class);
 //        navController = NavHostFragment.findNavController(this);
         alreadyThere = false;
     }
@@ -365,6 +368,15 @@ public class GroupsListFragment extends BaseFragment implements UserGroupImageCl
 
             }
         });
+
+//        //subscribe the home view model for upload/download updates
+//        homeViewModel.getCentralUpOrDownLoadLiveData().observe(getViewLifecycleOwner(), new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> hashMapDomainResource) {
+//                //some upload or download changed, see if it relevant to you
+//                Log.d(TAG, "some upload or download changed, see if it relevant to you: ");
+//            }
+//        });
 
 
     }

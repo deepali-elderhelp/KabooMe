@@ -231,7 +231,7 @@ public class HomeActivity extends CameraActivity {
             }
         });
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        subscribeObservers();
+//        subscribeObservers();
 
     }
 
@@ -256,21 +256,27 @@ public class HomeActivity extends CameraActivity {
                 }
             }
         });
-        homeViewModel.startObservingUploadAndDownload();
+//        homeViewModel.startObservingUploadAndDownload();
 
-        homeViewModel.getObserveUpload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
-            @Override
-            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
-                Log.d(TAG, "onChanged: from homeactivity - upload");
-            }
-        });
+//        homeViewModel.getObserveUpload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
+//                Log.d(TAG, "onChanged: from homeactivity - upload");
+////                homeViewModel.updateCentralUpOrDownLoadLiveData(domainMessageDomainResource.data);
+//
+//
+//            }
+//        });
+//
+//        homeViewModel.getObserveDownload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
+//            @Override
+//            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
+//                Log.d(TAG, "onChanged: from homeactivity - download");
+////                homeViewModel.updateCentralUpOrDownLoadLiveData(domainMessageDomainResource.data);
+//            }
+//        });
 
-        homeViewModel.getObserveDownload().observe(this, new Observer<DomainResource<HashMap<String, Object>>>() {
-            @Override
-            public void onChanged(DomainResource<HashMap<String, Object>> domainMessageDomainResource) {
-                Log.d(TAG, "onChanged: from homeactivity - download");
-            }
-        });
+
     }
 
     @Override
@@ -408,6 +414,8 @@ public class HomeActivity extends CameraActivity {
     @Override
     public void whileLoginInProgress() {
         Log.d(TAG, "whileLoginInProgress: ");
+        subscribeObservers();
+//        homeViewModel.startObservingUploadAndDownload();
         homeViewModel.getNumberOfInvitationsFromBackend();
     }
 

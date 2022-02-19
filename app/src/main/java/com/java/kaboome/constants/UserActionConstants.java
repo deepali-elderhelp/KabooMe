@@ -8,7 +8,8 @@ public enum UserActionConstants {
 
     UPDATE_USER_NAME("updateUserName"),
     UPDATE_USER_EMAIL("updateUserEmail"),
-    UPDATE_USER_PROFILE_IMAGE_TS("updateUserImage");
+    UPDATE_USER_PROFILE_IMAGE_TS("updateUserImage"),
+    UPDATE_USER_PROFILE_IMAGE_NO_TS("updateUserImageNoTS");
 
 
     private String action;

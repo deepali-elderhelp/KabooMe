@@ -10,14 +10,24 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
 
+import com.java.kaboome.constants.CreateGroupStatusContants;
 import com.java.kaboome.constants.GeneralStatusContants;
 import com.java.kaboome.constants.GroupActionConstants;
 import com.java.kaboome.constants.ImageTypeConstants;
+import com.java.kaboome.constants.MediaActionConstants;
+import com.java.kaboome.data.executors.AppExecutors2;
 import com.java.kaboome.data.repositories.DataGroupRepository;
 import com.java.kaboome.data.repositories.DataGroupsUsersRepository;
 import com.java.kaboome.data.repositories.DataImageUploadRepository;
 import com.java.kaboome.data.repositories.DataUserGroupRepository;
+import com.java.kaboome.data.workers.LoadMediaWorker;
 import com.java.kaboome.domain.entities.DomainGroup;
 import com.java.kaboome.domain.entities.DomainGroupUser;
 import com.java.kaboome.domain.entities.DomainResource;
@@ -51,11 +61,12 @@ import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class GroupViewModel extends ViewModel {
 
-    private static final String TAG = "KMGroupViewModel";
+    private static final String TAG = "KMGroupInfoViewModel";
     private GetGroupUseCase getGroupUseCase;
     private GetGroupUsersUseCase getGroupUsersUseCase;
     private UpdateGroupUseCase updateGroupUseCase;
@@ -304,33 +315,46 @@ public class GroupViewModel extends ViewModel {
     }
 
     public void updateGroup(final GroupModel groupModel, final String action) {
-        manageImage = new SingleMediatorLiveEvent<>();
-        groupEditActionUpdate.addSource(manageImage, new Observer<GeneralStatusContants>() {
-            @Override
-            public void onChanged(GeneralStatusContants generalStatusContants) {
-                Log.d(TAG, "onChanged: Status is - "+generalStatusContants);
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.SUCCESS){
-                    if(groupModel.isImageChanged()){
-                        //update the timestamp only if image changed
-                        timestamp = new Date().getTime();
-                        groupModel.setImageUpdateTimestamp(timestamp);
-                    }
-                    updateGroupToServer(groupModel, action);
-                    groupEditActionUpdate.removeSource(manageImage);
-                }
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.LOADING){
-                    groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.UPDATING, timestamp));
-                }
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.ERROR){
-                    Log.d(TAG, "Error uploading new image, not going ahead with saving anything on server");
-                    groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.ERROR, timestamp));
-                    groupEditActionUpdate.removeSource(manageImage);
-                }
-            }
-        });
 
-        uploadGroupImage(groupModel);
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction()) && groupModel.isImageChanged()){
+            groupModel.setGroupPicLoadingGoingOn(true);
+            groupModel.setGroupPicUploaded(false);
+        }
+        else{
+            groupModel.setGroupPicLoadingGoingOn(false);
+            groupModel.setGroupPicUploaded(true);
+        }
+        updateGroupToServer(groupModel, action);
     }
+
+//    public void updateGroup(final GroupModel groupModel, final String action) {
+//        manageImage = new SingleMediatorLiveEvent<>();
+//        groupEditActionUpdate.addSource(manageImage, new Observer<GeneralStatusContants>() {
+//            @Override
+//            public void onChanged(GeneralStatusContants generalStatusContants) {
+//                Log.d(TAG, "onChanged: Status is - "+generalStatusContants);
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.SUCCESS){
+//                    if(groupModel.isImageChanged()){
+//                        //update the timestamp only if image changed
+//                        timestamp = new Date().getTime();
+//                        groupModel.setImageUpdateTimestamp(timestamp);
+//                    }
+//                    updateGroupToServer(groupModel, action);
+//                    groupEditActionUpdate.removeSource(manageImage);
+//                }
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.LOADING){
+//                    groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.UPDATING, timestamp));
+//                }
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.ERROR){
+//                    Log.d(TAG, "Error uploading new image, not going ahead with saving anything on server");
+//                    groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.ERROR, timestamp));
+//                    groupEditActionUpdate.removeSource(manageImage);
+//                }
+//            }
+//        });
+//
+//        uploadGroupImage(groupModel);
+//    }
 
     /**
      * This method is called when the SAVE button is pressed on any update
@@ -356,18 +380,23 @@ public class GroupViewModel extends ViewModel {
                         //also update the user group cache
                         //so that the changes get reflected in the group home page
                         updateUserGroupCache(groupModel, action);
+                        //if the action was for uploading the image, start the image upload now
+                        if(action.equals(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction()) && groupModel.isImageChanged()){
+                            uploadGroupTNImage(groupModel);
+                            uploadGroupMainImage(groupModel);
+                        }
                         if (stringDomainUpdateResource.data != null) {
-                            groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.SUCCESS, timestamp));
+                            groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.SUCCESS, timestamp, groupModel.getImagePath()));
                         }
                         groupEditActionUpdate.removeSource(updateRepositorySource);
                     } else if (stringDomainUpdateResource.status == DomainUpdateResource.Status.UPDATING) {
                         if (stringDomainUpdateResource.data != null) {
 //                            showToast.setValue(stringDomainUpdateResource.data +" updating");
-                            groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.UPDATING, timestamp));
+                            groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.UPDATING, timestamp, groupModel.getImagePath()));
                         }
                     } else if (stringDomainUpdateResource.status == DomainUpdateResource.Status.ERROR) {
 //                        showToast.setValue(stringDomainUpdateResource.data +" errored");
-                        groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.ERROR, timestamp));
+                        groupEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.ERROR, timestamp, groupModel.getImagePath()));
                         groupEditActionUpdate.removeSource(updateRepositorySource);
 //                        showNoNetworkErrorToast.setValue(true);
                     }
@@ -386,34 +415,44 @@ public class GroupViewModel extends ViewModel {
 
     public void updateGroupUser(final GroupUserModel groupUserModel, final String action){
 
+        if(action.equals(GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS.getAction()) && groupUserModel.isImageChanged()){
+            groupUserModel.setGroupUserPicLoadingGoingOn(true);
+            groupUserModel.setGroupUserPicUploaded(false);
+        }
+        else{
+            groupUserModel.setGroupUserPicLoadingGoingOn(false);
+            groupUserModel.setGroupUserPicUploaded(true);
+        }
+        updateGroupUserToServer(groupUserModel, action);
+
         //first upload image and then data to server
         //it should work in any case because for any case, if the image is not changed
         //it comes back right away
-        manageImage = new SingleMediatorLiveEvent<>();
-        groupUserEditActionUpdate.addSource(manageImage, new Observer<GeneralStatusContants>() {
-            @Override
-            public void onChanged(GeneralStatusContants generalStatusContants) {
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.SUCCESS){
-                    if(groupUserModel.isImageChanged()){
-                        //update the timestamp only if image changed
-                        timestamp = new Date().getTime();
-                        groupUserModel.setImageUpdateTimestamp(timestamp);
-                    }
-                    updateGroupUserToServer(groupUserModel, action);
-                    groupUserEditActionUpdate.removeSource(manageImage);
-                }
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.LOADING){
-                    groupUserEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.UPDATING, timestamp));
-                }
-                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.ERROR){
-                    Log.d(TAG, "Error uploading new image, not going ahead with saving anything on server");
-                    groupUserEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.ERROR, timestamp));
-                    groupUserEditActionUpdate.removeSource(manageImage);
-                }
-            }
-        });
+//        manageImage = new SingleMediatorLiveEvent<>();
+//        groupUserEditActionUpdate.addSource(manageImage, new Observer<GeneralStatusContants>() {
+//            @Override
+//            public void onChanged(GeneralStatusContants generalStatusContants) {
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.SUCCESS){
+//                    if(groupUserModel.isImageChanged()){
+//                        //update the timestamp only if image changed
+//                        timestamp = new Date().getTime();
+//                        groupUserModel.setImageUpdateTimestamp(timestamp);
+//                    }
+//                    updateGroupUserToServer(groupUserModel, action);
+//                    groupUserEditActionUpdate.removeSource(manageImage);
+//                }
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.LOADING){
+//                    groupUserEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.UPDATING, timestamp));
+//                }
+//                if(generalStatusContants != null && generalStatusContants == GeneralStatusContants.ERROR){
+//                    Log.d(TAG, "Error uploading new image, not going ahead with saving anything on server");
+//                    groupUserEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(action), GroupEditDetails.Status.ERROR, timestamp));
+//                    groupUserEditActionUpdate.removeSource(manageImage);
+//                }
+//            }
+//        });
 
-        uploadGroupUserImage(groupUserModel);
+//        uploadGroupUserImage(groupUserModel);
 
 
     }
@@ -438,6 +477,11 @@ public class GroupViewModel extends ViewModel {
                     if (stringDomainUpdateResource.status == DomainUpdateResource.Status.SUCCESS) {
                         //update the user group cache to see these changes
                         updateUserGroupCache(groupUserModel, action);
+                        //if the action was for uploading the image, start the image upload now
+                        if(action.equals(GroupActionConstants.UPDATE_GROUP_USER_ROLE_AND_ALIAS.getAction()) && groupUserModel.isImageChanged()){
+                            uploadGroupUserImage(groupUserModel, ImageTypeConstants.MAIN);
+                            uploadGroupUserImage(groupUserModel, ImageTypeConstants.THUMBNAIL);
+                        }
                         if (stringDomainUpdateResource.data != null) {
                             groupUserEditActionUpdate.setValue(new GroupEditDetails(GroupActionContantsMapper.getConstant(stringDomainUpdateResource.data), GroupEditDetails.Status.SUCCESS, timestamp));
                         }
@@ -560,6 +604,8 @@ public class GroupViewModel extends ViewModel {
         domainUserGroup.setPrivateGroup(groupModel.getGroupPrivate());
         domainUserGroup.setExpiry(groupModel.getExpiryDate());
         domainUserGroup.setImageUpdateTimestamp(groupModel.getImageUpdateTimestamp());
+        domainUserGroup.setGroupPicLoadingGoingOn(groupModel.getGroupPicLoadingGoingOn());
+        domainUserGroup.setGroupPicUploaded(groupModel.getGroupPicUploaded());
         updateUserGroupCacheUseCase.execute(UpdateUserGroupCacheUseCase.Params.forUserGroup(domainUserGroup, action));
     }
 
@@ -582,9 +628,56 @@ public class GroupViewModel extends ViewModel {
     }
 
 
-    public void uploadGroupImage(final GroupModel groupModel) {
+    public void uploadGroupMainImage(final GroupModel groupModel) {
+
+        //here you should call the worker to upload the group image
+        Data inputData = new Data.Builder()
+                .putString("groupId", groupModel.getGroupId())
+                .putString("groupName", groupModel.getGroupName())
+                .putString("imageType", ImageTypeConstants.MAIN.getType())
+                .putString("action", MediaActionConstants.UPLOAD_GROUP_PIC.getAction())
+                .putString("attachment_path", groupModel.getImagePath())
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("upload_group_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
 
 
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Group Pic Uploaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Group Pic upload failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Group Pic upload failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Group Pic upload failed due to - "+e.getMessage());
+        }
+
+/***
         if(!groupModel.isImageChanged()){
             manageImage.setValue(GeneralStatusContants.SUCCESS);
             return;
@@ -623,7 +716,7 @@ public class GroupViewModel extends ViewModel {
                 }
             }
         });
-
+**///
 //        final LiveData<DomainUpdateResource<String>> uploadImageRespositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(new File(groupModel.getImagePath()), key, GroupActionConstants.UPDATE_GROUP_IMAGE.getAction()));
 //
 //        uploadingGroupImage.addSource(uploadImageRespositorySource, new Observer<DomainUpdateResource<String>>() {
@@ -670,6 +763,195 @@ public class GroupViewModel extends ViewModel {
 //        });
 
     }
+
+    public void uploadGroupTNImage(final GroupModel groupModel) {
+
+        //here you should call the worker to upload the group image
+        Data inputData = new Data.Builder()
+                .putString("groupId", groupModel.getGroupId())
+                .putString("groupName", groupModel.getGroupName())
+                .putString("imageType", ImageTypeConstants.THUMBNAIL.getType())
+                .putString("action", MediaActionConstants.UPLOAD_GROUP_PIC.getAction())
+                .putString("attachment_path", groupModel.getThumbnailPath())
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("upload_group_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
+
+
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Group TN Pic Uploaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Group TN Pic upload failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Group TN Pic upload failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Group TN Pic upload failed due to - "+e.getMessage());
+        }
+
+/***
+ if(!groupModel.isImageChanged()){
+ manageImage.setValue(GeneralStatusContants.SUCCESS);
+ return;
+ }
+
+ Log.d(TAG, "uploadImage: ");
+ String key = ImagesUtilHelper.getGroupImageName(groupModel.getGroupId(), ImageTypeConstants.MAIN);
+ final String tnKey = ImagesUtilHelper.getGroupImageName(groupModel.getGroupId(), ImageTypeConstants.THUMBNAIL);
+ HashMap<String, Object> userData = new HashMap<>();
+ final LiveData<DomainUpdateResource<String>> uploadImageRespositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(new File(groupModel.getImagePath()), key, GroupActionConstants.UPDATE_GROUP_IMAGE.getAction(), userData));
+
+ manageImage.addSource(uploadImageRespositorySource, new Observer<DomainUpdateResource<String>>() {
+@Override
+public void onChanged(@Nullable DomainUpdateResource<String> groupImageUpdateDomainResource) {
+Log.d(TAG, "onChanged: upload status changed");
+if (groupImageUpdateDomainResource != null) {
+
+if (groupImageUpdateDomainResource.status == DomainUpdateResource.Status.SUCCESS) {
+manageImage.setValue(GeneralStatusContants.SUCCESS);
+manageImage.removeSource(uploadImageRespositorySource);
+
+//start the upload of the thumbnail size image - this is reverse of the usual behavior since
+//the whole image is what the user will be seeing
+uploadImageSingleUseCase.execute(UploadImageSingleUseCase.Params.imageToUpload(tnKey, new File(groupModel.getThumbnailPath()), true));
+
+} else if (groupImageUpdateDomainResource.status == DomainUpdateResource.Status.UPDATING) {
+if (groupImageUpdateDomainResource.data != null) {
+manageImage.setValue(GeneralStatusContants.LOADING);
+}
+} else if (groupImageUpdateDomainResource.status == DomainUpdateResource.Status.ERROR) {
+manageImage.setValue(GeneralStatusContants.ERROR);
+manageImage.removeSource(uploadImageRespositorySource);
+}
+} else {
+manageImage.removeSource(uploadImageRespositorySource);
+}
+}
+});
+ **///
+//        final LiveData<DomainUpdateResource<String>> uploadImageRespositorySource = uploadImageUseCase.execute(UploadImageUseCase.Params.imageUpload(new File(groupModel.getImagePath()), key, GroupActionConstants.UPDATE_GROUP_IMAGE.getAction()));
+//
+//        uploadingGroupImage.addSource(uploadImageRespositorySource, new Observer<DomainUpdateResource<String>>() {
+//            @Override
+//            public void onChanged(@Nullable DomainUpdateResource<String> groupUpdateDomainResource) {
+//                Log.d(TAG, "onChanged: upload status changed");
+//                if (groupUpdateDomainResource != null) {
+//
+//
+//                    if (groupUpdateDomainResource.status == DomainUpdateResource.Status.SUCCESS) {
+//
+//                        //image upload was successful, now update the database image timestamps accordingly
+//                        //by calling the updateUser
+//                        timestamp = new Date().getTime(); //using this time of success as the timestamp for now
+//                        //later should find a way to get the correct timestamp from s3
+//                        groupModel.setImageUpdateTimestamp(timestamp);
+//                        updateGroup(groupModel, GroupActionConstants.UPDATE_GROUP_IMAGE.getAction());
+//
+//                        //update the signature - so that glide uploads the new image
+////                        AppConfigHelper.increaseUserImageSignature();
+//
+//                        if (groupUpdateDomainResource.data != null) {
+//                            //update the local timestamp as well
+//                            //this local timestamp is needed in other methods
+//                            //like the user creating a new request etc.
+//                            uploadingGroupImage.setValue(new GroupEditDetails(GroupActionConstants.UPDATE_GROUP_IMAGE, GroupEditDetails.Status.SUCCESS, timestamp));
+//                        }
+//                        uploadingGroupImage.removeSource(uploadImageRespositorySource);
+//                    } else if (groupUpdateDomainResource.status == DomainUpdateResource.Status.UPDATING) {
+//                        if (groupUpdateDomainResource.data != null) {
+////                            showToast.setValue(stringDomainUpdateResource.data +" updating");
+//                            uploadingGroupImage.setValue(new GroupEditDetails(GroupActionConstants.UPDATE_GROUP_IMAGE, GroupEditDetails.Status.UPDATING, timestamp));
+//                        }
+//                    } else if (groupUpdateDomainResource.status == DomainUpdateResource.Status.ERROR) {
+////                        showToast.setValue(stringDomainUpdateResource.data +" errored");
+//                        uploadingGroupImage.setValue(new GroupEditDetails(GroupActionConstants.UPDATE_GROUP_IMAGE, GroupEditDetails.Status.ERROR, timestamp));
+//                        uploadingGroupImage.removeSource(uploadImageRespositorySource);
+////                        showNoNetworkErrorToast.setValue(true);
+//                    }
+//                } else {
+//                    uploadingGroupImage.removeSource(uploadImageRespositorySource);
+//                }
+//            }
+//        });
+
+    }
+
+
+
+    public void uploadGroupUserImage(final GroupUserModel groupUserModel, final ImageTypeConstants imageType){
+        Data inputData = new Data.Builder()
+                .putString("groupId", groupUserModel.getGroupId())
+                .putString("userId", groupUserModel.getUserId())
+                .putString("groupUserName", groupUserModel.getAlias())
+                .putString("groupUserRole", groupUserModel.getRole())
+                .putString("imageType", imageType.getType())
+                .putString("action", MediaActionConstants.UPLOAD_GROUP_USER_PIC.getAction())
+                .putString("attachment_path", groupUserModel.getImagePath())
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        //now start a worker to do the same in the backend
+        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest
+                .Builder(LoadMediaWorker.class)
+                .addTag("upload_group_user_pic")
+                .setInputData(inputData)
+                .setConstraints(constraints)
+                .build();
+
+
+        final Operation resultOfOperation = WorkManager.getInstance().enqueue(simpleRequest);
+
+        try {
+            resultOfOperation.getResult().addListener(new Runnable() {
+                @Override
+                public void run() {
+                    //only comes here for SUCCESS
+                    try {
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+" Uploaded successfully");
+                        resultOfOperation.getResult().get();
+
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                        //if the update API gave error, it gets wrapped in ExecutionException
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to "+e.getCause().getMessage());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to "+e.getMessage());
+                    }
+                }
+            }, AppExecutors2.getInstance().diskIO());
+        } catch (Exception e) {
+            Log.d(TAG, "Group User Pic "+imageType.getType()+"upload failed due to - "+e.getMessage());
+        }
+    }
+
 
     public void uploadGroupUserImage(final GroupUserModel groupUserModel) {
 

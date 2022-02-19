@@ -2,6 +2,8 @@ package com.java.kaboome.domain.entities;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -49,6 +51,10 @@ public class DomainUserGroup implements Serializable {
     private Long imageUpdateTimestamp;
 
     private Long userImageUpdateTimestamp;
+
+    private Boolean groupPicUploaded;
+
+    private Boolean groupPicLoadingGoingOn = false;
 
 //    private Long lastMessageCacheTS;
 
@@ -284,8 +290,23 @@ public class DomainUserGroup implements Serializable {
         this.cacheClearTS = cacheClearTS;
     }
 
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
+    }
 
-//    public int getNumberOfRequests() {
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
+    }
+
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
+    }
+
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
+    }
+
+    //    public int getNumberOfRequests() {
 //        return numberOfRequests;
 //    }
 //

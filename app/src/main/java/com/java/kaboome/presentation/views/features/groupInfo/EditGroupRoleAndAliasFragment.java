@@ -38,9 +38,7 @@ import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.GroupUserModel;
 import com.java.kaboome.presentation.helpers.DialogHelper;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.views.features.joinGroup.JoinPrivateGroupDialog;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -209,7 +207,7 @@ public class EditGroupRoleAndAliasFragment extends DialogFragment {
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
         ImageHelper.getInstance().loadGroupUserImage(groupUserModel.getGroupId(), ImageTypeConstants.MAIN, groupUserModel.getUserId(), groupUserModel.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                handler, userGroupImage, userImageProgressBar);
+                handler, userGroupImage, userImageProgressBar, true);
 //        ImageHelper.loadUserImage(ImagesUtilHelper.getGroupUserImageName(groupUserModel.getGroupId(), groupUserModel.getUserId()), AppConfigHelper.getCurrentUserImageTimestamp(),
 //                ImageHelper.getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
 //                handler, userGroupImage, null);

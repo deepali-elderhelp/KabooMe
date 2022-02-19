@@ -3,7 +3,6 @@ package com.java.kaboome.presentation.views.features.groupInfo;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +27,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.constants.UserGroupStatusConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.GroupUserModel;
@@ -145,7 +143,7 @@ public class GroupUserActionsDialog extends BottomSheetDialogFragment implements
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.bs_profile);
         ImageHelper.getInstance().loadGroupUserImage(groupUser.getGroupId(), ImageTypeConstants.MAIN, groupUser.getUserId(), groupUser.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                handler, userImage, null);
+                handler, userImage, null, true);
 
         if(currentUserIsAdmin && "false".equalsIgnoreCase(groupUser.getIsAdmin())){
             makeAdminLink.setVisibility(View.VISIBLE);

@@ -1,7 +1,7 @@
 package com.java.kaboome.presentation.views.features.profile;
 
 
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavBackStackEntry;
@@ -30,23 +29,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.exceptions.CognitoInternalErrorException;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.constants.UserActionConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
-import com.java.kaboome.helpers.CognitoHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.UserModel;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
+import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.views.features.BaseFragment;
-import com.java.kaboome.presentation.views.features.BaseViewModel;
 import com.java.kaboome.presentation.views.features.profile.viewmodel.ProfileViewModel;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.java.kaboome.helpers.AppConfigHelper.getContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,6 +68,7 @@ public class ProfileFragment extends BaseFragment {
     private NavController navController;
     private Toolbar mainToolbar;
     private ImageView networkOffImageView;
+    int loop = 3;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -137,19 +137,52 @@ public class ProfileFragment extends BaseFragment {
 //                }
                 if(userModelPassed != null){
                     Log.d(TAG, "UserModelStatus - "+userModelPassed.getStatus());
+                    String imagePath = null;
+                    if(userModel != null){
+                        imagePath = userModel.getImagePath();
+                    }
                     userModel = userModelPassed;
+                    userModel.setImagePath(imagePath);
                     profileName.setText(userModel.getUserName());
                     profileEmail.setText(userModel.getEmail());
                     profilePhone.setText(userModel.getPhoneNumber());
-                    //load image again in case the timestamp has changed on fresh successful update from server
-                    if(!"Loading".equalsIgnoreCase(userModelPassed.getStatus()) && userModelPassed.getImageUpdateTimestamp() != null){
-
+                    if(userModel.getImagePath() != null){
+                        Glide
+                                .with(profileImage)
+                                .load(userModel.getImagePath())
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .dontAnimate()
+                                .into(new SimpleTarget<Drawable>() {
+                                    @Override
+                                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                                        Bitmap mIcon = ImagesUtilHelper.drawableToBitmap(resource);
+                                        profileImage.setImageBitmap(mIcon);
+                                    }
+                                });
+                    }
+                    else{
 //                        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userModel.getUserName() != null? userModel.getUserName():"K M");
                         Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
                         ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN, userModelPassed.getImageUpdateTimestamp(),
                                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                                 handler, profileImage, null);
                     }
+                    if(userModel.getUserPicLoadingGoingOn()){
+                        profileImageProgressBar.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        profileImageProgressBar.setVisibility(View.GONE);
+                    }
+                    //load image again in case the timestamp has changed on fresh successful update from server
+//                    if(!"Loading".equalsIgnoreCase(userModelPassed.getStatus()) && userModelPassed.getImageUpdateTimestamp() != null){
+//
+////                        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userModel.getUserName() != null? userModel.getUserName():"K M");
+//                        Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
+//                        ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN, userModelPassed.getImageUpdateTimestamp(),
+//                                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
+//                                handler, profileImage, null);
+//                    }
                 }
             }
         });
@@ -164,12 +197,6 @@ public class ProfileFragment extends BaseFragment {
                 else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.SUCCESS)){
                     Log.d(TAG, "User has been updated");
                     profileFullProgressBar.setVisibility(View.GONE);
-                    if(userEditDetails.getAction() == UserActionConstants.UPDATE_USER_PROFILE_IMAGE_TS){
-                        Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
-                        ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN,userEditDetails.getImageUpdatedTimestamp(),
-                                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                                handler, profileImage, null);
-                    }
                 }
                 else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.ERROR)){
                     profileFullProgressBar.setVisibility(View.GONE);
@@ -177,23 +204,23 @@ public class ProfileFragment extends BaseFragment {
                 }
             }
         });
-        profileViewModel.getUploadingUserImage().removeObservers(getViewLifecycleOwner()); //if any old hanging there
-        profileViewModel.getUploadingUserImage().observe(getViewLifecycleOwner(), new Observer<UserEditDetails>() {
-            @Override
-            public void onChanged(UserEditDetails userEditDetails) {
-                if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.UPDATING)){
-                    profileImageProgressBar.setVisibility(View.VISIBLE);
-                }
-                else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.SUCCESS)){
-                    Log.d(TAG, "User Image has been updated");
-                    profileImageProgressBar.setVisibility(View.GONE);
-                }
-                else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.ERROR)){
-                    profileImageProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Something went wrong in update, please try again", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        profileViewModel.getUploadingUserImage().removeObservers(getViewLifecycleOwner()); //if any old hanging there
+//        profileViewModel.getUploadingUserImage().observe(getViewLifecycleOwner(), new Observer<UserEditDetails>() {
+//            @Override
+//            public void onChanged(UserEditDetails userEditDetails) {
+//                if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.UPDATING)){
+//                    profileImageProgressBar.setVisibility(View.VISIBLE);
+//                }
+//                else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.SUCCESS)){
+//                    Log.d(TAG, "User Image has been updated");
+//                    profileImageProgressBar.setVisibility(View.GONE);
+//                }
+//                else if(userEditDetails != null && (userEditDetails.getStatus() == UserEditDetails.Status.ERROR)){
+//                    profileImageProgressBar.setVisibility(View.GONE);
+//                    Toast.makeText(getContext(), "Something went wrong in update, please try again", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
     }
 
     private void addListeners() {
@@ -283,7 +310,10 @@ public class ProfileFragment extends BaseFragment {
                 if (event.equals(Lifecycle.Event.ON_RESUME)
                         && navBackStackEntry.getSavedStateHandle().contains("userImage")) {
                     UserModel userModelTemp = navBackStackEntry.getSavedStateHandle().get("userImage");
+
                     if(NetworkHelper.isOnline()){
+                        userModel.setImagePath(userModelTemp.getImagePath());
+                        userModel.setThumbnailPath(userModelTemp.getThumbnailPath());
                         profileViewModel.uploadUserImage(userModelTemp);
                     }
                     else{
@@ -314,6 +344,7 @@ public class ProfileFragment extends BaseFragment {
 //        subscribeObservers();
         //timestamp null will load the old existing image
         Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
+//        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userModel.getUserName() != null? userModel.getUserName():"K M");
         ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(),ImageTypeConstants.MAIN, AppConfigHelper.getCurrentUserImageTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                 handler, profileImage, null);
@@ -328,6 +359,7 @@ public class ProfileFragment extends BaseFragment {
         subscribeObservers();
         //timestamp null will load the old existing image
         Drawable imageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
+//        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userModel.getUserName() != null? userModel.getUserName():"K M");
         ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(),ImageTypeConstants.MAIN, AppConfigHelper.getCurrentUserImageTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
                 handler, profileImage, null);

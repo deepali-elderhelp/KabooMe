@@ -27,6 +27,12 @@ public class UserGroupModel implements Serializable {
 
     Long lastMessageSentAt;
 
+    String lastAdminMessageText;
+
+    String lastAdminMessageSentBy;
+
+    Long lastAdminMessageSentAt;
+
     String groupImageLink;
 
     int unreadCount;
@@ -39,6 +45,10 @@ public class UserGroupModel implements Serializable {
 
     private Long imageUpdateTimestamp; //this is to help glide determine if new image needs to be loaded from server
     //or cache is okay
+
+    private Boolean groupPicUploaded;
+
+    private Boolean groupPicLoadingGoingOn = false;
 
     private Long userImageUpdateTimestamp; //user image timestamp
 
@@ -206,6 +216,22 @@ public class UserGroupModel implements Serializable {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
     }
 
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
+    }
+
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
+    }
+
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
+    }
+
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
+    }
+
     public Long getUserImageUpdateTimestamp() {
         return userImageUpdateTimestamp;
     }
@@ -276,6 +302,30 @@ public class UserGroupModel implements Serializable {
 
     public void setLastMessageSentAt(Long lastMessageSentAt) {
         this.lastMessageSentAt = lastMessageSentAt;
+    }
+
+    public String getLastAdminMessageText() {
+        return lastAdminMessageText;
+    }
+
+    public void setLastAdminMessageText(String lastAdminMessageText) {
+        this.lastAdminMessageText = lastAdminMessageText;
+    }
+
+    public String getLastAdminMessageSentBy() {
+        return lastAdminMessageSentBy;
+    }
+
+    public void setLastAdminMessageSentBy(String lastAdminMessageSentBy) {
+        this.lastAdminMessageSentBy = lastAdminMessageSentBy;
+    }
+
+    public Long getLastAdminMessageSentAt() {
+        return lastAdminMessageSentAt;
+    }
+
+    public void setLastAdminMessageSentAt(Long lastAdminMessageSentAt) {
+        this.lastAdminMessageSentAt = lastAdminMessageSentAt;
     }
 
     public ReceivedGroupDataTypeConstants getReceivedGroupDataType() {

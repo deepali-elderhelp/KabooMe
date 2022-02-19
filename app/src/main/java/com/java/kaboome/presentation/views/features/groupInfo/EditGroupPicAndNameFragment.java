@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -40,7 +41,6 @@ import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.constants.UserGroupStatusConstants;
 import com.java.kaboome.presentation.entities.GroupModel;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.DialogHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -131,14 +131,20 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
         publicOrPrivateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
-                saveButton.setEnabled(true);
-                if (bChecked) {
-                    DialogHelper.showDialogMessage(getActivity(), "Private Group", getResources().getString(R.string.group_private_alert));
-                    privacy = true;
-                } else {
-                    DialogHelper.showDialogMessage(getActivity(), "Public Group", getResources().getString(R.string.group_public_alert));
-                    privacy = false;
+                Toast.makeText(getContext(), "Sorry, this setting cannot be changed after Group creation", Toast.LENGTH_SHORT).show();
+                if(privacy){
+                    publicOrPrivateSwitch.setChecked(true);
                 }
+                else{
+                    publicOrPrivateSwitch.setChecked(false);
+                }
+//                if (bChecked) {
+//                    DialogHelper.showDialogMessage(getActivity(), "Private Group", getResources().getString(R.string.group_private_alert));
+//                    privacy = true;
+//                } else {
+//                    DialogHelper.showDialogMessage(getActivity(), "Public Group", getResources().getString(R.string.group_public_alert));
+//                    privacy = false;
+//                }
             }
         });
         announcementsOnlySwitch = view.findViewById(R.id.edit_group_name_announcments_switch);
@@ -148,6 +154,18 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
         else{
             announcementsOnlySwitch.setChecked(false);
         }
+        announcementsOnlySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                Toast.makeText(getContext(), "Sorry, this setting cannot be changed after Group creation", Toast.LENGTH_SHORT).show();
+                if(groupModel.getUnicastGroup() != null && groupModel.getUnicastGroup()){
+                    announcementsOnlySwitch.setChecked(true);
+                }
+                else{
+                    announcementsOnlySwitch.setChecked(false);
+                }
+            }
+        });
         newGroupName = view.findViewById(R.id.editGroupName);
         newGroupName.setText(groupModel.getGroupName());
         newGroupName.addTextChangedListener(new GroupNameTextWatcher());
@@ -169,7 +187,7 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
                     Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.bs_profile);
                     ImageHelper.getInstance().loadGroupImage(groupModel.getGroupId(), ImageTypeConstants.MAIN,  groupModel.getImageUpdateTimestamp(),
                             ImageHelper.getInstance().getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                            handler, groupImage, null);
+                            handler, groupImage, null, true);
                     imageChanged = false;
                 }
                 else{
@@ -257,12 +275,12 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, groupModel.getGroupName());
         ImageHelper.getInstance().loadGroupImage(groupModel.getGroupId(),ImageTypeConstants.MAIN,  groupModel.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
         if(!groupModel.getCurrentUserGroupStatus().equals(UserGroupStatusConstants.ADMIN_MEMBER)) {
             saveButton.setVisibility(View.GONE);
             changePicture.setVisibility(View.GONE);
-            publicOrPrivateSwitch.setEnabled(false);
+//            publicOrPrivateSwitch.setEnabled(false);
             newGroupName.setEnabled(false);
         }
         return view;
@@ -299,6 +317,8 @@ public class EditGroupPicAndNameFragment extends DialogFragment {
         });
 
     }
+
+
     private class GroupNameTextWatcher implements TextWatcher{
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

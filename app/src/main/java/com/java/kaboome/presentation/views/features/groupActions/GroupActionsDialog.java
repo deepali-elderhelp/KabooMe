@@ -4,7 +4,6 @@ package com.java.kaboome.presentation.views.features.groupActions;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -33,11 +33,10 @@ import android.widget.Toast;
 
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.R;
 import com.java.kaboome.presentation.entities.UserGroupModel;
+import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.viewModelProvider.CustomViewModelProvider;
-import com.java.kaboome.presentation.views.features.groupInfo.viewmodel.GroupViewModel;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,6 +53,7 @@ public class GroupActionsDialog extends BottomSheetDialogFragment implements Vie
     ProgressBar groupImageProgressBar;
     ImageView privacyImage;
     TextView groupName;
+    LinearLayoutCompat unicastLabel;
 //    boolean showGoToMessages = true;
     private UserGroupModel group;
     private boolean showMessages = true;
@@ -119,6 +119,7 @@ public class GroupActionsDialog extends BottomSheetDialogFragment implements Vie
         groupImage = rootView.findViewById(R.id.group_actions_dialog_image);
         privacyImage = rootView.findViewById(R.id.group_actions_dialog_group_private);
         groupName = rootView.findViewById(R.id.group_actions_dialog_name);
+        unicastLabel = rootView.findViewById(R.id.group_actions_unicast);
         groupImageProgressBar = rootView.findViewById(R.id.group_actions_dialog_image_progress);
         requestFrame = rootView.findViewById(R.id.group_actions_requests_count_frame);
         requestCount = rootView.findViewById(R.id.group_actions_requests_count_number);
@@ -136,6 +137,13 @@ public class GroupActionsDialog extends BottomSheetDialogFragment implements Vie
         }
         else{
             privacyImage.setVisibility(View.GONE);
+        }
+
+        if(group.getUnicastGroup()){
+            unicastLabel.setVisibility(View.VISIBLE);
+        }
+        else{
+            unicastLabel.setVisibility(View.GONE);
         }
 
 //        BottomSheetBehavior.from(rootView).setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -229,10 +237,11 @@ public class GroupActionsDialog extends BottomSheetDialogFragment implements Vie
 //            frameLayoutForRequestCount.setVisibility(View.INVISIBLE);
 //        }
 //        ImageHelper.loadGroupImage(group.getGroupId(), group.getImageUpdateTimestamp(), ImageHelper.getRequestManager(getContext(), R.drawable.account_group_grey, R.drawable.account_group_grey), handler, groupImage, null);
-        Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
+        Drawable imageError = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
+        Drawable imagePlaceholder = AvatarHelper.generatePlaceholderAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
         ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
-                ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, groupImageProgressBar);
+                ImageHelper.getInstance().getRequestManager(getContext()), imagePlaceholder, imageError,
+                handler, groupImage, groupImageProgressBar, true);
 
         Log.d(TAG, "onResume: after image loading");
 

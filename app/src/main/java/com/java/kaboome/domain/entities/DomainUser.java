@@ -1,5 +1,7 @@
 package com.java.kaboome.domain.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DomainUser {
 
     private String userId;
@@ -9,6 +11,8 @@ public class DomainUser {
     private String deviceId;
     private String email;
     private Long imageUpdateTimestamp;
+    private Boolean userPicUploaded;
+    private Boolean userPicLoadingGoingOn = false;
 
     public DomainUser() {
     }
@@ -81,6 +85,22 @@ public class DomainUser {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getUserPicUploaded() {
+        return userPicUploaded;
+    }
+
+    public void setUserPicUploaded(Boolean userPicUploaded) {
+        this.userPicUploaded = userPicUploaded;
+    }
+
+    public Boolean getUserPicLoadingGoingOn() {
+        return userPicLoadingGoingOn;
+    }
+
+    public void setUserPicLoadingGoingOn(Boolean userPicLoadingGoingOn) {
+        this.userPicLoadingGoingOn = userPicLoadingGoingOn;
     }
 
     @Override

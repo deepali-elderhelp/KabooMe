@@ -16,23 +16,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.TimeBar;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.helpers.DateHelper;
 import com.java.kaboome.presentation.helpers.FileUtils;
+import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.helpers.MediaHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.images.ImageLinkHandler;
@@ -107,9 +96,9 @@ public class AudioSentMessageHolder extends RecyclerView.ViewHolder {
 
         Drawable imageErrorAndPlaceholder = itemView.getContext().getResources().getDrawable(R.drawable.account_gray_192);
 
-        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.THUMBNAIL,message.getSentBy(), message.getSentByImageTS(),
+        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.MAIN,message.getSentBy(), message.getSentByImageTS(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, profileImage, null);
+                handler, profileImage, null, false);
 
         yourAliasText.setText(message.getAlias());
         if (message.getRole() != null && !(message.getRole().trim().isEmpty())) {
@@ -341,7 +330,7 @@ public class AudioSentMessageHolder extends RecyclerView.ViewHolder {
 
 
     private void getS3Url(String messageId, String groupId) {
-        String key = groupId+"_"+messageId;
+        String key = ImagesUtilHelper.getMessageAttachmentKeyName(groupId, messageId);
         S3LoadingHelper.getPresignedImageLink(key, new ImageLinkHandler() {
             @Override
             public void onImageLinkReady(URL url) {

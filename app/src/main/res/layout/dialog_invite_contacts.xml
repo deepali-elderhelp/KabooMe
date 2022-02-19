@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_invite_contacts_vertical_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_invite_contacts_vertical_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <!--        <androidx.constraintlayout.widget.Guideline-->
+    <!--            android:id="@+id/guideline_invite_contacts_recycler_start"-->
+    <!--            android:layout_width="0dp"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            app:layout_constraintGuide_percent="0.15"/>-->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_invite_contacts_horizontal_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/invite_contacts_done_button"
+        style="@style/GradientButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/done"
+        app:layout_constraintEnd_toEndOf="@+id/guideline_invite_contacts_vertical_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_invite_contacts_vertical_start"
+        app:layout_constraintTop_toBottomOf="@+id/guideline_invite_contacts_horizontal_button" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_contact_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_invite_contacts_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_invite_contacts_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/search_contact_list"
+        app:layout_constraintBottom_toTopOf="@id/guideline_invite_contacts_horizontal_button"
+        android:scrollbars="vertical"
+
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_contact_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_invite_contacts_vertical_start"
+        app:layout_constraintEnd_toEndOf="@id/guideline_invite_contacts_vertical_end"
+        app:layout_constraintTop_toBottomOf="@id/contact_list_close_button"
+        ></androidx.appcompat.widget.SearchView>
+
+    <ImageView
+        android:id="@+id/contact_list_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/content_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/close" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

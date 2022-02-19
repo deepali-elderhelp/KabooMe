@@ -16,6 +16,63 @@
         app:layout_constraintGuide_percent="0.4"/>
 
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/group_actions_unicast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/broadcast"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_marginLeft="4dp"
+            android:gravity="center"
+            android:text="Announcements Only Group"
+            style="@style/GroupActionsLabelsVerySmall"
+            ></TextView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+<!--    <ImageView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/group_actions_unicast"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:src="@drawable/broadcast"/>-->
+<!--    -->
+<!--    <TextView-->
+<!--        android:id="@+id/group_actions_unicast"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:ellipsize="end"-->
+<!--        android:lines="1"-->
+<!--        android:maxLines="1"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginLeft="2dp"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"-->
+<!--        android:gravity="center"-->
+<!--        android:text="Announcements Only Group"-->
+<!--        style="@style/GroupActionsLabelsVerySmall"-->
+<!--        android:visibility="visible"></TextView>-->
 
         <FrameLayout
         android:id="@+id/group_actions_dialog_image_frame"
@@ -78,16 +135,22 @@
 
     <TextView
         android:id="@+id/group_actions_dialog_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@id/group_actions_dialog_image_frame"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_dialog_actions_vertical"
+        app:layout_constraintEnd_toEndOf="@id/guideline_mess_attach_vertical_end"
+        android:gravity="center"
         android:text="Group Name"
         style="@style/GroupActionsLabels"></TextView>
+
+
 
 
 <!--    <TextView-->

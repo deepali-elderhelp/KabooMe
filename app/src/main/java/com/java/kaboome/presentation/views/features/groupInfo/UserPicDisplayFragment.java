@@ -19,14 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.RequestManager;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.presentation.entities.GroupUserModel;
 import com.java.kaboome.presentation.entities.UserModel;
 import com.java.kaboome.presentation.images.ImageHelper;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**

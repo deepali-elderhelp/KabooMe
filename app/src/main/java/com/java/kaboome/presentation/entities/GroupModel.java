@@ -1,5 +1,6 @@
 package com.java.kaboome.presentation.entities;
 
+import com.google.gson.annotations.SerializedName;
 import com.java.kaboome.constants.UserGroupStatusConstants;
 
 import java.io.Serializable;
@@ -35,6 +36,10 @@ public class GroupModel implements Serializable {
     UserGroupStatusConstants currentUserGroupStatus;
 
     Long imageUpdateTimestamp; //group's image's time stamp
+
+    private Boolean groupPicUploaded;
+
+    private Boolean groupPicLoadingGoingOn = false;
 
     List<GroupUserModel> admins;
 
@@ -208,6 +213,22 @@ public class GroupModel implements Serializable {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
+    }
+
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
+    }
+
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
+    }
+
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
     }
 
     public GroupUserModel getGroupUserById(String groupUserId){

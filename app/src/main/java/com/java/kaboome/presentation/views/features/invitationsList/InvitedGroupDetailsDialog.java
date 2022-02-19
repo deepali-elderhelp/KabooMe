@@ -4,7 +4,6 @@ package com.java.kaboome.presentation.views.features.invitationsList;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -125,7 +124,7 @@ public class InvitedGroupDetailsDialog extends BottomSheetDialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, invitationModel.getGroupName());
         ImageHelper.getInstance().loadGroupImage(invitationModel.getGroupId(), ImageTypeConstants.MAIN, null,
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
 
         return view;

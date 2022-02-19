@@ -2,14 +2,11 @@ package com.java.kaboome.presentation.views.features.groupQRCode;
 
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,13 +18,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
-import android.print.PrintAttributes;
-import android.print.PrintDocumentAdapter;
-import android.print.PrintJob;
-import android.print.PrintManager;
 import android.provider.MediaStore;
 import android.text.Html;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -40,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.presentation.entities.GroupModel;
@@ -221,7 +212,7 @@ public class GroupQRFragment extends BaseFragment implements  EasyPermissions.Pe
             Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
             ImageHelper.getInstance().loadGroupImage(groupModel.getGroupId(), ImageTypeConstants.MAIN, groupModel.getImageUpdateTimestamp(),
                     ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+                    handler, groupImage, null, true);
         }
 
 
@@ -472,7 +463,7 @@ public class GroupQRFragment extends BaseFragment implements  EasyPermissions.Pe
             Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
             ImageHelper.getInstance().loadGroupImage(userGroupModel.getGroupId(), ImageTypeConstants.MAIN, userGroupModel.getImageUpdateTimestamp(),
                     ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+                    handler, groupImage, null, true);
         }
 
 
@@ -496,7 +487,7 @@ public class GroupQRFragment extends BaseFragment implements  EasyPermissions.Pe
             Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(), R.dimen.group_actions_dialog_image_width, userGroupModel.getGroupName());
             ImageHelper.getInstance().loadGroupImage(userGroupModel.getGroupId(), ImageTypeConstants.MAIN, userGroupModel.getImageUpdateTimestamp(),
                     ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                    handler, groupImage, null);
+                    handler, groupImage, null, true);
 
 
 //        Bitmap qrCodeImageBitmap = getQRImage(userGroupModel.getGroupId(),2, 4.8, 2.6);

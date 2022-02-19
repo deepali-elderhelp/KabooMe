@@ -258,7 +258,12 @@ public class DataGroupRequestRepository implements GroupRequestRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupRequestsDao.deleteRequest(userId, groupId);
+                try {
+                    groupRequestsDao.deleteRequest(userId, groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteRequestOnlyLocal "+exception.getMessage());
+                }
             }
         });
     }
@@ -273,7 +278,12 @@ public class DataGroupRequestRepository implements GroupRequestRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupRequestsDao.deleteAllRequestsForGroup(groupId);
+                try {
+                    groupRequestsDao.deleteAllRequestsForGroup(groupId);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in deleteAllRequestsForGroupOnlyLocal "+exception.getMessage());
+                }
             }
         });
     }
@@ -295,7 +305,12 @@ public class DataGroupRequestRepository implements GroupRequestRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                groupRequestsDao.insertGroupRequest(groupRequest);
+                try {
+                    groupRequestsDao.insertGroupRequest(groupRequest);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in addRequestOnlyLocal "+exception.getMessage());
+                }
             }
         });
     }

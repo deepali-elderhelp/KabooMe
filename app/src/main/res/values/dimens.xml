@@ -64,6 +64,8 @@
 
     <dimen name="group_actions_dialog_image_width">152dp</dimen>
     <dimen name="group_actions_dialog_image_height">152dp</dimen>
+    <dimen name="group_actions_dialog_pb_width">153dp</dimen>
+    <dimen name="group_actions_dialog_pb_height">153dp</dimen>
     <dimen name="group_actions_icon_width">20dp</dimen>
     <dimen name="group_actions_icon_height">20dp</dimen>
     <dimen name="group_info_add_admin_width">20dp</dimen>

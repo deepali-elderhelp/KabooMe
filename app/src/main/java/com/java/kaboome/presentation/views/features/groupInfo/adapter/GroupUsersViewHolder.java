@@ -1,6 +1,5 @@
 package com.java.kaboome.presentation.views.features.groupInfo.adapter;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.View;
@@ -11,13 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.GroupUserModel;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.ImagesUtilHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -87,10 +83,38 @@ public class GroupUsersViewHolder extends RecyclerView.ViewHolder {
 //                ImageHelper.getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
 //                handler, groupUserImage, null);
 
-        Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
-        ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.THUMBNAIL, user.getUserId(), user.getImageUpdateTimestamp(),
-        ImageHelper.getInstance().getRequestManager(itemView.getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-        handler, groupUserImage, null);
+//        if(user.getImagePath() != null){
+//            Glide.with(itemView.getContext()).clear(groupUserImage);
+//            // remove the placeholder (optional); read comments below
+//            groupUserImage.setImageDrawable(null);
+//            Log.d(TAG, "onBind: Image path is there - "+ user.getImagePath());
+//                Glide
+//                        .with(groupUserImage.getContext())
+//                        .load(user.getImagePath())
+//                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                        .skipMemoryCache(true)
+//                        .dontAnimate()
+//                        .into(groupUserImage);
+//        }
+//        else {
+//            Log.d(TAG, "onBind: no image path");
+            Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
+//        ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.THUMBNAIL, user.getUserId(), user.getImageUpdateTimestamp(),
+//        ImageHelper.getInstance().getRequestManager(itemView.getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
+//        handler, groupUserImage, null);
+//            ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.THUMBNAIL, user.getUserId(), user.getImageUpdateTimestamp(),
+//                    ImageHelper.getInstance().getRequestManager(itemView.getContext()), null, userImageErrorAndPlaceholder,
+//                    handler, groupUserImage, null, true);
+        ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.MAIN, user.getUserId(), user.getImageUpdateTimestamp(),
+                ImageHelper.getInstance().getRequestManager(itemView.getContext()), null, userImageErrorAndPlaceholder,
+                handler, groupUserImage, null, false);
+//        }
+        if(user.getGroupUserPicLoadingGoingOn()){
+            userImageLoadingProgress.setVisibility(View.VISIBLE);
+        }
+        else{
+            userImageLoadingProgress.setVisibility(View.GONE);
+        }
 
         groupUserAlias.setText(user.getAlias());
         groupUserRole.setText(user.getRole() != null ? user.getRole() : " ");

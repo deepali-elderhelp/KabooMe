@@ -12,10 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.GroupUserModel;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.views.features.groupInfo.adapter.GroupAliasAndRoleEditClickListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,7 +54,7 @@ public class GroupUsersForConvViewHolder extends RecyclerView.ViewHolder {
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
         ImageHelper.getInstance().loadGroupUserImage(user.getGroupId(), ImageTypeConstants.THUMBNAIL, user.getUserId(), user.getImageUpdateTimestamp(),
         ImageHelper.getInstance().getRequestManager(itemView.getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-        handler, groupUserImage, null);
+        handler, groupUserImage, null, false);
 
         groupUserAlias.setText(user.getAlias());
         groupUserRole.setText(user.getRole() != null ? user.getRole() : " ");

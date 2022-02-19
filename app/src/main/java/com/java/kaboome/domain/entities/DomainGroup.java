@@ -1,6 +1,7 @@
 package com.java.kaboome.domain.entities;
 
 
+import com.google.gson.annotations.SerializedName;
 import com.java.kaboome.constants.UserGroupStatusConstants;
 import com.java.kaboome.data.entities.GroupUser;
 
@@ -36,6 +37,10 @@ public class DomainGroup {
     private UserGroupStatusConstants currentUserStatusForGroup;
 
     private Long imageUpdateTimestamp; //group's image's time stamp
+
+    private Boolean groupPicUploaded;
+
+    private Boolean groupPicLoadingGoingOn = false;
 
     private ArrayList<DomainGroupUser> usersJoined;
 
@@ -173,6 +178,22 @@ public class DomainGroup {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getGroupPicUploaded() {
+        return groupPicUploaded;
+    }
+
+    public void setGroupPicUploaded(Boolean groupPicUploaded) {
+        this.groupPicUploaded = groupPicUploaded;
+    }
+
+    public Boolean getGroupPicLoadingGoingOn() {
+        return groupPicLoadingGoingOn;
+    }
+
+    public void setGroupPicLoadingGoingOn(Boolean groupPicLoadingGoingOn) {
+        this.groupPicLoadingGoingOn = groupPicLoadingGoingOn;
     }
 
     public ArrayList<DomainGroupUser> getUsersJoined() {

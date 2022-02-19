@@ -45,8 +45,11 @@ public abstract class UserGroupConversationDao {
     @Query("UPDATE user_group_conversation SET lastAccessed = :last_accessed WHERE userId = :user_id and groupId = :group_id and otherUserId = :conversationId")
     public abstract void updateUserGroupConversationLastAccessed(Long last_accessed, String user_id, String group_id, String conversationId);
 
-    @Query("UPDATE user_group_conversation SET cacheClearTS = :new_cache_clear_TS WHERE userId = :user_id and groupId = :group_id and otherUserId = :conversation_id")
-    public abstract void updateUserGroupConversationCacheClearTS(Long new_cache_clear_TS, String user_id, String conversation_id, String group_id);
+//    @Query("UPDATE user_group_conversation SET cacheClearTS = :new_cache_clear_TS WHERE userId = :user_id and groupId = :group_id and otherUserId = :conversation_id")
+//    public abstract void updateUserGroupConversationCacheClearTS(Long new_cache_clear_TS, String user_id, String conversation_id, String group_id);
+
+    @Query("UPDATE user_group_conversation SET cacheClearTS = :new_cache_clear_TS, lastAccessed = :new_cache_clear_TS WHERE userId = :user_id and groupId = :group_id and otherUserId = :conversation_id")
+    public abstract void updateUserGroupConversationCacheClearTSAndLastAccessTS(Long new_cache_clear_TS, String user_id, String conversation_id, String group_id);
 
     @Query("UPDATE user_group_conversation SET otherUserName = :other_user_name and otherUserRole = :other_user_role and imageUpdateTimestamp = :image_update_ts WHERE userId = :user_id and groupId = :group_id and otherUserId = :conversation_id")
     public abstract void updateUserGroupConversationDetails(String other_user_name, String other_user_role, Long image_update_ts, String user_id, String conversation_id, String group_id);

@@ -4,14 +4,12 @@ package com.java.kaboome.presentation.views.features.joinGroup;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -41,7 +39,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.domain.entities.DomainUserGroup;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.entities.GroupModel;
@@ -163,7 +160,7 @@ public class JoinGroupDialog extends DialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
         ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
         ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN, AppConfigHelper.getCurrentUserImageTimestamp(),

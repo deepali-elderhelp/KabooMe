@@ -2,6 +2,7 @@ package com.java.kaboome.domain.repositories;
 
 import androidx.lifecycle.LiveData;
 
+import com.java.kaboome.data.entities.Group;
 import com.java.kaboome.domain.entities.DomainGroup;
 import com.java.kaboome.domain.entities.DomainGroupUser;
 import com.java.kaboome.domain.entities.DomainResource;
@@ -16,6 +17,8 @@ public interface GroupRepository {
 //    void updateGroup(final String groupId, final String groupName, int privacy, final String action);
 
     LiveData<DomainUpdateResource<String>> updateGroup(final DomainGroup group, final String action);
+
+//    void updateGroupPicUploadingFields(final Boolean picUploaded, final Boolean picUploadingGoingOn, String groupId);
 
     LiveData<DomainUpdateResource<String>> deleteGroup(final String groupId, final String action);
 
@@ -32,4 +35,6 @@ public interface GroupRepository {
     void removeGroupFromCache(String groupId);
 
     void deleteGroupUserFromCache(String groupId, String groupUserId);
+
+    void updateGroupCache(DomainGroup group, String action);
 }

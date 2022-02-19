@@ -46,7 +46,6 @@ import com.java.kaboome.constants.MessageGroupsConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.domain.entities.DomainMessage;
 import com.java.kaboome.domain.entities.DomainResource;
-import com.java.kaboome.domain.entities.DomainUserGroup;
 import com.java.kaboome.domain.entities.DomainUserGroupConversation;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
@@ -63,7 +62,6 @@ import com.java.kaboome.presentation.helpers.MessageDeleteCheckHelper;
 import com.java.kaboome.presentation.helpers.MessageGroupsHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.mappers.UserGroupConversationModelMapper;
-import com.java.kaboome.presentation.mappers.UserGroupModelMapper;
 import com.java.kaboome.presentation.viewModelProvider.CustomViewModelProvider;
 import com.java.kaboome.presentation.views.features.BaseFragment;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.DownloadClickListener;
@@ -87,7 +85,11 @@ import java.util.UUID;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-
+/**
+ * This class is for the admins to see specific messages sent by a particular user to them
+ * All admins will see the messages
+ * This User is an Admin
+ */
 public class GroupAdminUserMessagesFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks, MessageInput.InputListener, MessageInput.TypingListener, MessageInput.AttachmentsListener,
     MessageListViewAdapter.OnMessageLongClickListener<Message>, MessageListViewAdapter.OnMessageClickListener,
     MediaPlayClickListener, WelcomeMessageClickListener, UserImageClickListener,
@@ -108,6 +110,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         private boolean urgentChecked = false;
         private NavController navController;
         private boolean firstLoad = true;
+        private boolean connectionEstablished = false;
         private FrameLayout newMessagesFlashIcon;
         private boolean alreadyThere = false;
         private static final int REQUEST_READ_EXTERNAL_STORAGE = 101;
@@ -156,7 +159,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
 
-
+            Log.d(TAG, "onCreateView: ");
             //toolbar needs to be set again since it was reset by other viewer fragments
             final AppCompatActivity act = (AppCompatActivity) getActivity();
             mainToolbar = act.findViewById(R.id.mainToolbar);
@@ -188,14 +191,14 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
                 }
             });
 
-            clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
-            clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    messagesViewModel.clearMedia();
-                    return true;
-                }
-            });
+//            clearMedia = mainToolbar.getMenu().findItem(R.id.group_media_clear);
+//            clearMedia.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    messagesViewModel.clearMedia();
+//                    return true;
+//                }
+//            });
 
 
             groupChat = mainToolbar.getMenu().findItem(R.id.group_chat);
@@ -334,9 +337,11 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         @Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        
             if(alreadyThere)
                 return;
 
+        Log.d(TAG, "onViewCreated: ");
             MutableLiveData attachmentPicked = navController.getCurrentBackStackEntry()
                     .getSavedStateHandle()
                     .getLiveData("attachments");
@@ -347,15 +352,15 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
                     if (o != null) { //it could be null if coming from Viewers
 
                         Attachment[] attachments = (Attachment[]) o;
+                        if (NetworkHelper.isOnline() && connectionEstablished) {
+                            //TODO: right now only one attachment, handle more than one
+                            final Attachment attachment = attachments[0];
+                            Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
+                            final String caption = attachment.getAttachmentCaption();
+                            final String attachmentURI = attachment.getAttachmentURI();
+                            final String attachmentPath = attachment.getAttachmentPath();
 
-                        //TODO: right now only one attachment, handle more than one
-                        final Attachment attachment = attachments[0];
-                        Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
-                        final String caption = attachment.getAttachmentCaption();
-                        final String attachmentURI = attachment.getAttachmentURI();
-                        final String attachmentPath = attachment.getAttachmentPath();
-
-                        //start observing imageupload first, before publishing the message
+                            //start observing imageupload first, before publishing the message
 //                    messagesViewModel.getUploadMessageAttachment().observe(getViewLifecycleOwner(), new Observer<DomainUpdateResource>() {
 //                        @Override
 //                        public void onChanged(DomainUpdateResource domainUpdateResource) {
@@ -377,127 +382,133 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 //
 //                        }
 //                    });
-                        //user has selected the attachment, now create a message for it and send it
+                            //user has selected the attachment, now create a message for it and send it
 //                        final String fileExtension = FileUtils.getExtension(Uri.parse(attachmentURI), getContext());
 //                        final String fileMime = FileUtils.getMimeType(getContext(), Uri.parse(attachmentURI));
 //                        final String messageId = UUID.randomUUID().toString();
 //                        final Long sentAt = (new Date()).getTime();
 
-                        final String fileExtension = FileUtils.getExtension(attachmentPath);
-                        final String fileMime = FileUtils.getMimeType(fileExtension);
-                        final String messageId = UUID.randomUUID().toString();
-                        final Long sentAt = (new Date()).getTime();
+                            final String fileExtension = FileUtils.getExtension(attachmentPath);
+                            final String fileMime = FileUtils.getMimeType(fileExtension);
+                            final String messageId = UUID.randomUUID().toString();
+                            final Long sentAt = (new Date()).getTime();
 
-                        //if the message is type image or video, get a thumbnail of the image
-                        //add that to the message and publish
+                            //if the message is type image or video, get a thumbnail of the image
+                            //add that to the message and publish
 //                        if(fileMime.contains("image") || fileMime.contains("video")){
 //                            Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
 //                            Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(thumbnail, 20, 20, true);
 //                            thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
 //                        }
-                        if(fileMime.contains("image") || fileMime.contains("video")) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                try {
-                                    Bitmap thumbnail = getActivity().getContentResolver().loadThumbnail(Uri.parse(attachmentURI), new Size(20,20), null);
-                                    thumbnailString = GeneralHelper.bitmapToBase64(thumbnail);
-                                } catch (IOException e) {
-                                    Log.d(TAG, "exception on thumbnail; generation - "+e.getMessage());
-                                    e.printStackTrace();
-                                }
-
-                            } else {
-                                Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
-                                Bitmap exifedBitmap = thumbnail;
-                                if(thumbnail == null){
-                                    //somehow bitmap is null, put default
-                                    Drawable d = getResources().getDrawable(R.drawable.attachment_default);
-                                    thumbnail = ImagesUtilHelper.drawableToBitmap(d);
-                                }
-                                try {
-                                    //sometimes for the older versions, the exif is coming off by 90 degrees
-                                    //hence rotating it
-                                    int angle = 0;
-                                    ExifInterface oldExif = new ExifInterface(attachmentPath);
-                                    int orientation = oldExif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                            ExifInterface.ORIENTATION_UNDEFINED);
-                                    switch(orientation) {
-                                        case ExifInterface.ORIENTATION_ROTATE_90:
-                                            angle = 90;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_180:
-                                            angle = 180;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_270:
-                                            angle = 270;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_NORMAL:
-                                        default:
-                                            angle=0;
+                            if (fileMime.contains("image") || fileMime.contains("video")) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    try {
+                                        Bitmap thumbnail = getActivity().getContentResolver().loadThumbnail(Uri.parse(attachmentURI), new Size(20, 20), null);
+                                        thumbnailString = GeneralHelper.bitmapToBase64(thumbnail);
+                                    } catch (IOException e) {
+                                        Log.d(TAG, "exception on thumbnail; generation - " + e.getMessage());
+                                        e.printStackTrace();
                                     }
 
-                                    Matrix matrix = new Matrix();
-                                    matrix.postRotate(angle);
-                                    exifedBitmap = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(),
-                                            matrix, true);
+                                } else {
+                                    Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
+                                    Bitmap exifedBitmap = thumbnail;
+                                    if (thumbnail == null) {
+                                        //somehow bitmap is null, put default
+                                        Drawable d = getResources().getDrawable(R.drawable.attachment_default);
+                                        thumbnail = ImagesUtilHelper.drawableToBitmap(d);
+                                    }
+                                    try {
+                                        //sometimes for the older versions, the exif is coming off by 90 degrees
+                                        //hence rotating it
+                                        int angle = 0;
+                                        ExifInterface oldExif = new ExifInterface(attachmentPath);
+                                        int orientation = oldExif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                                ExifInterface.ORIENTATION_UNDEFINED);
+                                        switch (orientation) {
+                                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                                angle = 90;
+                                                break;
 
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                                angle = 180;
+                                                break;
+
+                                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                                angle = 270;
+                                                break;
+
+                                            case ExifInterface.ORIENTATION_NORMAL:
+                                            default:
+                                                angle = 0;
+                                        }
+
+                                        Matrix matrix = new Matrix();
+                                        matrix.postRotate(angle);
+                                        exifedBitmap = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(),
+                                                matrix, true);
+
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(exifedBitmap, 20, 20, true);
+                                    thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                                 }
-                                Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(exifedBitmap, 20, 20, true);
-                                thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
-                            }
-                        }
-
-                        messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true,
-                                fileExtension, fileMime, false, thumbnailString, MessageGroupsConstants.USER_ADMIN_MESSAGES,attachmentURI,
-                                userGroupConversationModel.getOtherUserId(),
-                                userGroupConversationModel.getOtherUserName(), userGroupConversationModel.getOtherUserRole(), userGroupConversationModel.getImageUpdateTimestamp(),
-                                new PublishMessageCallback() {
-
-                            @Override
-                            public void publishSuccessful() {
-
-                                Message message = new Message();
-                                message.setMessageId(messageId);
-                                message.setGroupId(userGroupConversationModel.getGroupId());
-                                message.setSentBy(AppConfigHelper.getUserId());
-                                message.setSentByImageTS(userGroupModel.getUserImageUpdateTimestamp());
-                                message.setAlias(userGroupModel.getAlias());
-                                message.setRole(userGroupModel.getRole());
-                                message.setIsAdmin(userGroupModel.getIsAdmin());
-                                message.setHasAttachment(true);
-                                message.setAttachmentUploaded(false);
-                                message.setAttachmentMime(fileMime);
-                                message.setAttachmentExtension(fileExtension);
-                                message.setSentAt(sentAt);
-                                message.setSentTo(userGroupConversationModel.getOtherUserId());
-                                message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
-                                message.setMessageText(String.valueOf(caption));
-                                message.setTnBlob(thumbnailString);
-                                message.setAttachmentUri(attachmentURI);
-                                message.setAttachmentLoadingGoingOn(true);
-                                message.setDeleted(false);
-                                message.setSentToUserName(userGroupConversationModel.getOtherUserName());
-                                message.setSentToUserRole(userGroupConversationModel.getOtherUserRole());
-                                message.setSentToImageTS(userGroupConversationModel.getImageUpdateTimestamp());
-//                                handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
-                                messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
-
                             }
 
-                            @Override
-                            public void publishFailed() {
-                                //show alert that the message sent failed
+                            messagesViewModel.addToMessageAttachmentMap(messageId, new String[]{attachmentPath, attachmentURI});
+
+                            messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), AppConfigHelper.getUserId(), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true,
+                                    fileExtension, fileMime, false, thumbnailString, MessageGroupsConstants.USER_ADMIN_MESSAGES, attachmentURI,
+                                    userGroupConversationModel.getOtherUserId(),
+                                    userGroupConversationModel.getOtherUserName(), userGroupConversationModel.getOtherUserRole(), userGroupConversationModel.getImageUpdateTimestamp(),
+                                    new PublishMessageCallback() {
+
+                                        @Override
+                                        public void publishSuccessful() {
+
+//                                Message message = new Message();
+//                                message.setMessageId(messageId);
+//                                message.setGroupId(userGroupConversationModel.getGroupId());
+//                                message.setSentBy(AppConfigHelper.getUserId());
+//                                message.setSentByImageTS(userGroupModel.getUserImageUpdateTimestamp());
+//                                message.setAlias(userGroupModel.getAlias());
+//                                message.setRole(userGroupModel.getRole());
+//                                message.setIsAdmin(userGroupModel.getIsAdmin());
+//                                message.setHasAttachment(true);
+//                                message.setAttachmentUploaded(false);
+//                                message.setAttachmentMime(fileMime);
+//                                message.setAttachmentExtension(fileExtension);
+//                                message.setSentAt(sentAt);
+//                                message.setSentTo(userGroupConversationModel.getOtherUserId());
+//                                message.setNotify(attachment.isAttachmentPriority() ? 1 : 2);
+//                                message.setMessageText(String.valueOf(caption));
+//                                message.setTnBlob(thumbnailString);
+//                                message.setAttachmentUri(attachmentURI);
+//                                message.setAttachmentLoadingGoingOn(true);
+//                                message.setDeleted(false);
+//                                message.setSentToUserName(userGroupConversationModel.getOtherUserName());
+//                                message.setSentToUserRole(userGroupConversationModel.getOtherUserRole());
+//                                message.setSentToImageTS(userGroupConversationModel.getImageUpdateTimestamp());
+////                                handleUploadAttachment(message, FileUtils.getFile(getContext(), Uri.parse(attachmentURI)));
+////                                messagesViewModel.startUploadingAttachment(message, new File(attachmentPath));
+//                                messagesViewModel.startUploadingAttachment(message, attachmentPath);
+
+                                        }
+
+                                        @Override
+                                        public void publishFailed() {
+                                            //show alert that the message sent failed
 //                            IoTHelper.getInstance().setLastMessage(null);
-                                Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
-                            }
+                                            Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                                        }
 
 
-                        });
+                                    });
 
+                        } else {
+                            Toast.makeText(getContext(), "There seems to be some network problem...please try sending again in some time", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
@@ -524,6 +535,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         @Override
         public void onResume() {
 
+            Log.d(TAG, "onResume: ");
             mainToolbar.setTitle(userGroupConversationModel.getOtherUserName()+"-"+userGroupConversationModel.getOtherUserRole());
             mainToolbar.setSubtitle(userGroupModel.getGroupName());
             //the following is needed because when waking up after screen change on something, the old value comes up
@@ -532,7 +544,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
             //so here I set the value to false, to subscribe topic does not happen
             //onChange is called but it does nothing when the value is false
             IoTHelper.getInstance().resetConnectionEstablished();
-            Log.d(TAG, "onResume: ");
+            Log.d(TAG, "onResume: connection reset");
 
             super.onResume();
             //check if the mqtt connection is still there
@@ -668,6 +680,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 //                            IoTHelper.getInstance().subscribeToGroup(group.getGroupId());
                             IoTHelper.getInstance().subscribeToGroup(messagesViewModel.getTopicName());
                             messageInput.getButton().setEnabled(true);
+                            connectionEstablished = true;
                         } catch (Exception e) {
                             if(messagesViewModel.connectionErrorToBeDisplayed(e)){
                                 Toast.makeText(getContext(), "Could not connect to network, please check", Toast.LENGTH_LONG).show();
@@ -677,6 +690,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
                     }
                     else{
                         messageInput.getButton().setEnabled(false);
+                        connectionEstablished = false;
                     }
                 }
             });
@@ -795,26 +809,29 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
         public boolean onSubmit(CharSequence input) {
             firstLoad = false;
             //check if the connection is there
-            if(NetworkHelper.isOnline()){
+            if(NetworkHelper.isOnline() && connectionEstablished){
 //                messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, MessageGroupsConstants.USER_ADMIN_MESSAGES, AppConfigHelper.getUserId(), new PublishMessageCallback() {
 
-                messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, MessageGroupsConstants.USER_ADMIN_MESSAGES,
+                messagesViewModel.publishIoTMessage(String.valueOf(input), AppConfigHelper.getUserId(), urgentChecked ? 1 : 2, MessageGroupsConstants.USER_ADMIN_MESSAGES,
                         userGroupConversationModel.getOtherUserId(), userGroupConversationModel.getOtherUserName(), userGroupConversationModel.getOtherUserRole(),
                         userGroupConversationModel.getImageUpdateTimestamp(), new PublishMessageCallback() {
                     @Override
                     public void publishSuccessful() {
                         //do nothing
+                        Log.d(TAG, "publishSuccessful: ");
 
                     }
 
                     @Override
                     public void publishFailed() {
+                        Log.d(TAG, "publishFailed: ");
                         //show message that it failed, connection issue could be there, try again
                         Toast.makeText(getContext(), "There seems to be some network problem...still trying", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
             else{
+                Log.d(TAG, "onSubmit: no network connection");
                 Toast.makeText(getContext(), "Sorry, seems like there is no network connection", Toast.LENGTH_SHORT).show();
             }
 
@@ -1283,11 +1300,11 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 //            message.setAttachmentUri(galleryImageUri);
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachmentFile);
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-                messagesViewModel.startUploadingAttachment(message, attachment);
+                messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{attachment.getPath()});
             }
             else{
 //            messagesViewModel.startUploadingAttachment(message.getMessageId(), message.getGroupId(), message.getSentAt(), message.getAttachmentExtension(), message.getAttachmentMime(), attachment);
-                messagesViewModel.startUploadingAttachment(message, attachment);
+                messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{attachment.getPath()});
             }
         }
 
@@ -1307,7 +1324,8 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
                 return;
             }
 //            handleUploadAttachment(message, fileToUpload);
-            messagesViewModel.startUploadingAttachment(message, fileToUpload);
+            messagesViewModel.startUploadingAttachment(message.getMessageId(), new String[]{fileToUpload.getPath()});
+
         }
 
         @Override
@@ -1338,15 +1356,6 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
 
             Log.d(TAG, "onLoginSuccess: ");
 
-            if(alreadyThere)
-                return;
-
-//            initRecyclerView();
-//            subscribeObservers();
-
-            messagesViewModel.loadServerMessages();
-            messagesViewModel.startNetGroupUnreadMessages();
-
             /**
              * sometimes when the user is on messages for a long time, the cognito session is expired
              * when user comes back, onResume() happens which starts the process of getting credentials
@@ -1356,6 +1365,18 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
              */
 //            IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
             IoTHelper.getInstance().connectToIoT(messagesViewModel.getTopicName(), false); //this will trigger onChanged() for connectionEstablished
+
+
+            Log.d(TAG, "onLoginSuccess: connection done");
+            if(alreadyThere)
+                return;
+
+//            initRecyclerView();
+//            subscribeObservers();
+
+            messagesViewModel.loadServerMessages();
+            messagesViewModel.startNetGroupUnreadMessages();
+
 
             alreadyThere = true;
         }
@@ -1427,7 +1448,7 @@ public class GroupAdminUserMessagesFragment extends BaseFragment implements Easy
             //this is a welcome message
             Bundle args = new Bundle();
             args.putSerializable("group", userGroupModel);
-            navController.navigate(R.id.action_groupAdminUserMessagesFragment_to_inviteContactsFragment, args);
+            navController.navigate(R.id.action_groupAdminUserMessagesFragment_to_inviteContactsDialog, args);
             return;
         }
 

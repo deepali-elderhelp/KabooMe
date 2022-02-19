@@ -13,6 +13,8 @@ public interface UserGroupsListRepository {
 
     LiveData<List<DomainUserGroup>> getGroupsListOnlyFromCache();
 
+    List<DomainUserGroup> getGroupsListOnlyFromCacheNonLive();
+
     void addNewGroupToCache(DomainUserGroup domainUserGroup);
 
     void updateUserGroupLastAccessed(String groupId, Long newLastAccessed);

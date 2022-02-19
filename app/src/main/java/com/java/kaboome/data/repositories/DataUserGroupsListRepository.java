@@ -85,6 +85,11 @@ public class DataUserGroupsListRepository implements UserGroupsListRepository {
     }
 
     @Override
+    public List<DomainUserGroup> getGroupsListOnlyFromCacheNonLive() {
+        return UserGroupDataDomainMapper.transform(userGroupDao.getUserGroupsNonLive(AppConfigHelper.getUserId()));
+    }
+
+    @Override
     public void addNewGroupToCache(DomainUserGroup domainUserGroup) {
         final UserGroup userGroup = UserGroupDataDomainMapper.transformFromDomain(domainUserGroup);
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
@@ -110,7 +115,8 @@ public class DataUserGroupsListRepository implements UserGroupsListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupDao.updateUserGroupCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
+//                userGroupDao.updateUserGroupCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
+                userGroupDao.updateUserGroupCacheClearTSAndLastAccess(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
             }
         });
     }
@@ -130,7 +136,8 @@ public class DataUserGroupsListRepository implements UserGroupsListRepository {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                userGroupDao.updateUserGroupAdminCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
+//                userGroupDao.updateUserGroupAdminCacheClearTS(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
+                userGroupDao.updateUserGroupAdminCacheClearTSAndLastAccess(newCacheClearTS, AppConfigHelper.getUserId(), groupId);
             }
         });
     }

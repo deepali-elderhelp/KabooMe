@@ -18,6 +18,8 @@ public class UserModelMapper {
             userModel.setPhoneNumber(domainUser.getPhoneNumber());
             userModel.setEmail(domainUser.getEmail());
             userModel.setImageUpdateTimestamp(domainUser.getImageUpdateTimestamp());
+            userModel.setUserPicLoadingGoingOn(domainUser.getUserPicLoadingGoingOn());
+            userModel.setUserPicUploaded(domainUser.getUserPicUploaded());
         }
 
         if(input.status == DomainResource.Status.LOADING){
@@ -46,6 +48,8 @@ public class UserModelMapper {
             domainUser.setPhoneNumber(userModel.getPhoneNumber());
             domainUser.setEmail(userModel.getEmail());
             domainUser.setImageUpdateTimestamp(userModel.getImageUpdateTimestamp());
+            domainUser.setUserPicLoadingGoingOn(userModel.getUserPicLoadingGoingOn());
+            domainUser.setUserPicUploaded(userModel.getUserPicUploaded());
         }
 
         return domainUser;

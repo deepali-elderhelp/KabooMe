@@ -59,6 +59,9 @@ public interface MessageDao {
     @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     LiveData<Message> getLastMessageForOnlyGroupAsLiveData(String group_id);
 
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo != 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
+    LiveData<Message> getLastMessageForAllConvsAsLiveData(String group_id);
+
     @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     LiveData<Message> getLastMessageForConvAsLiveData(String group_id, String user_id);
 
@@ -71,6 +74,9 @@ public interface MessageDao {
     @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0))ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForOnlyGroup(String group_id);
 
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo != 'Group' AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0))ORDER BY sentAt DESC LIMIT 1")
+    Message getLastMessageForAllConvs(String group_id);
+
     @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id AND NOT (coalesce(isDeletedLocally, 0) OR coalesce(isDeleted, 0)) ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForConv(String group_id, String user_id);
 
@@ -79,6 +85,9 @@ public interface MessageDao {
 
     @Query("SELECT * FROM messages where groupId = :group_id and sentTo = 'Group' ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForOnlyGroupIncludingDeleted(String group_id);
+
+    @Query("SELECT * FROM messages where groupId = :group_id and sentTo != 'Group' ORDER BY sentAt DESC LIMIT 1")
+    Message getLastMessageForAllConvsIncludingDeleted(String group_id);
 
     @Query("SELECT * FROM messages where groupId = :group_id AND sentTo = :user_id ORDER BY sentAt DESC LIMIT 1")
     Message getLastMessageForConvIncludingDeleted(String group_id, String user_id);

@@ -237,11 +237,15 @@ public class AppConfigHelper extends Application {
 //                editor.commit();
 //            }
             if(timestamp != null && timestamp > imageSignatureTimestamp.getTimeStamp()){
-//                Log.d(TAG, "New signature bcoz old timestamp - "+imageSignatureTimestamp.getTimeStamp()+" and new one is - "+timestamp+" for id "+id);
+                Log.d(TAG, "New signature bcoz old timestamp - "+imageSignatureTimestamp.getTimeStamp()+" and new one is - "+timestamp+" for id "+id);
                 imageSignatureTimestamp.incrementSignature(timestamp);
                 imageSignatureTimestamp.setTimeStamp(timestamp);
                 editor.putString("imageSignatures", new Gson().toJson(imageSignatureTimestampsInMemory));
                 editor.commit();
+            }
+            //for logging
+            if(id.equals("group116081f5-5ff0-47c8-8490-04cab35d028e_MN")){
+                Log.d(TAG, "116081f5-5ff0-47c8-8490-04cab35d028e: "+imageSignatureTimestamp.getSignature());
             }
             return imageSignatureTimestamp.getSignature();
         }

@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface GroupsListRepository {
 
+
     LiveData<DomainResource<List<DomainGroup>>> getGroupsList(String groupNameOrId, String searchText, boolean goToServer);
 }

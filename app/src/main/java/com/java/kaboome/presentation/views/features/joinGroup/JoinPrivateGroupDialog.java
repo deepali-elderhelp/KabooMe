@@ -48,7 +48,6 @@ import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.helpers.ErrorMessageHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.views.features.joinGroup.viewmodel.JoinPrivateGroupViewModel;
-import com.java.kaboome.presentation.views.features.profile.EditUserPicFragment;
 
 import java.util.Date;
 
@@ -161,7 +160,7 @@ public class JoinPrivateGroupDialog extends DialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, group.getGroupName());
         ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
         ImageHelper.getInstance().loadUserImage(AppConfigHelper.getUserId(), ImageTypeConstants.MAIN, AppConfigHelper.getCurrentUserImageTimestamp(),

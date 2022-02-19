@@ -14,6 +14,7 @@ public enum GroupActionConstants {
     UPDATE_GROUP_REQUESTS_SETTING("updateGroupRequestsSetting"),
     UPDATE_GROUP_USER_ROLE_AND_ALIAS("updateGroupUserRoleAndAlias"),
     UPDATE_GROUP_USER_IMAGE("updateGroupUserImage"),
+    UPDATE_GROUP_CURRENT_STATUS("updateGroupCurrentStatus"),
     UPDATE_GROUP_ROLE_AND_ALIAS_AND_IMAGE("updateGroupUserRoleAliasAndImage"),
     UPDATE_GROUP_CONV_ROLE_AND_ALIAS_AND_IMAGE("updateGroupUserRoleAndAlias_conv"),
     UPDATE_GROUP_USER_NOTIFICATION("updateGroupUserNotification"),

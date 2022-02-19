@@ -49,6 +49,10 @@ public class GroupModelMapper {
 
         group.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
 
+        group.setGroupPicUploaded(domainGroup.getGroupPicUploaded());
+
+        group.setGroupPicLoadingGoingOn(domainGroup.getGroupPicLoadingGoingOn());
+
         return group;
     }
 
@@ -69,6 +73,8 @@ public class GroupModelMapper {
                 groupUserModel.setIsAdmin(groupUser.getIsAdmin());
                 groupUserModel.setIsCreator(groupUser.getIsCreator());
                 groupUserModel.setRole(groupUser.getRole());
+                groupUserModel.setGroupUserPicUploaded(groupUser.getGroupUserPicUploaded());
+                groupUserModel.setGroupUserPicLoadingGoingOn(groupUser.getGroupUserPicLoadingGoingOn());
                 groupUserModel.setImageUpdateTimestamp(groupUser.getImageUpdateTimestamp());
                 groupUserModel.setDeviceId(groupUser.getDeviceId());
                 listOfGroupUsers.add(groupUserModel);
@@ -96,6 +102,8 @@ public class GroupModelMapper {
                 groupUserModel.setIsAdmin(groupUser.getIsAdmin());
                 groupUserModel.setIsCreator(groupUser.getIsCreator());
                 groupUserModel.setRole(groupUser.getRole());
+                groupUserModel.setGroupUserPicUploaded(groupUser.getGroupUserPicUploaded());
+                groupUserModel.setGroupUserPicLoadingGoingOn(groupUser.getGroupUserPicLoadingGoingOn());
                 groupUserModel.setImageUpdateTimestamp(groupUser.getImageUpdateTimestamp());
                 groupUserModel.setDeviceId(groupUser.getDeviceId());
                 listOfGroupUsers.add(groupUserModel);
@@ -168,6 +176,8 @@ public class GroupModelMapper {
         domainGroup.setUnicastGroup(groupModel.getUnicastGroup());
         domainGroup.setOpenToRequests(groupModel.getOpenToRequests());
         domainGroup.setImageUpdateTimestamp(groupModel.getImageUpdateTimestamp());
+        domainGroup.setGroupPicLoadingGoingOn(groupModel.getGroupPicLoadingGoingOn());
+        domainGroup.setGroupPicUploaded(groupModel.getGroupPicUploaded());
         domainGroup.setGroupCreatorRole(groupModel.getCreatorRole());
         domainGroup.setCreatedByAlias(groupModel.getCreatedByAlias());
 
@@ -186,6 +196,8 @@ public class GroupModelMapper {
         domainGroup.setUnicastGroup(groupModel.getUnicastGroup());
         domainGroup.setOpenToRequests(groupModel.getOpenToRequests());
         domainGroup.setImageUpdateTimestamp(groupModel.getImageUpdateTimestamp());
+        domainGroup.setGroupPicUploaded(groupModel.getGroupPicUploaded());
+        domainGroup.setGroupPicLoadingGoingOn(groupModel.getGroupPicLoadingGoingOn());
         domainGroup.setGroupCreatorRole(groupModel.getCreatorRole());
         domainGroup.setCreatedByAlias(groupModel.getCreatedByAlias());
 
@@ -216,6 +228,8 @@ public class GroupModelMapper {
         groupModel.setExpiryDate(domainGroup.getExpiry());
         groupModel.setOpenToRequests(domainGroup.getOpenToRequests());
         groupModel.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
+        groupModel.setGroupPicLoadingGoingOn(domainGroup.getGroupPicLoadingGoingOn());
+        groupModel.setGroupPicUploaded(domainGroup.getGroupPicUploaded());
         groupModel.setCreatorRole(domainGroup.getGroupCreatorRole());
 
         return groupModel;
@@ -291,6 +305,8 @@ public class GroupModelMapper {
                 groupModel.setExpiryDate(domainGroup.getExpiry());
                 groupModel.setOpenToRequests(domainGroup.getOpenToRequests());
                 groupModel.setImageUpdateTimestamp(domainGroup.getImageUpdateTimestamp());
+                groupModel.setGroupPicUploaded(domainGroup.getGroupPicUploaded());
+                groupModel.setGroupPicLoadingGoingOn(domainGroup.getGroupPicLoadingGoingOn());
                 //TODO: remaining fields as and when needed
 
                 viewGroupsList.add(groupModel);

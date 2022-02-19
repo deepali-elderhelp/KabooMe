@@ -33,8 +33,23 @@ public abstract class GroupDao {
     @Query("UPDATE groups SET groupName = :groupName WHERE groupId = :groupId")
     public abstract void updateGroupName(String groupName, String groupId);
 
+    @Query("UPDATE groups SET groupPicLoadingGoingOn = :group_pic_loading_going_on WHERE groupId = :group_id")
+    public abstract void updateGroupImageLoadingGoingOn(Boolean group_pic_loading_going_on, String group_id);
+
+    @Query("UPDATE groups SET groupPicUploaded = :group_pic_uploaded WHERE groupId = :group_id")
+    public abstract void updateGroupImageUploaded(Boolean group_pic_uploaded, String group_id);
+
+    @Query("UPDATE groups SET groupPicUploaded = :group_pic_uploaded, groupPicLoadingGoingOn = :group_pic_loading_going_on WHERE groupId = :group_id")
+    public abstract void updateGroupImageUploadingData(Boolean group_pic_uploaded, Boolean group_pic_loading_going_on, String group_id);
+
+    @Query("UPDATE groups SET groupName = :group_name, groupPicUploaded = :group_pic_uploaded, groupPicLoadingGoingOn = :group_pic_loading_going_on WHERE groupId = :group_id")
+    public abstract void updateGroupINameAndmageUploadingData(String group_name, Boolean group_pic_uploaded, Boolean group_pic_loading_going_on, String group_id);
+
     @Query("UPDATE groups SET privateGroup = :groupPrivacy WHERE groupId = :groupId")
     public abstract void updateGroupPrivacy(boolean groupPrivacy, String groupId);
+
+    @Query("UPDATE groups SET currentUserStatusForGroup = :current_user_status_for_group WHERE groupId = :groupId")
+    public abstract void updateCurrentUserStatusForGroup(UserGroupStatusConstants current_user_status_for_group, String groupId);
 
     @Query("UPDATE groups SET groupDescription = :groupDescription WHERE groupId = :groupId")
     public abstract void updateGroupDescription(String groupDescription, String groupId);

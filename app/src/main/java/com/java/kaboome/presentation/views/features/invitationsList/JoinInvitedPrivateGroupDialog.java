@@ -4,7 +4,6 @@ package com.java.kaboome.presentation.views.features.invitationsList;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +38,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
+import com.java.kaboome.constants.InvitationStatusConstants;
 import com.java.kaboome.constants.RequestActionConstants;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.presentation.entities.GroupRequestModel;
@@ -47,9 +48,7 @@ import com.java.kaboome.presentation.helpers.AvatarHelper;
 import com.java.kaboome.presentation.helpers.DateFormatter;
 import com.java.kaboome.presentation.helpers.ErrorMessageHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
-import com.java.kaboome.presentation.views.features.joinGroup.JoinPrivateGroupDialog;
 import com.java.kaboome.presentation.views.features.joinGroup.viewmodel.JoinPrivateGroupViewModel;
-import com.java.kaboome.presentation.views.features.profile.EditUserEmailFragment;
 
 import java.util.Date;
 
@@ -172,7 +171,7 @@ public class JoinInvitedPrivateGroupDialog extends DialogFragment {
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(getContext(),R.dimen.group_actions_dialog_image_width, invitation.getGroupName());
         ImageHelper.getInstance().loadGroupImage(invitation.getGroupId(), ImageTypeConstants.MAIN,null,
                 ImageHelper.getInstance().getRequestManager(getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, true);
 
 
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.account_gray_192);
@@ -325,23 +324,27 @@ public class JoinInvitedPrivateGroupDialog extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            GroupRequestModel groupRequestModel = new GroupRequestModel();
-            groupRequestModel.setUserId(AppConfigHelper.getUserId());
-            groupRequestModel.setGroupId(invitation.getGroupId());
-            groupRequestModel.setRequestMessage(messageToAdmin.getText().toString());
-            groupRequestModel.setUserAlias(userAlias.getText().toString());
-            groupRequestModel.setUserRole(userRole.getText().toString());
-            if(imageChanged){
-                groupRequestModel.setImageUpdateTimestamp((new Date()).getTime());
+            if(invitation.getInvitationStatus() == InvitationStatusConstants.PENDING){
+                Toast.makeText(getContext(), "Your request is already pending with the Admin", Toast.LENGTH_SHORT).show();
             }
-            else{
-                groupRequestModel.setImageUpdateTimestamp(AppConfigHelper.getCurrentUserImageTimestamp());
+            else {
+
+                GroupRequestModel groupRequestModel = new GroupRequestModel();
+                groupRequestModel.setUserId(AppConfigHelper.getUserId());
+                groupRequestModel.setGroupId(invitation.getGroupId());
+                groupRequestModel.setRequestMessage(messageToAdmin.getText().toString());
+                groupRequestModel.setUserAlias(userAlias.getText().toString());
+                groupRequestModel.setUserRole(userRole.getText().toString());
+                if (imageChanged) {
+                    groupRequestModel.setImageUpdateTimestamp((new Date()).getTime());
+                } else {
+                    groupRequestModel.setImageUpdateTimestamp(AppConfigHelper.getCurrentUserImageTimestamp());
+                }
+
+                groupRequestModel.setDateRequestMade((new Date()).getTime());
+
+                joinPrivateGroupViewModel.createRequest(groupRequestModel, invitation.getGroupName(), String.valueOf(invitation.getPrivateGroup()), RequestActionConstants.REQUEST_TO_JOIN.getAction(), picturePath, thumbnailPath, imageChanged);
             }
-
-            groupRequestModel.setDateRequestMade((new Date()).getTime());
-
-            joinPrivateGroupViewModel.createRequest(groupRequestModel, invitation.getGroupName(), String.valueOf(invitation.getPrivateGroup()), RequestActionConstants.REQUEST_TO_JOIN.getAction(), picturePath, thumbnailPath,imageChanged);
-
         }
     };
 

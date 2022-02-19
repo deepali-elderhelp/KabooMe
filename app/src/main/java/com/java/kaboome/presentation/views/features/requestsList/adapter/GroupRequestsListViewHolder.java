@@ -1,6 +1,5 @@
 package com.java.kaboome.presentation.views.features.requestsList.adapter;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.View;
@@ -12,7 +11,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.presentation.entities.GroupRequestModel;
@@ -69,7 +67,7 @@ public class GroupRequestsListViewHolder extends RecyclerView.ViewHolder {
 
         ImageHelper.getInstance().loadGroupUserImage(groupRequestModel.getGroupId(), ImageTypeConstants.MAIN, groupRequestModel.getUserId(), groupRequestModel.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, userImage, null);
+                handler, userImage, null, true);
 
         userAlias.setText(groupRequestModel.getUserAlias());
         userRole.setText(groupRequestModel.getUserRole());

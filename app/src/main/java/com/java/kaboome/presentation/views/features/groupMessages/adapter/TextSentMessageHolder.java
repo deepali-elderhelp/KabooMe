@@ -4,36 +4,21 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.RequestOptions;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.helpers.DateHelper;
-import com.java.kaboome.presentation.helpers.FileUtils;
-import com.java.kaboome.presentation.images.BlurTransformation;
 import com.java.kaboome.presentation.images.ImageHelper;
 import com.java.kaboome.presentation.views.widgets.MessagesListStyle;
-
-import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -130,9 +115,9 @@ public class TextSentMessageHolder extends RecyclerView.ViewHolder {
 
         Drawable imageErrorAndPlaceholder = itemView.getContext().getResources().getDrawable(R.drawable.account_gray_192);
 
-        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.THUMBNAIL, message.getSentBy(), message.getSentByImageTS(),
+        ImageHelper.getInstance().loadGroupUserImage(message.getGroupId(), ImageTypeConstants.MAIN, message.getSentBy(), message.getSentByImageTS(),
                 ImageHelper.getInstance().getRequestManager(itemView.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, profileImage, null);
+                handler, profileImage, null, false);
 
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override

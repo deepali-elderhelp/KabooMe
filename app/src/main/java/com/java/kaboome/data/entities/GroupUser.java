@@ -75,6 +75,12 @@ public class GroupUser implements Serializable {
     @SerializedName("imageUpdateTimestamp")
     private Long imageUpdateTimestamp; //group users's image's time stamp
 
+    @SerializedName("groupUserPicUploaded")
+    private Boolean groupUserPicUploaded;
+
+    @SerializedName("groupUserPicLoadingGoingOn")
+    private Boolean groupUserPicLoadingGoingOn = false;
+
     public String getUserId() {
         return userId;
     }
@@ -144,6 +150,22 @@ public class GroupUser implements Serializable {
 
     public void setImageUpdateTimestamp(Long imageUpdateTimestamp) {
         this.imageUpdateTimestamp = imageUpdateTimestamp;
+    }
+
+    public Boolean getGroupUserPicUploaded() {
+        return groupUserPicUploaded;
+    }
+
+    public void setGroupUserPicUploaded(Boolean groupUserPicUploaded) {
+        this.groupUserPicUploaded = groupUserPicUploaded;
+    }
+
+    public Boolean getGroupUserPicLoadingGoingOn() {
+        return groupUserPicLoadingGoingOn;
+    }
+
+    public void setGroupUserPicLoadingGoingOn(Boolean groupUserPicLoadingGoingOn) {
+        this.groupUserPicLoadingGoingOn = groupUserPicLoadingGoingOn;
     }
 
     public GroupUser() {

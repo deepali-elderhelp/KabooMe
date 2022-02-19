@@ -28,6 +28,9 @@ import com.java.kaboome.domain.repositories.UserGroupsListRepository;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DataGroupsListRepository implements GroupsListRepository {

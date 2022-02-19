@@ -7,43 +7,22 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.bumptech.glide.Glide;
-import com.google.android.material.textfield.TextInputEditText;
 import com.java.kaboome.R;
 import com.java.kaboome.constants.ImageTypeConstants;
-import com.java.kaboome.presentation.entities.GroupModel;
 import com.java.kaboome.presentation.entities.GroupUserModel;
-import com.java.kaboome.presentation.entities.UserGroupModel;
-import com.java.kaboome.presentation.helpers.AvatarHelper;
-import com.java.kaboome.presentation.helpers.DialogHelper;
 import com.java.kaboome.presentation.images.ImageHelper;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.java.kaboome.helpers.AppConfigHelper.getContext;
 
 
 /**
@@ -121,7 +100,7 @@ public class GroupUserPicDisplayFragment extends DialogFragment {
         Drawable userImageErrorAndPlaceholder = getContext().getResources().getDrawable(R.drawable.bs_profile);
         ImageHelper.getInstance().loadGroupUserImage(groupUserModel.getGroupId(), ImageTypeConstants.MAIN, groupUserModel.getUserId(), groupUserModel.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(getContext()), userImageErrorAndPlaceholder, userImageErrorAndPlaceholder,
-                new Handler(), userImage, userImageProgressBar);
+                new Handler(), userImage, userImageProgressBar, true);
 
 
         return view;

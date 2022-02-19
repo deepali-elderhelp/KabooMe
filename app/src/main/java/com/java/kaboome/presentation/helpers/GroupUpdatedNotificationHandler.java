@@ -71,9 +71,14 @@ public GroupUpdatedNotificationHandler(RemoteMessage remoteMessage, Context cont
         if(remoteMessage != null && remoteMessage.getData().containsValue(GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction())){
             updateUserGroupCacheUseCase.execute(UpdateUserGroupCacheUseCase.Params.forUserGroup(groupObject, GroupActionConstants.UPDATE_GROUP_NAME_PRIVACY_IMAGE.getAction()));
         }
-        if(remoteMessage != null && remoteMessage.getData().containsValue(GroupActionConstants.UPDATE_GROUP_EXPIRY.getAction())){
+        else if(remoteMessage != null && remoteMessage.getData().containsValue(GroupActionConstants.UPDATE_GROUP_IMAGE.getAction())){
+            updateUserGroupCacheUseCase.execute(UpdateUserGroupCacheUseCase.Params.forUserGroup(groupObject, GroupActionConstants.UPDATE_GROUP_IMAGE.getAction()));
+        }
+        else if(remoteMessage != null && remoteMessage.getData().containsValue(GroupActionConstants.UPDATE_GROUP_EXPIRY.getAction())){
             updateUserGroupCacheUseCase.execute(UpdateUserGroupCacheUseCase.Params.forUserGroup(groupObject, GroupActionConstants.UPDATE_GROUP_EXPIRY.getAction()));
         }
+
+        //TODO: if the action is updated group image, then start a worker to download that new image
 
         //no notification - quietly change
 //        buildNotificationForUser(context, groupObject);

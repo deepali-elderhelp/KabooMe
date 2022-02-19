@@ -129,26 +129,39 @@ public class GroupUserListViewAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyDataSetChanged();
     }
 
-    public void setGroupUser(GroupUserModel groupUser){
-        Log.d(TAG, "setGroupUsers: size is "+groupUsers.size());
-        if(this.groupUsers != null) {
-            this.groupUsers.set(this.groupUsers.indexOf(groupUser), groupUser);
-            notifyItemChanged(this.groupUsers.indexOf(groupUser));
-        }
-    }
+//    public void setGroupUser(GroupUserModel groupUser){
+//        Log.d(TAG, "setGroupUsers: size is "+groupUsers.size());
+//        if(this.groupUsers != null && this.groupUsers.indexOf(groupUser) != -1) {
+//            this.groupUsers.set(this.groupUsers.indexOf(groupUser), groupUser);
+//            notifyItemChanged(this.groupUsers.indexOf(groupUser));
+//        }
+//    }
 
-    public void updateCurrentGroupUserImageTS(Long timestamp){
-        String userId = AppConfigHelper.getUserId();
-        for(GroupUserModel groupUser: groupUsers){
-            if(groupUser.getUserId().equals(userId)){
-                if(Objects.equals(groupUser.getImageUpdateTimestamp(), timestamp)){
-                    return;
-                }
-                groupUser.setImageUpdateTimestamp(timestamp);
-                setGroupUser(groupUser);
-            }
-        }
-    }
+//    public void updateCurrentGroupUserImageTS(Long timestamp){
+//        String userId = AppConfigHelper.getUserId();
+//        for(GroupUserModel groupUser: groupUsers){
+//            if(groupUser.getUserId().equals(userId)){
+//                if(Objects.equals(groupUser.getImageUpdateTimestamp(), timestamp)){
+//                    return;
+//                }
+//                groupUser.setImageUpdateTimestamp(timestamp);
+//                setGroupUser(groupUser);
+//            }
+//        }
+//    }
+//
+//    public void updateCurrentGroupUserImagePath(String imagePath){
+//        String userId = AppConfigHelper.getUserId();
+//        for(GroupUserModel groupUser: groupUsers){
+//            if(groupUser.getUserId().equals(userId)){
+//                if(Objects.equals(groupUser.getImagePath(), imagePath)){
+//                    return;
+//                }
+//                groupUser.setImagePath(imagePath);
+//                setGroupUser(groupUser);
+//            }
+//        }
+//    }
 
     private View.OnLongClickListener getGroupUserLongClickListener(final GroupUserModel groupUser) {
         return new View.OnLongClickListener() {

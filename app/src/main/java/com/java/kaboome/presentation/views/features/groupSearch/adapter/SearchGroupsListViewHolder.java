@@ -63,9 +63,9 @@ public class SearchGroupsListViewHolder extends RecyclerView.ViewHolder {
         //load groupImage
 //        ImageHelper.loadGroupImage(group.getGroupId(), group.getImageUpdateTimestamp(), requestManager, handler, groupImage, groupImageLoadingProgress);
         Drawable imageErrorAndPlaceholder = AvatarHelper.generateAvatar(itemView.getContext(),R.dimen.group_search_list_item_image_width, group.getGroupName());
-        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.THUMBNAIL, group.getImageUpdateTimestamp(),
+        ImageHelper.getInstance().loadGroupImage(group.getGroupId(), ImageTypeConstants.MAIN, group.getImageUpdateTimestamp(),
                 ImageHelper.getInstance().getRequestManager(groupImage.getContext()), imageErrorAndPlaceholder, imageErrorAndPlaceholder,
-                handler, groupImage, null);
+                handler, groupImage, null, false);
 
 
         groupName.setText(group.getGroupName());
