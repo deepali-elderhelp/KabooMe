@@ -8,6 +8,8 @@
 package com.java.kaboome.presentation.views.features.groupMessages.adapter;
 
 import android.annotation.SuppressLint;
+
+import androidx.annotation.Nullable;
 import androidx.paging.AsyncPagedListDiffer;
 import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
@@ -78,6 +80,11 @@ public class MessageListViewAdapter extends PagedListAdapter<Message, RecyclerVi
         return mDiffer.getItemCount();
     }
 
+    @Override
+    public void onCurrentListChanged(PagedList<Message> currentList) {
+        Log.d(TAG, "onCurrentListChanged: ");
+        super.onCurrentListChanged(currentList);
+    }
 
     public void submitList(final PagedList<Message> pagedList, int indexToShowNewMessageHeaderAt) {
 
@@ -143,7 +150,7 @@ public class MessageListViewAdapter extends PagedListAdapter<Message, RecyclerVi
                         @NonNull Message oldMessage, @NonNull Message newMessage) {
                     // NOTE: if you use equals, your object must properly override Object#equals()
                     // Incorrectly returning false here will result in too many animations.
-                    Log.d(TAG, "areContentsTheSame: "+oldMessage.equals(newMessage)+" "+oldMessage.getMessageId()+" - "+newMessage.getMessageId());
+//                    Log.d(TAG, "areContentsTheSame: "+oldMessage.equals(newMessage)+" "+oldMessage.getMessageId()+" - "+newMessage.getMessageId());
                     return oldMessage.equals(newMessage);
                 }
 

@@ -120,6 +120,7 @@ public class AdminMessagesViewModel extends ViewModel {
     private boolean hasLoadedAll = false;
     private boolean cancelRequest;
     private Long lastAccessedTime = (new Date()).getTime();
+    private int limit = 30;
 
     public AdminMessagesViewModel(UserGroupModel group) {
 
@@ -170,7 +171,7 @@ public class AdminMessagesViewModel extends ViewModel {
 
         Log.d(TAG, "loadServerMessages: with last accessed - "+lastAccessedTime);
 
-        final int limit = 15;
+//        final int limit = 15;
         if(lastAccessedTime == null){
             lastAccessedTime = (new Date()).getTime();
         }
@@ -205,14 +206,14 @@ public class AdminMessagesViewModel extends ViewModel {
                                     hasLoadedAll = true;
                                     Log.d(TAG, "no more messages in the server...");
                                 }
-                                if (listDomainResource.data.size() > 0 && listDomainResource.data.size() < 15) {
+                                if (listDomainResource.data.size() > 0 && listDomainResource.data.size() < limit) {
                                     Log.d(TAG, "no more messages in the server...");
                                     isLoading = false;
                                     hasLoadedAll = true;
                                     lastAccessedTime = listDomainResource.data.get(listDomainResource.data.size()-1).getSentAt();
                                     Log.d(TAG, "onChanged: new last accessed becomes "+lastAccessedTime);
                                 }
-                                if(listDomainResource.data.size() == 15){
+                                if(listDomainResource.data.size() >= limit){
                                     Log.d(TAG, "There are more messages in the server...");
                                     isLoading = false;
                                     hasLoadedAll = false;
@@ -222,6 +223,7 @@ public class AdminMessagesViewModel extends ViewModel {
                                 }
 
                             }
+                            serverMessages.setValue(listDomainResource);
                             serverMessages.removeSource(messagesSource);
                         } else if (listDomainResource.status == DomainResource.Status.LOADING) {
                             isLoading = true;

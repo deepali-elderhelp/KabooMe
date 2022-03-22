@@ -86,6 +86,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_user_alias_sent"
+            android:textColor="@color/grey_600"
             android:text="Testing stuff not showing initially but then it started to roll into something bigger and bigger and bigger and bigger mmanhf shdfs js kju dfjuhcv jhf vchvuixchv j" />
 
         <TextView

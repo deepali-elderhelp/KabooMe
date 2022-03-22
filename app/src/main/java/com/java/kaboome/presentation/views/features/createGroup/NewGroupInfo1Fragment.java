@@ -189,6 +189,8 @@ public class NewGroupInfo1Fragment extends Fragment implements TextWatcher {
     private void handleNext(){
         String groupName = getGroupName();
         String groupDescription = getGroupDescription();
-        handleNextListener.handleNext(!groupName.isEmpty() && !groupDescription.isEmpty());
+        if(handleNextListener != null) {
+            handleNextListener.handleNext(!groupName.isEmpty() && !groupDescription.isEmpty());
+        }
     }
 }

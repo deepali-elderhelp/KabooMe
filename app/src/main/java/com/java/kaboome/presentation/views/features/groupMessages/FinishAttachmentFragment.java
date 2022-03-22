@@ -189,7 +189,7 @@ public class FinishAttachmentFragment extends Fragment implements MessageInput.I
                 MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(videoUri);
                 videoPlayer.prepare(videoSource);
-                videoPlayer.setPlayWhenReady(true);
+                videoPlayer.setPlayWhenReady(false);
             }
 
 

@@ -245,6 +245,8 @@ public class SearchGroupFragment extends BaseFragment implements SearchView.OnQu
             }
 
             userGroupModel.setPrivate(group.getGroupPrivate());
+            userGroupModel.setUnicastGroup(group.getUnicastGroup());
+            userGroupModel.setImageUpdateTimestamp(group.getImageUpdateTimestamp());
 
             Bundle bundle = new Bundle();
             bundle.putSerializable("group", userGroupModel);

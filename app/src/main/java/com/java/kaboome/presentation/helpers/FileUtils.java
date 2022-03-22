@@ -658,26 +658,35 @@ public class FileUtils {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
                 String wholeID = DocumentsContract.getDocumentId(uri);
-                String id_one = wholeID.split(":")[1];
-                Long origId = Long.parseLong(id_one);
-
-                if (mimeType.contains("video")) {
-                    bm = MediaStore.Video.Thumbnails.getThumbnail(
-                            resolver,
-                            origId,
-                            MediaStore.Video.Thumbnails.MINI_KIND,
-                            null);
+                String[] split_array = wholeID.split(":");
+                if(split_array.length > 1) {
+                    String id_one = wholeID.split(":")[1];
+                    Long origId = Long.parseLong(id_one);
+                    if (mimeType.contains("video")) {
+                        bm = MediaStore.Video.Thumbnails.getThumbnail(
+                                resolver,
+                                origId,
+                                MediaStore.Video.Thumbnails.MINI_KIND,
+                                null);
 //                    } else if (mimeType.contains(FileUtils.MIME_TYPE_IMAGE)) {
 
-                } else if (mimeType.contains("image")) {
-                    bm = MediaStore.Images.Thumbnails.getThumbnail(
-                            resolver,
-                            origId,
-                            MediaStore.Images.Thumbnails.MICRO_KIND,
-                            null);
+                    } else if (mimeType.contains("image")) {
+                        bm = MediaStore.Images.Thumbnails.getThumbnail(
+                                resolver,
+                                origId,
+                                MediaStore.Images.Thumbnails.MICRO_KIND,
+                                null);
+                    }
                 }
+                else{
+                    return null;
+                }
+
+
+
             }
             else if ("content".equalsIgnoreCase(uri.getScheme())) {
+//            if ("content".equalsIgnoreCase(uri.getScheme())) {
                 Cursor cursor = null;
             try {
                 cursor = resolver.query(uri, null, null, null, null);

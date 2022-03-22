@@ -57,6 +57,8 @@ public interface MessagesListRepository {
 
     void updateMessageAttachmentDetails(String messageId, Boolean hasAttachment, Boolean attachmentUploaded, Boolean attachmentLoadingGoingOn, String mimeType, String attachmentUri);
 
+    void updateMessageAttachmentUploadFailed(String messageId, Boolean attachmentLoadingGoingOn);
+
     void updateMessageLoadingProgress(String messageId, int progress);
 
     void deleteLocalMessage(DomainMessage domainMessage);

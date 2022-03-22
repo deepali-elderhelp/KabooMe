@@ -162,7 +162,10 @@ public class NewGroupInfo2Fragment extends Fragment implements TextWatcher {
     private void handleNext() {
         String alias = getAlias();
         String role = getCreatorRole();
-        handleNextListener.handleNext(!alias.isEmpty() && !role.isEmpty());
+        //weird but coming back from camera, it has failed here once
+        if(handleNextListener != null) {
+            handleNextListener.handleNext(!alias.isEmpty() && !role.isEmpty());
+        }
     }
 
 

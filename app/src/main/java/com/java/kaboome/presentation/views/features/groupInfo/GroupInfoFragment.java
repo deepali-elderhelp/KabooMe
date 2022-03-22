@@ -806,7 +806,12 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                     Log.d(TAG, "onChanged: Group is finally removed - all done, now finish this fragment");
                     waitBeforeLeaving.setVisibility(View.INVISIBLE);
                     deleteInProgress = false;
-                    navController.popBackStack();
+//                    navController.popBackStack();
+                    //no, I should rather pop up back to Group List Fragment
+                    //this is because the user can call this delete from anywhere -
+                    //like from group messages, after leaving the group, you do not want to
+                    //go back to the group messages
+                    navController.popBackStack(R.id.groupsListFragment, false);
                 }
                 if(groupDeleteDetails != null && (groupDeleteDetails.getStatus() == GroupDeleteDetails.Status.ERROR)){
                     Toast.makeText(getContext(), "Sorry, removing group action failed, please try again", Toast.LENGTH_SHORT).show();
@@ -842,7 +847,12 @@ public class GroupInfoFragment extends BaseFragment implements GroupAliasAndRole
                     Log.d(TAG, "onChanged: Group is finally removed - all done, now finish this fragment");
                     showHideProgressBar(groupDeleteDetails.getAction(), false);
                     deleteInProgress = false;
-                    navController.popBackStack();
+//                    navController.popBackStack();
+                    //no, I should rather pop up back to Group List Fragment
+                    //this is because the user can call this delete from anywhere -
+                    //like from group messages, after leaving the group, you do not want to
+                    //go back to the group messages
+                    navController.popBackStack(R.id.groupsListFragment, false);
                 }
                 if(groupDeleteDetails != null && (groupDeleteDetails.getStatus() == GroupDeleteDetails.Status.ERROR)){
                     Toast.makeText(getContext(), "Sorry, leaving group action failed, please try again", Toast.LENGTH_SHORT).show();

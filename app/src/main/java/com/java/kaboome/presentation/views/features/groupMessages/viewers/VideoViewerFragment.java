@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -29,6 +33,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -58,6 +63,7 @@ public class VideoViewerFragment extends Fragment {
     private PlayerView videoPlayerView;
     private SimpleExoPlayer videoPlayer;
     private Uri videoPathUri;
+//    Toolbar toolbar;
 
     private static final String TAG = "KMVideoViewerFragment";
 
@@ -128,6 +134,29 @@ public class VideoViewerFragment extends Fragment {
         videoPlayerView.setUseController(true);
         videoPlayerView.setPlayer(videoPlayer);
 
+
+//        final ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+////        toolbar = ((AppCompatActivity)getActivity()).findViewById(R.id.mainToolbar);
+
+//        videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+//            @Override
+//            public void onVisibilityChange(int visibility) {
+//                Log.e(TAG, "onVisibilityChange: " + visibility);
+//                if (View.GONE == visibility) {
+////                    toolbar.setVisibility(View.GONE);
+////                    actionBar.hide();
+//                    hideSystemUI();
+//
+//                } else if (View.VISIBLE == visibility) {
+////                    actionBar.show();
+////                    toolbar.setVisibility(View.VISIBLE);
+//                    showSystemUI();
+//
+//                }
+//            }
+//        });
+
+
         return rootView;
     }
 
@@ -182,6 +211,7 @@ public class VideoViewerFragment extends Fragment {
                 .createMediaSource(videoUri);
         videoPlayer.prepare(videoSource);
         videoPlayer.setPlayWhenReady(true);
+
     }
 
 //    private boolean pathToPictureExists() {
@@ -200,5 +230,26 @@ public class VideoViewerFragment extends Fragment {
         }
         videoPlayer = null;
     }
+
+//    public void hideSystemUI() {
+//        if (((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+//            ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//        }
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(
+//                View.SYSTEM_UI_FLAG_IMMERSIVE
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+//    }
+//
+//    public void showSystemUI() {
+//        if (((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+//            ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//        }
+//        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+//    }
 
 }

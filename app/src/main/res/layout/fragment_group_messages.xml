@@ -71,7 +71,7 @@
                         android:layout_above="@id/messages_send_ll"
                         android:layout_alignRight="@id/fr_gr_me_reyclerview_message_list"
                         android:background="@drawable/downward_circle"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="10dp"
                                 >
@@ -126,7 +126,7 @@
                     android:text="@string/normal"
                     android:textAllCaps="false"
                     android:layout_weight="0.2"
-
+                    android:enabled="false"
                     />
 
                 <androidx.appcompat.widget.AppCompatButton

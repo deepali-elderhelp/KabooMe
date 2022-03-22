@@ -60,8 +60,8 @@ public class IoTHelper {
     }
 
 
-    public void connectToIoT(final String topicName, final boolean recreateClient) {
-        Log.d(TAG, "connectToIoT: Topic Name - "+topicName);
+    public void connectToIoT(final boolean recreateClient) {
+//        Log.d(TAG, "connectToIoT: Topic Name - "+topicName);
         try {
             CognitoHelper.getCredentialsProvider(new CredentialsHandler() {
                 @Override
@@ -84,7 +84,7 @@ public class IoTHelper {
                             public void onSuccess() {
                                 //set the AppConfig variable to set
                                 AppConfigHelper.setIotPolicyAttached(true);
-                                connectToMQTT(topicName, recreateClient);
+                                connectToMQTT(recreateClient);
                             }
 
                             @Override
@@ -121,7 +121,7 @@ public class IoTHelper {
     }
 
 
-    private void connectToMQTT(String topicName, boolean recreateClient){
+    private void connectToMQTT(boolean recreateClient){
 
 //        if(!NetworkHelper.isOnline()){
 //            return;
@@ -320,7 +320,7 @@ public class IoTHelper {
             //when user comes here, the best way to handle this is to form the connection again.
             //but the connection needs afresh...even new mqttClient
 //            mqttManager = null;
-            connectToIoT(topicName, true);
+            connectToIoT(true);
 
 
         }
@@ -420,7 +420,7 @@ public class IoTHelper {
                             AppExecutors2.getInstance().mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    connectToIoT(topicName, true);
+                                    connectToIoT(true);
                                     callback.publishFailed();
                                 }
                             });

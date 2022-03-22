@@ -281,7 +281,7 @@ public class JoinPrivateGroupViewModel extends ViewModel{
 
     public void copyGroupUserImage(final GroupRequestModel groupRequestModel, final ImageTypeConstants imageType){
         String key;
-        if(ImageTypeConstants.THUMBNAIL.getType().equals(imageType)){
+        if(ImageTypeConstants.THUMBNAIL.equals(imageType)){
             key = ImagesUtilHelper.getGroupUserImageName(groupRequestModel.getGroupId(), AppConfigHelper.getUserId(),ImageTypeConstants.THUMBNAIL );
         }
         else{

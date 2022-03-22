@@ -367,6 +367,9 @@
         <action
             android:id="@+id/action_groupMessagesFragment_to_groupConversationsFragment"
             app:destination="@id/groupConversationsFragment" />
+        <action
+            android:id="@+id/action_groupMessagesFragment_to_groupInfoFragment"
+            app:destination="@id/groupInfoFragment" />
     </fragment>
     <dialog
         android:id="@+id/messageAttachmentsDialog"

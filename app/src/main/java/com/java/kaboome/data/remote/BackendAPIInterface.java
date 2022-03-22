@@ -219,4 +219,7 @@ public interface BackendAPIInterface {
 //    Call<ResponseBody> sendHelpFeedbackMessage(@Path(value = "userid") String userId, @Body JsonObject jsonObject);
 
 
+    @PUT(BackendAPI.updateMessage)
+    Call<ResponseBody> updateMessage(@Path(value = "userid") String userId, @Path(value = "groupid") String groupId, @Path(value = "messageid") String messageId, @Query(value = "action") String action);
+
 }

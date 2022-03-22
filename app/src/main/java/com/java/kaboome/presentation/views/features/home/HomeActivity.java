@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+
+import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
 import com.google.android.material.bottomappbar.BottomAppBar;
 
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import com.java.kaboome.domain.entities.DomainResource;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
 import com.java.kaboome.presentation.helpers.DialogHelper;
+import com.java.kaboome.presentation.helpers.IoTHelper;
 import com.java.kaboome.presentation.views.features.conversations.GroupConversationsFragment;
 import com.java.kaboome.presentation.views.features.groupList.GroupsListFragment;
 import com.java.kaboome.presentation.views.features.home.viewmodel.HomeViewModel;
@@ -376,6 +379,15 @@ public class HomeActivity extends CameraActivity {
         homeViewModel.cleanUpOldDeletedUserGroups();
         //this will trigger getting the number from backend and update the badge accordingly
         homeViewModel.getNumberOfInvitationsFromBackend();
+
+        //also connect to IoT right here - only if it is not already connected
+        //otherwise it recreates the client with same client id
+        //big mess
+        Log.d(TAG, "onLoginSuccess: " + IoTHelper.getInstance().getCurrentStatus());
+        if(!(IoTHelper.getInstance().getCurrentStatus() == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.Connected)) {
+            Log.d(TAG, "Connection again ");
+            IoTHelper.getInstance().connectToIoT(false);
+        }
     }
 
 

@@ -126,6 +126,7 @@
         <TextView
             android:id="@+id/image_message_rcvd"
             style="@style/ChatNormal"
+            android:textColor="@color/grey_600"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"

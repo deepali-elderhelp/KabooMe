@@ -24,8 +24,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -68,12 +70,13 @@ import com.java.kaboome.presentation.views.features.groupMessages.adapter.MediaP
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.MessageListViewAdapter;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.PublishMessageCallback;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.UploadClickListener;
+import com.java.kaboome.presentation.views.features.groupMessages.paginate.RecyclerPaginate;
 import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.MessagesViewModel;
 import com.java.kaboome.presentation.views.features.home.HomeActivity;
 import com.java.kaboome.presentation.views.features.home.viewmodel.HomeViewModel;
 import com.java.kaboome.presentation.views.widgets.MessageInput;
 import com.java.kaboome.presentation.views.widgets.MessagesList;
-import com.paginate.Paginate;
+import com.java.kaboome.presentation.views.features.groupMessages.paginate.Paginate;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +87,8 @@ import java.util.UUID;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 
 /**
@@ -111,7 +115,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     private AppCompatButton normalButton;
     private boolean urgentChecked = false;
     private NavController navController;
-    private boolean firstLoad = true;
+//    private boolean firstLoad = true;
     private boolean connectionEstablished = false;
     private FrameLayout newMessagesFlashIcon;
     private boolean alreadyThere = false;
@@ -131,6 +135,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     private boolean userScrolled = false;
     private String thumbnailString = "";
     private TextView numberOfNewMessages;
+    private Paginate paginate;
 
 
     public GroupMessagesFragment() {
@@ -165,6 +170,15 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         //toolbar needs to be set again since it was reset by other viewer fragments
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         mainToolbar = act.findViewById(R.id.mainToolbar);
+
+        mainToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle args = new Bundle();
+                args.putSerializable("group", group);
+                navController.navigate(R.id.action_groupMessagesFragment_to_groupInfoFragment, args);
+            }
+        });
 
 //        mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -300,7 +314,6 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         newMessagesCountTextView = rootView.findViewById(R.id.fr_gr_me_new_messages_count);
 
         scrollDownArrowImage = rootView.findViewById(R.id.fr_gr_me_scroll_down_arrow);
-
         urgentButton = rootView.findViewById(R.id.urgent_button);
         urgentButton.setOnClickListener(urgentButtonClicked);
         normalButton = rootView.findViewById(R.id.normal_button);
@@ -329,11 +342,11 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         if((group.getIsAdmin().equalsIgnoreCase("false")) && group.getUnicastGroup() != null && group.getUnicastGroup()){
             messagePrivacyLL.setVisibility(View.GONE);
             messageInput.setVisibility(View.GONE);
-            sendPrivateMessage.setVisibility(View.VISIBLE);
+            sendPrivateMessage.setVisibility(VISIBLE);
         }
         else{
-            messagePrivacyLL.setVisibility(View.VISIBLE);
-            messageInput.setVisibility(View.VISIBLE);
+            messagePrivacyLL.setVisibility(VISIBLE);
+            messageInput.setVisibility(VISIBLE);
             sendPrivateMessage.setVisibility(View.GONE);
         }
 
@@ -528,6 +541,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     public void onResume() {
 
         Log.d(TAG, "onResume: ");
+        Log.d(TAG, "User scrolled is - "+userScrolled);
         mainToolbar.setTitle(group.getGroupName());
         mainToolbar.setSubtitle("Group Messages");
         //the following is needed because when waking up after screen change on something, the old value comes up
@@ -536,7 +550,6 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         //so here I set the value to false, to subscribe topic does not happen
         //onChange is called but it does nothing when the value is false
         IoTHelper.getInstance().resetConnectionEstablished();
-        Log.d(TAG, "onResume: ");
 
         super.onResume();
         //check if the mqtt connection is still there
@@ -572,6 +585,10 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             }
         });
 
+        if(messagesViewModel.getLastRecycleViewPosition() != -1) {
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPosition(messagesViewModel.getLastRecycleViewPosition());
+        }
+//        messagesViewModel.storeRecyclerViewPosition(-1); //reset
 //        messagesViewModel.updateLastAccess();
 
     }
@@ -580,6 +597,9 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
+        int currentVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        messagesViewModel.storeRecyclerViewPosition(currentVisiblePosition);
+        Log.d(TAG, "onPause: last position - "+currentVisiblePosition);
         //this is to take care that the GroupLastSeenTS gets updated on pause
         messagesViewModel.onPausePressed();
 
@@ -650,15 +670,23 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         messagesViewModel.getServerMessages().observe(this, new Observer<DomainResource<List<DomainMessage>>>() {
             @Override
             public void onChanged(@Nullable DomainResource<List<DomainMessage>> listDomainResource) {
-                Log.d(TAG, "onChanged: Data came back, but not needed really");
+                if(listDomainResource != null && listDomainResource.data != null){
+                    paginate.addToTotalCurrentCount(listDomainResource.data.size());
+//                    Log.d(TAG, "Status - "+listDomainResource.status+" and size "+listDomainResource.data.size());
+                }
             }
         });
 
 
-        Paginate.with(recyclerView, messageListPaginateCallback)
-                .setLoadingTriggerThreshold(2)
-                .addLoadingListItem(false)
-                .build();
+//        Paginate.with(recyclerView, messageListPaginateCallback)
+//                .setLoadingTriggerThreshold(2)
+//                .addLoadingListItem(false)
+//                .build();
+        //moving to onLoginSuccess()
+//        Paginate.with(recyclerView, messageListPaginateCallback)
+//                .setLoadingTriggerThreshold(2)
+//                .setLimit(30)
+//                .build();
 
         messagesViewModel.getConnectionEstablished().observe(this, new Observer<Boolean>() {
             @Override
@@ -689,13 +717,26 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             public void onChanged(@Nullable IoTMessage message) {
                 if(message != null){
                     Log.d(TAG, "New message received - "+message);
-                    if(!message.getDeleted()) {
-                        firstLoad = false;
-                        newMessagesCount++;
-                        scrollDownArrowImage.setVisibility(View.GONE);
-                        newMessagesCountTextView.setVisibility(View.VISIBLE);
-                        newMessagesCountTextView.setText(String.valueOf(newMessagesCount));
+                    if(!message.getDeleted()){
+                        if(!message.getSentBy().equals(AppConfigHelper.getUserId())) {
+                            newMessagesCount++;
+                        }
                     }
+//                    if(!message.getDeleted()) {
+//                        //if message was sent by this user itself
+//                        if(message.getSentBy().equals(AppConfigHelper.getUserId())){
+//                            //scroll all the way down to see the message
+//                            recyclerView.getLayoutManager().scrollToPosition(0);
+//                        }
+//                        else {
+////                        firstLoad = false;
+//                            //following should also only be done when the scroll position is not already down
+//                            newMessagesCount++;
+//                            scrollDownArrowImage.setVisibility(View.GONE);
+//                            newMessagesCountTextView.setVisibility(VISIBLE);
+//                            newMessagesCountTextView.setText(String.valueOf(newMessagesCount));
+//                        }
+//                    }
                     //also add to the internal cache
                     messagesViewModel.handleMessageArrival(message);
                 }
@@ -712,7 +753,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                         //there are new user messages, lit the icon
                         adminChat.setVisible(false);
                         adminChatLit.setVisible(true);
-                        numberOfNewMessages.setVisibility(View.VISIBLE);
+                        numberOfNewMessages.setVisibility(VISIBLE);
                         numberOfNewMessages.setText(String.valueOf(domainMessages.size()));
                     }
                     else{
@@ -733,7 +774,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                     if(domainMessages != null && domainMessages.size() > 0){
                         //there are new user messages, lit the icon
                         adminChatLit.setVisible(true);
-                        numberOfNewMessages.setVisibility(View.VISIBLE);
+                        numberOfNewMessages.setVisibility(VISIBLE);
                         numberOfNewMessages.setText(String.valueOf(domainMessages.size()));
                         adminChat.setVisible(false);
                     }
@@ -781,32 +822,74 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         recyclerView.setAdapter(adapter, true, (RequestManager) initGlide(), newMessagesFlashIcon, new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-//                    super.onItemRangeInserted(positionStart, itemCount);
+                    super.onItemRangeInserted(positionStart, itemCount);
 
-//                recyclerView.smoothScrollToPosition(0);
-                if(!userScrolled){
-                    Log.d(TAG, "Going to move recycler view to position 0");
+                int firstVisiblePosition = recyclerView.getLayoutManager().findFirstVisibleItemPosition();
+                if(positionStart == 0 && firstVisiblePosition <= 1 && messagesViewModel.getLastRecycleViewPosition() == -1) {  //first visible item 0 or 1
                     recyclerView.smoothScrollToPosition(0);
                 }
+
+//                int firstVisiblePosition = recyclerView.getLayoutManager().findFirstVisibleItemPosition();
+//                if(positionStart == 0 && firstVisiblePosition <= 1){  //first visible item 0 or 1
+//                    if(messagesViewModel.getLastRecycleViewPosition() == -1) {
+//                        recyclerView.getLayoutManager().scrollToPosition(0);
+////                    smoothScrollToPosition(0);
+//                        Log.d(TAG, "onItemRangeInserted: scrolling to position 0");
+//                    }
+//                    else{
+//                        recyclerView.getLayoutManager().scrollToPosition(messagesViewModel.getLastRecycleViewPosition());
+//                    }
+//                }
+//                if(firstVisiblePosition > 1){
+//                    newMessagesFlashIcon.setVisibility(VISIBLE);
+//                }
+//                else{
+//                    newMessagesFlashIcon.setVisibility(INVISIBLE);
+//                }
+
+//                recyclerView.smoothScrollToPosition(0);
+//                if(!userScrolled){
+//                    Log.d(TAG, "Going to move recycler view to position 0");
+//                    recyclerView.smoothScrollToPosition(0);
+//                }
             }
+
         });
+
+
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                //store the last location on recycler view
+//                int currentVisiblePosition = GroupMessagesFragment.this.recyclerView.getLayoutManager().findFirstVisibleItemPosition();
+//                messagesViewModel.storeRecyclerViewPosition(currentVisiblePosition);
+//                super.onScrolled(recyclerView, dx, dy);
+//            }
+//        });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                userScrolled = true;
+                int currentVisiblePosition = GroupMessagesFragment.this.recyclerView.getLayoutManager().findFirstVisibleItemPosition();
+                messagesViewModel.storeRecyclerViewPosition(currentVisiblePosition);
+//                Log.d(TAG, "onScrolled: dx - "+dx+" dy "+dy);
+//                userScrolled = true;
                 if(newMessagesFlashIcon != null){
                     if(!recyclerView.canScrollVertically(1)){
                         newMessagesFlashIcon.setVisibility(View.GONE);
                         newMessagesCount = 0;
-                        userScrolled = false;
+//                        userScrolled = false;
                     }
                     else{
-                        newMessagesFlashIcon.setVisibility(View.VISIBLE);
+                        newMessagesFlashIcon.setVisibility(VISIBLE);
                         if(newMessagesCount == 0){
                             newMessagesCountTextView.setVisibility(View.GONE);
-                            scrollDownArrowImage.setVisibility(View.VISIBLE);
-
+                            scrollDownArrowImage.setVisibility(VISIBLE);
+                        }
+                        else{
+                            newMessagesCountTextView.setText(String.valueOf(newMessagesCount));
+                            newMessagesCountTextView.setVisibility(VISIBLE);
+                            scrollDownArrowImage.setVisibility(INVISIBLE);
                         }
 
                     }
@@ -814,11 +897,15 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
             }
 
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                firstLoad = false;
-            }
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+////                Log.d(TAG, "onScrollStateChanged: new state - "+newState);
+//                super.onScrollStateChanged(recyclerView, newState);
+////                firstLoad = false;
+//                if(!recyclerView.canScrollVertically(1)){
+//                    Log.d(TAG, "cannot scroll vertically downwards anymore");
+//                }
+//            }
         });
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -836,7 +923,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
     @Override
     public boolean onSubmit(CharSequence input) {
-        firstLoad = false;
+//        firstLoad = false;
         //check if the connection is there
         //also check if subscription has happened
         if(NetworkHelper.isOnline() && connectionEstablished){
@@ -898,10 +985,12 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         @Override
         public void onClick(View v) {
 //            newMessagesCount = 0;
-            if(newMessagesCount > 1)
-                recyclerView.smoothScrollToPosition(0+newMessagesCount-1);
-            else
+            if(newMessagesCount > 0) {
+                recyclerView.smoothScrollToPosition(0 + (newMessagesCount-1));
+            }
+            else {
                 recyclerView.smoothScrollToPosition(0);
+            }
             newMessagesCount = 0;
         }
     };
@@ -925,7 +1014,9 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
     @Override
     public void onStartTyping() {
+        Log.d(TAG, "onStartTyping: scrolling to position zero");
         recyclerView.getLayoutManager().scrollToPosition(0);
+        messagesViewModel.storeRecyclerViewPosition(-1);
     }
 
     @Override
@@ -946,7 +1037,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
         @Override
         public boolean isLoading() {
-//            Log.d(TAG, "isLoading: ");
+            Log.d(TAG, "isLoading: ");
             if(messagesViewModel != null)
                 return messagesViewModel.isLoading();
             else
@@ -955,7 +1046,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
         @Override
         public boolean hasLoadedAllItems() {
-//            Log.d(TAG, "hasLoadedAllItems: ");
+            Log.d(TAG, "hasLoadedAllItems: ");
             if(messagesViewModel != null){
                 if(messagesViewModel.isHasLoadedAll()){
                     Log.d(TAG, "hasLoadedAllItems: ");
@@ -1143,7 +1234,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             Log.d(TAG, "onPermissionsGranted: read external storage permission granted");
             //you need to refresh the messages so that the downloaded media messages show up
 
-            messagesViewModel.loadServerMessages();
+//            messagesViewModel.loadServerMessages();
 //            messagesViewModel.startNetUnreadGroupConversationMessagesUseCase();
 //            messagesViewModel.startNetUnreadGroupAllConversationMessagesUseCase();
         }
@@ -1365,7 +1456,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
          * before the session is established and hence credentials needed for IoT fail and the connection is not formed
          * so, we need to make the IoT connection only after login is successful
          */
-        IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
+        IoTHelper.getInstance().connectToIoT( false); //this will trigger onChanged() for connectionEstablished
 
 
         if(alreadyThere)
@@ -1374,7 +1465,16 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 //        initRecyclerView();
 //        subscribeObservers();
 
-        messagesViewModel.loadServerMessages();
+        //this should result in a call to loadServerMessages
+        paginate = Paginate.with(recyclerView, messageListPaginateCallback)
+                .setLoadingTriggerThreshold(2)
+                .setLimit(30)
+                .build();
+
+        Log.d(TAG, "Going to attach paginate with recycler view");
+
+
+//        messagesViewModel.loadServerMessages();
         messagesViewModel.startNetUnreadGroupConversationMessagesUseCase();
         messagesViewModel.startNetUnreadGroupAllConversationMessagesUseCase();
 
@@ -1404,7 +1504,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         initRecyclerView();
         subscribeObservers();
 
-        messagesViewModel.loadServerMessages();
+//        messagesViewModel.loadServerMessages();
         messagesViewModel.startNetUnreadGroupConversationMessagesUseCase();
         messagesViewModel.startNetUnreadGroupAllConversationMessagesUseCase();
 
@@ -1425,7 +1525,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 
     @Override
     public void onNetworkOff() {
-        networkOffImageView.setVisibility(View.VISIBLE);
+        networkOffImageView.setVisibility(VISIBLE);
         //can't do this here, there could be a case that this method gets called
         //when the onCreateView() has not finished. So, all the widgets are null right now.
         //this ends up throwing NPE
@@ -1449,7 +1549,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         if(IoTHelper.getInstance().getCurrentStatus() != null && IoTHelper.getInstance().getCurrentStatus() == AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus.ConnectionLost){
             Log.d(TAG, "onNetworkOn: going to recreate on thread - "+Thread.currentThread().getName());
             //so connection was lost, try connecting again
-            IoTHelper.getInstance().connectToIoT(group.getGroupId(), true);
+            IoTHelper.getInstance().connectToIoT(true);
         }
         //can't do this here, there could be a case that this method gets called
         //when the onCreateView() has not finished. So, all the widgets are null right now.

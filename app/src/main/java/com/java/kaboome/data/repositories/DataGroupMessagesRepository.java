@@ -343,6 +343,22 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
     }
 
     @Override
+    public void updateMessageAttachmentUploadFailed(final String messageId, final Boolean attachmentLoadingGoingOn) {
+        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    messageDao.updateMessageAttachmentUploadStatus(messageId, attachmentLoadingGoingOn);
+                    Log.d(TAG, "run: message updated for attachments upload failed");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                    Log.d(TAG, "Exception in updateMessageAttachmentDetails "+exception.getMessage());
+                }
+            }
+        });
+    }
+
+    @Override
     public void updateMessageLoadingProgress(final String messageId, final int progress) {
         AppExecutors2.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -393,6 +409,7 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
                     if(existingMessage != null){
                         message.setUnread(existingMessage.getUnread());
                         message.setAttachmentUri(existingMessage.getAttachmentUri());
+                        message.setLoadingProgress(existingMessage.getLoadingProgress());
                     }
                     messageDao.insertMessage(message);
                     Log.d(TAG, "run: Message inserted in cache "+message.getMessageId());
@@ -446,6 +463,7 @@ public class DataGroupMessagesRepository implements MessagesListRepository {
                             }
                             message.setUnread(messageFromCache.getUnread());
                             message.setAttachmentUri(messageFromCache.getAttachmentUri());
+                            message.setLoadingProgress(messageFromCache.getLoadingProgress());
                         }
 //                        if(message.getHasAttachment() != null && message.getHasAttachment() && message.getAttachmentUploaded()){ //message attachment has been completely uploaded
 //                            Message messageFromCache = messageDao.getMessage(message.getMessageId());

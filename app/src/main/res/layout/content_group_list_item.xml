@@ -137,34 +137,49 @@
         app:layout_constraintTop_toTopOf="@id/gr_li_fr_list_item_group_image_frame"
         android:layout_marginLeft="10dp">
 
-    <TextView
-        android:ellipsize="end"
-        android:id="@+id/gr_li_fr_list_item_group_name"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:lines="1"
-        android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@+id/gr_li_fr_list_item_privacy"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="wrap"
-        style="@style/group_list_group_heading"
-        android:text="Sample Group Name"/>
+<!--    <TextView-->
+<!--        android:ellipsize="end"-->
+<!--        android:id="@+id/gr_li_fr_list_item_group_name"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:lines="1"-->
+<!--        android:maxLines="1"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/gr_li_fr_list_item_privacy"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintWidth_default="wrap"-->
+<!--        style="@style/group_list_group_heading"-->
+<!--        android:text="Sample Group Name"/>-->
+
+        <TextView
+            android:ellipsize="end"
+            android:id="@+id/gr_li_fr_list_item_group_name"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:layout_marginRight="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/gr_li_fr_list_item_privacy"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap"
+            style="@style/group_list_group_heading"
+            android:text="Test Ash Bug"/>
 
         <ImageView
             android:id="@+id/gr_li_fr_list_item_privacy"
             android:layout_height="15dp"
             android:layout_width="15dp"
             app:srcCompat="@drawable/private_dark"
-            android:layout_marginLeft="5dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/gr_li_fr_list_item_group_name"
             app:layout_constraintEnd_toStartOf="@id/gr_li_fr_list_item_unicast"
             app:layout_constraintTop_toTopOf="parent"
-
             />
 
         <ImageView
@@ -172,12 +187,12 @@
             android:layout_height="15dp"
             android:layout_width="15dp"
             android:src="@drawable/broadcast"
-            android:layout_marginLeft="5dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@id/gr_li_fr_list_item_privacy"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
 
 <!--        <androidx.appcompat.widget.LinearLayoutCompat-->

@@ -10,15 +10,19 @@ import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.WorkerParameters;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtilityOptions;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
+import com.amazonaws.services.s3.model.ListMultipartUploadsRequest;
+import com.amazonaws.services.s3.model.MultipartUploadListing;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.java.kaboome.constants.AWSConstants;
 import com.java.kaboome.constants.GroupActionConstants;
@@ -49,6 +53,9 @@ import com.java.kaboome.presentation.images.ImageHelper;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_FAILURE;
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_RESPONSE;
@@ -132,8 +139,8 @@ public class LoadMediaWorker extends ListenableWorker {
 
                 String action = getInputData().getString(ACTION);
                 if(action.equals(MediaActionConstants.UPLOAD_ATTACHMENT.getAction())){
-                    String messageId = getInputData().getString(MESSAGE_ID);
-                    String groupId = getInputData().getString(GROUP_ID);
+                    final String messageId = getInputData().getString(MESSAGE_ID);
+                    final String groupId = getInputData().getString(GROUP_ID);
                     String attachmentPath = getInputData().getString(ATTACHMENT_PATH);
                     File attachment = new File(attachmentPath);
                     String attachmentURI = getInputData().getString(ATTACHMENT_URI);
@@ -153,6 +160,17 @@ public class LoadMediaWorker extends ListenableWorker {
                                 .putString(WORK_RESPONSE, exception.getMessage())
                                 .build();
                         workerCallback.onError(outPut);
+                    }
+
+                    //if message attachment is already uploaded or attachment loading is going on
+                    //then don't do anything - return
+                    //this is to avoid multiple calls to uploading the files
+                    if(message.getAttachmentUploaded() || (message.getLoadingProgress() > 0)){
+                        Data outPut = new Data.Builder()
+                                .putString(WORK_RESULT,WORK_SUCCESS)
+                                .putString(WORK_RESPONSE, "SUCCESS")
+                                .build();
+                        workerCallback.onSuccess(outPut);
                     }
 
                     message.setAttachmentUri(attachmentURI);
@@ -183,6 +201,9 @@ public class LoadMediaWorker extends ListenableWorker {
 
                                 @Override
                                 public void onError(Exception exception) {
+
+                                    Log.d(TAG, "onError: 187"+exception.getMessage());
+                                    //call the worker to update the message with attachmentLoadingGoingOn - false
                                     Data outPut = new Data.Builder()
                                             .putString(WORK_RESULT,WORK_FAILURE)
                                             .putString(WORK_RESPONSE, exception.getMessage())
@@ -194,6 +215,16 @@ public class LoadMediaWorker extends ListenableWorker {
 
                         @Override
                         public void onError(Exception exception) {
+                            Log.d(TAG, "onError: 200"+exception.getMessage());
+                            //TBD: this is where you should handle that the upload failed, so
+                            //call backend to set attachmentLoadingGoingOn to false
+                            //and update the cache accordingly
+                            //don't do it outside because outside might be closed by then
+                            //also figure out to cancel the task rather than it getting retried
+                            //later
+
+                            //task should already be cancelled - because the transferobserver handles that
+                            updateRemoteAndLocalForFailedMessageUpload(AppConfigHelper.getUserId(), groupId, messageId);
                             //TODO: Pass DATA Result as error
                             //image could not be uploaded, so just return error
                             Data outPut = new Data.Builder()
@@ -319,6 +350,7 @@ public class LoadMediaWorker extends ListenableWorker {
 
                                 @Override
                                 public void onError(Exception exception) {
+                                    //call the worker to update the group with attachmentLoadingGoingOn - false
                                     Data outPut = new Data.Builder()
                                             .putString(WORK_RESULT,WORK_FAILURE)
                                             .putString(WORK_RESPONSE, exception.getMessage())
@@ -384,6 +416,7 @@ public class LoadMediaWorker extends ListenableWorker {
 
                                 @Override
                                 public void onError(Exception exception) {
+                                    //call the worker to update the group user with attachmentLoadingGoingOn - false
                                     Data outPut = new Data.Builder()
                                             .putString(WORK_RESULT, WORK_FAILURE)
                                             .putString(WORK_RESPONSE, exception.getMessage())
@@ -444,6 +477,7 @@ public class LoadMediaWorker extends ListenableWorker {
 
                                 @Override
                                 public void onError(Exception exception) {
+                                    //call the worker to update the group user with attachmentLoadingGoingOn - false
                                     Data outPut = new Data.Builder()
                                             .putString(WORK_RESULT, WORK_FAILURE)
                                             .putString(WORK_RESPONSE, exception.getMessage())
@@ -496,6 +530,7 @@ public class LoadMediaWorker extends ListenableWorker {
 
                                 @Override
                                 public void onError(Exception exception) {
+                                    //call the worker to update the user with attachmentLoadingGoingOn - false
                                     Data outPut = new Data.Builder()
                                             .putString(WORK_RESULT, WORK_FAILURE)
                                             .putString(WORK_RESPONSE, exception.getMessage())
@@ -544,7 +579,15 @@ public class LoadMediaWorker extends ListenableWorker {
                 public void onSuccess(CognitoCachingCredentialsProvider credentialsProviderReturned) {
                     Log.d(TAG, "Successful retrieval of CredentialsProvider");
 
-                    s3Client = new AmazonS3Client(credentialsProviderReturned);
+
+                    //these increased settings help big mutlipart files get uploaded
+                    ClientConfiguration clientConfiguration = new ClientConfiguration();
+                    clientConfiguration.setConnectionTimeout(35*1000); // 35 seconds
+                    clientConfiguration.setSocketTimeout(35*1000);
+                    clientConfiguration.setMaxErrorRetry(0);
+
+                    s3Client = new AmazonS3Client(credentialsProviderReturned, clientConfiguration);
+//                    s3Client = new AmazonS3Client(credentialsProviderReturned);
                     s3Client.setRegion(Region.getRegion(Regions.US_WEST_2));
 
                     if(action.equals(MediaActionConstants.UPLOAD_ATTACHMENT.getAction())) {
@@ -567,10 +610,12 @@ public class LoadMediaWorker extends ListenableWorker {
 
                 @Override
                 public void onFailure(Exception exception) {
+                    Log.d(TAG, "onError: 578"+exception.getMessage());
                     Log.d(TAG, "Failed retrieval of CredentialsProvider due to" + exception);
                 }
             });
         } catch (Exception e) {
+            Log.d(TAG, "onError: 583"+e.getMessage());
             Log.d(TAG, "No callback passed to getCredentials()");
             e.printStackTrace();
         }
@@ -616,6 +661,10 @@ public class LoadMediaWorker extends ListenableWorker {
 
     private void startUploadFile(final String key, final File fileToUpload, final HashMap<String, Object> userData, final loadCallback loadCallback){
 
+        Log.d(TAG, "startUploadFile: ");
+
+
+
         if(fileToUpload == null || key == null){
             String msg = "File or key passed is null, returning immediately";
             //return immediately
@@ -624,8 +673,23 @@ public class LoadMediaWorker extends ListenableWorker {
 
         }
 
-        TransferUtility transferUtility = TransferUtility.builder().s3Client(s3Client).context(AppConfigHelper.getContext()).build();
-        TransferObserver uploadObserver = transferUtility.upload(AWSConstants.S3_BUCKET_NAME.toString(), key, fileToUpload);
+        TransferUtilityOptions transferUtilityOptions = new TransferUtilityOptions();
+        transferUtilityOptions.setTransferThreadPoolSize(10);
+        final TransferUtility transferUtility = TransferUtility.builder().transferUtilityOptions(transferUtilityOptions).s3Client(s3Client).context(AppConfigHelper.getContext()).build();
+        final TransferObserver uploadObserver = transferUtility.upload(AWSConstants.S3_BUCKET_NAME.toString(), key, fileToUpload);
+
+//        AppExecutors2.getInstance().diskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                ListMultipartUploadsRequest allMultpartUploadsRequest =
+//                        new ListMultipartUploadsRequest(AWSConstants.S3_BUCKET_NAME.toString());
+//                MultipartUploadListing multipartUploadListing =
+//                        s3Client.listMultipartUploads(allMultpartUploadsRequest);
+//
+//                Log.d(TAG, "Multipart going on - "+multipartUploadListing.getBucketName()+" "+multipartUploadListing.getKeyMarker()+" "+multipartUploadListing.getDelimiter());
+//
+//            }
+//        });
 
         uploadObserver.setTransferListener(new TransferListener() {
 
@@ -634,6 +698,9 @@ public class LoadMediaWorker extends ListenableWorker {
                 if (TransferState.COMPLETED == state) {
                     //all callbacks are called on main thread
                     Log.d(TAG, "onStateChanged: success - finished upload");
+                    //now cancel the task - not sure - but sometimes it runs again
+                    //so just cancelling it
+                    transferUtility.cancel(uploadObserver.getId());
                     //fileToUpload.delete();
                     //go back to background thread
                     AppExecutors2.getInstance().diskIO().execute(new Runnable() {
@@ -644,6 +711,8 @@ public class LoadMediaWorker extends ListenableWorker {
                     });
 
                 } else if (TransferState.FAILED == state) {
+                    //since it failed, cancel the task
+                    transferUtility.cancel(uploadObserver.getId());
                     //file.delete();
                     Log.d(TAG, "state failed ");
                     AppExecutors2.getInstance().diskIO().execute(new Runnable() {
@@ -674,6 +743,7 @@ public class LoadMediaWorker extends ListenableWorker {
             @Override
             public void onError(int id, final Exception ex) {
                 ex.printStackTrace();
+                Log.d(TAG, "onError: 687"+ex.getMessage());
                 AppExecutors2.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -991,7 +1061,22 @@ public class LoadMediaWorker extends ListenableWorker {
 
     }
 
+    private void updateRemoteAndLocalForFailedMessageUpload(String userId, String groupId, String messageId) {
+        Call<ResponseBody> call = AppConfigHelper.getBackendApiServiceProvider().updateMessage(userId, groupId, messageId, "attachmentUploadFailed");
+        try {
+            ResponseBody responseBody = call.execute().body();
+            if (responseBody == null) {
+                throw new Exception("Response is null");
+            }
 
+            DataGroupMessagesRepository dataGroupMessagesRepository = DataGroupMessagesRepository.getInstance();
+            dataGroupMessagesRepository.updateMessageAttachmentUploadFailed(messageId, false);
+
+        } catch (Exception e) { //retrofit failure also comes here
+            Log.d(TAG, "updateRemoteAndLocalForFailedMessageUpload: exception - " + e.getMessage());
+        }
+
+    }
 
 
 }

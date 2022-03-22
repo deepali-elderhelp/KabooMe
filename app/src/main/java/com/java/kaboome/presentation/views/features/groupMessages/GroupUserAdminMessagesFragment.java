@@ -71,7 +71,7 @@ import com.java.kaboome.presentation.views.features.groupMessages.adapter.Welcom
 import com.java.kaboome.presentation.views.features.groupMessages.viewmodel.AdminMessagesViewModel;
 import com.java.kaboome.presentation.views.widgets.MessageInput;
 import com.java.kaboome.presentation.views.widgets.MessagesList;
-import com.paginate.Paginate;
+import com.java.kaboome.presentation.views.features.groupMessages.paginate.Paginate;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,6 +123,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         private TextView margueeTextView;
         private MenuItem groupChatLit;
         private TextView numberOfNewMessages;
+        private Paginate paginate;
 
 
     public GroupUserAdminMessagesFragment() {
@@ -358,62 +359,17 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 //                            Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(thumbnail, 20, 20, true);
 //                            thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
 //                        }
-                        if(fileMime.contains("image") || fileMime.contains("video")) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                try {
-                                    Bitmap thumbnail = getActivity().getContentResolver().loadThumbnail(Uri.parse(attachmentURI), new Size(20,20), null);
+                            if(fileMime.contains("image") || fileMime.contains("video")) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    Bitmap thumbnail = ImagesUtilHelper.getThumbnailBitmap(getContext(), attachmentURI, attachmentPath, fileMime);
                                     thumbnailString = GeneralHelper.bitmapToBase64(thumbnail);
-                                } catch (IOException e) {
-                                    Log.d(TAG, "exception on thumbnail; generation - "+e.getMessage());
-                                    e.printStackTrace();
                                 }
-
-                            } else {
-                                Bitmap thumbnail = FileUtils.getThumbnail(getContext(), Uri.parse(attachmentURI), fileMime);
-                                Bitmap exifedBitmap = thumbnail;
-                                if(thumbnail == null){
-                                    //somehow bitmap is null, put default
-                                    Drawable d = getResources().getDrawable(R.drawable.attachment_default);
-                                    thumbnail = ImagesUtilHelper.drawableToBitmap(d);
+                                else {
+                                    Bitmap thumbnail = ImagesUtilHelper.getThumbnailBitmap(getContext(), attachmentURI, attachmentPath, fileMime);
+                                    Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(thumbnail, 20, 20, true);
+                                    thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                                 }
-                                try {
-                                    //sometimes for the older versions, the exif is coming off by 90 degrees
-                                    //hence rotating it
-                                    int angle = 0;
-                                    ExifInterface oldExif = new ExifInterface(attachmentPath);
-                                    int orientation = oldExif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                                            ExifInterface.ORIENTATION_UNDEFINED);
-                                    switch(orientation) {
-                                        case ExifInterface.ORIENTATION_ROTATE_90:
-                                            angle = 90;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_180:
-                                            angle = 180;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_ROTATE_270:
-                                            angle = 270;
-                                            break;
-
-                                        case ExifInterface.ORIENTATION_NORMAL:
-                                        default:
-                                            angle=0;
-                                    }
-
-                                    Matrix matrix = new Matrix();
-                                    matrix.postRotate(angle);
-                                    exifedBitmap = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(),
-                                            matrix, true);
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                Bitmap evenSmallerBitmap = Bitmap.createScaledBitmap(exifedBitmap, 20, 20, true);
-                                thumbnailString = GeneralHelper.bitmapToBase64(evenSmallerBitmap);
                             }
-                        }
-
                         messagesViewModel.addToMessageAttachmentMap(messageId, new String[]{attachmentPath, attachmentURI});
 
                         messagesViewModel.publishIoTMessage(messageId, String.valueOf(caption), sentAt, attachment.isAttachmentPriority() ? 1 : 2, true, false, true, fileExtension, fileMime, false, thumbnailString, attachmentURI, MessageGroupsConstants.USER_ADMIN_MESSAGES, AppConfigHelper.getUserId(), new PublishMessageCallback() {
@@ -595,15 +551,23 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
             messagesViewModel.getServerMessages().observe(this, new Observer<DomainResource<List<DomainMessage>>>() {
                 @Override
                 public void onChanged(@Nullable DomainResource<List<DomainMessage>> listDomainResource) {
-                    Log.d(TAG, "onChanged: Data came back, but not needed really");
+                    if(listDomainResource != null && listDomainResource.data != null){
+                        paginate.addToTotalCurrentCount(listDomainResource.data.size());
+//                    Log.d(TAG, "Status - "+listDomainResource.status+" and size "+listDomainResource.data.size());
+                    }
                 }
             });
 
 
-            Paginate.with(recyclerView, messageListPaginateCallback)
-                    .setLoadingTriggerThreshold(2)
-                    .addLoadingListItem(false)
-                    .build();
+//            Paginate.with(recyclerView, messageListPaginateCallback)
+//                    .setLoadingTriggerThreshold(2)
+//                    .addLoadingListItem(false)
+//                    .build();
+
+//            Paginate.with(recyclerView, messageListPaginateCallback)
+//                    .setLoadingTriggerThreshold(2)
+//                    .setLimit(30)
+//                    .build();
 
             messagesViewModel.getConnectionEstablished().observe(this, new Observer<Boolean>() {
                 @Override
@@ -1048,7 +1012,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
             }
             else if(requestCode == REQUEST_READ_EXTERNAL_STORAGE){
                 Log.d(TAG, "onPermissionsGranted: read external storage permission granted");
-                messagesViewModel.loadServerMessages();
+//                messagesViewModel.loadServerMessages();
 //                messagesViewModel.startOnlyGroupUnreadMessages();
             }
 
@@ -1240,6 +1204,12 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         public void onLoginSuccess() {
             Log.d(TAG, "onLoginSuccess: ");
 
+            //this should result in a call to loadServerMessages
+            paginate = Paginate.with(recyclerView, messageListPaginateCallback)
+                    .setLoadingTriggerThreshold(2)
+                    .setLimit(30)
+                    .build();
+
             /**
              * sometimes when the user is on messages for a long time, the cognito session is expired
              * when user comes back, onResume() happens which starts the process of getting credentials
@@ -1248,7 +1218,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
              * so, we need to make the IoT connection only after login is successful
              */
 //            IoTHelper.getInstance().connectToIoT(group.getGroupId(), false); //this will trigger onChanged() for connectionEstablished
-            IoTHelper.getInstance().connectToIoT(messagesViewModel.getTopicName(), false); //this will trigger onChanged() for connectionEstablished
+            IoTHelper.getInstance().connectToIoT(false); //this will trigger onChanged() for connectionEstablished
 
 
             if(alreadyThere)
@@ -1257,7 +1227,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
 //            initRecyclerView();
 //            subscribeObservers();
 
-            messagesViewModel.loadServerMessages();
+//            messagesViewModel.loadServerMessages();
             messagesViewModel.startOnlyGroupUnreadMessages();
 
 
@@ -1274,7 +1244,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
         initRecyclerView();
         subscribeObservers();
 
-        messagesViewModel.loadServerMessages();
+//        messagesViewModel.loadServerMessages();
         messagesViewModel.startOnlyGroupUnreadMessages();
 
     }
@@ -1306,7 +1276,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                 Log.d(TAG, "onNetworkOn: going to recreate on thread - "+Thread.currentThread().getName());
                 //so connection was lost, try connecting again
 //                IoTHelper.getInstance().connectToIoT(group.getGroupId(), true);
-                IoTHelper.getInstance().connectToIoT(messagesViewModel.getTopicName(), true);
+                IoTHelper.getInstance().connectToIoT(true);
             }
             //can't do this here, there could be a case that this method gets called
             //when the onCreateView() has not finished. So, all the widgets are null right now.

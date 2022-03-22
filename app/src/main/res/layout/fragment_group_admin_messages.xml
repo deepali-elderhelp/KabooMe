@@ -151,7 +151,7 @@
                     android:text="@string/normal"
                     android:textAllCaps="false"
                     android:layout_weight="0.2"
-
+                    android:enabled="false"
                     />
 
                 <androidx.appcompat.widget.AppCompatButton

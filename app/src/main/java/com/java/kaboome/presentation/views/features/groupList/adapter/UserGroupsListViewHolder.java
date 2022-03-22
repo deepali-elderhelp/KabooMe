@@ -162,14 +162,14 @@ public class UserGroupsListViewHolder extends RecyclerView.ViewHolder {
             privacyImage.setVisibility(View.VISIBLE);
         }
         else{
-            privacyImage.setVisibility(View.INVISIBLE);
+            privacyImage.setVisibility(View.GONE);
         }
 
         if(group.getUnicastGroup() != null && group.getUnicastGroup()){
             unicastImage.setVisibility(View.VISIBLE);
         }
         else{
-            unicastImage.setVisibility(View.INVISIBLE);
+            unicastImage.setVisibility(View.GONE);
         }
 
         if(group.getUnreadCount() <= 0){

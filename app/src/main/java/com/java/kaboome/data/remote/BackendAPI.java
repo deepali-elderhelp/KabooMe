@@ -53,6 +53,8 @@ public interface BackendAPI {
 
     String deleteMessage = "users/{userid}/groups/{groupid}/messages/{messageid}";
 
+    String updateMessage = "users/{userid}/groups/{groupid}/messages/{messageid}";
+
     String getUserGroupConversations = "users/{userid}/groups/{groupid}/conversations";
 
     String createUserGroupConversations = "users/{userid}/groups/{groupid}/conversations";

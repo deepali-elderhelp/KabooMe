@@ -11,6 +11,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.work.Configuration;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,6 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -84,6 +88,7 @@ public class AppConfigHelper extends Application {
         createNotificationChannels();
         getExistingDeviceToken();
 
+        Log.d(TAG, "onCreate: ");
 
     }
 

@@ -431,6 +431,10 @@ public class BackendAPIInterfaceProvider {
 //       return apiInterface.sendHelpFeedbackMessage(userId, helpFeedbackRequest.getMessageText());
     }
 
+    public  Call<ResponseBody> updateMessage(String userId,String groupId,String messageId, String action){
+        return apiInterface.updateMessage(userId, groupId, messageId, action);
+    }
+
 //    public Call<ResponseBody> sendHelpFeedbackMessage(String userId, JsonObject jsonObject){
 //        return apiInterface.sendHelpFeedbackMessage(userId, jsonObject);
 ////       return apiInterface.sendHelpFeedbackMessage(userId, helpFeedbackRequest.getMessageText());

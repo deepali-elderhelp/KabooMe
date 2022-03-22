@@ -300,6 +300,7 @@ public class JoinInvitedGroupDialog extends DialogFragment {
             userGroupModel.setAdminsCacheClearTS(currentDate);
             userGroupModel.setIsAdmin("false");
 
+
             if(imageChanged){//user selected a new image, so current date is the timestamp
 //                userGroupModel.setImageUpdateTimestamp((new Date()).getTime());
                 userGroupModel.setUserImageUpdateTimestamp((new Date()).getTime());

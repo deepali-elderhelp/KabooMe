@@ -1,30 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.views.features.groupMessages.viewers.ImageViewerFragment"
-    android:id="@+id/image_viewer_frame">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<!--    <ImageView-->
-<!--        android:id="@+id/image_viewer_image"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        />-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_image_viewer_vertical_end"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85"/>
+
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/image_viewer_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_image_viewer_vertical_end"
+
         />
 
     <TextView
         android:id="@+id/image_viewer_caption"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
+        app:layout_constraintTop_toTopOf="@id/guideline_image_viewer_vertical_end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text=""
         android:layout_gravity="bottom"
         android:gravity="center"
-        android:layout_marginBottom="20dp"
-        style="@style/MediumText"/>
+        style="@style/MediumText"
+        android:textColor="@color/grey_600"
+        />
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    tools:context=".presentation.views.features.groupMessages.viewers.ImageViewerFragment"-->
+<!--    android:id="@+id/image_viewer_frame">-->
+
+<!--&lt;!&ndash;    <ImageView&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/image_viewer_image"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        />&ndash;&gt;-->
+<!--    <com.github.chrisbanes.photoview.PhotoView-->
+<!--        android:id="@+id/image_viewer_image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/image_viewer_caption"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text=""-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        style="@style/MediumText"-->
+<!--        android:textColor="@color/black"/>-->
+
+<!--</FrameLayout>-->

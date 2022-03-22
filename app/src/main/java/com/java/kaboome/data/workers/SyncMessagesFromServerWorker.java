@@ -1,13 +1,21 @@
 package com.java.kaboome.data.workers;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.java.kaboome.R;
 import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.data.entities.User;
 import com.java.kaboome.data.executors.AppExecutors2;
@@ -27,17 +35,23 @@ import com.java.kaboome.domain.usecases.GetGroupConversationFromCacheSingleUseCa
 import com.java.kaboome.domain.usecases.GetLastOnlyGroupMessageInCacheSingleUseCase;
 import com.java.kaboome.helpers.AppConfigHelper;
 import com.java.kaboome.helpers.NetworkHelper;
+import com.java.kaboome.presentation.entities.IoTMessage;
+import com.java.kaboome.presentation.entities.NotificationsModel;
+import com.java.kaboome.presentation.views.features.home.HomeActivity;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Call;
 
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_FAILURE;
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_RESPONSE;
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_RESULT;
 import static com.java.kaboome.data.constants.WorkerConstants.WORK_SUCCESS;
+import static com.java.kaboome.helpers.AppConfigHelper.CHANNEL_ID;
 
 /**
  * This method launches a worker or replaces if one already exists which gets all the new messages
@@ -179,6 +193,17 @@ public class SyncMessagesFromServerWorker extends Worker {
             Message[] messagesArray = new Message[messagesList.size()];
             MessageDao messageDao = AppConfigHelper.getKabooMeDatabaseInstance().getMessageDao();
             messageDao.insertMessages((Message[]) (messagesList.toArray(messagesArray)));
+
+            //see if notification needs to be built
+            if(ProcessLifecycleOwner.get().getLifecycle().getCurrentState() == Lifecycle.State.CREATED){
+                //app is in the background
+                Log.d(TAG, "handleNotification: App is in the background, building notification");
+                buildNotificationForUser(AppConfigHelper.getContext(), messagesList);
+            }
+            if(ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+                //app is in the foreground
+                Log.d(TAG, "handleNotification: App is in foreground, not building notification");
+            }
         }
     }
 
@@ -216,4 +241,135 @@ public class SyncMessagesFromServerWorker extends Worker {
 
 
     }
+
+    private void buildNotificationForUser(Context context, List<Message> messages) {
+        for(Message message: messages){
+            buildNotificationForUser(context, message);
+        }
+
+    }
+
+    private void buildNotificationForUser(Context context, Message message) {
+
+        Notification summaryNotification;
+
+        //form a notification
+        Log.d(TAG, "buildNotificationForUser");
+
+        if(message.getDeleted()){
+            //this message is freshly deleted - we do not want to show a notification for that
+            return;
+        }
+
+        int notificationIdToUse = AppConfigHelper.getNotificationId();
+
+        //this pending intent later could be more specific to a place inside the app
+        Intent activityIntent = new Intent(context, HomeActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context,
+                0, activityIntent, 0);
+
+        String contentText = message.getMessageText();
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        Notification notification1 = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_notification_96)
+//                .setSmallIcon(R.drawable.ic_launcher_new)
+                .setContentTitle(message.getAlias())
+                .setContentText(contentText)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(contentIntent)
+                .setGroup("kaboome_group")
+                .setAutoCancel(true)
+                .build();
+
+        //if the message already exists, which can happen in the case of attachment
+        //attachment messages are published twice, so the notification shows up twice
+        //we need to update in that case, not add new
+
+        Set<NotificationsModel> olderNotifications = AppConfigHelper.getPersistedNotificationModels();
+        Log.d(TAG, "Beginning count - "+olderNotifications.size());
+        boolean notificationExists = false;
+        for(NotificationsModel notificationsModel: olderNotifications){
+            Log.d(TAG, "Existing - "+notificationsModel.getMessageId());
+            //notification is already there, we need to use the same notification id, not add new one
+            if(notificationsModel.getMessageId().equals(message.getMessageId())){
+                //it is same, get the notificationIdToUse
+                Log.d(TAG, "Notification already exists");
+                notificationExists = true;
+                notificationIdToUse = notificationsModel.getNotificationId();
+            }
+
+        }
+        if(!notificationExists){
+            Log.d(TAG, "This was a new notification");
+            //now persist this one too
+            NotificationsModel newNotification = new NotificationsModel(notificationIdToUse, message.getMessageId(), message.getAlias());
+            olderNotifications.add(newNotification);
+            AppConfigHelper.persistNotification(olderNotifications);
+            Log.d(TAG, "Now all - "+olderNotifications.size());
+        }
+
+
+        notificationManager.notify(notificationIdToUse, notification1);
+
+
+
+        if(olderNotifications == null || olderNotifications.isEmpty()){
+            ShortcutBadger.applyCount(context, 1);
+            summaryNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_notification_96)
+//                    .setSmallIcon(R.drawable.ic_launcher_new)
+                    .setStyle(new NotificationCompat.InboxStyle()
+                            .addLine(message.getAlias() + " " + contentText)
+                            .setBigContentTitle("1 new message")
+                            .setSummaryText("1 new message"))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setGroup("kaboome_group")
+                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                    .setGroupSummary(true)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true)
+//                    .setNumber(1)
+                    .build();
+        }
+        else{
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            int numberOfOldMessages = olderNotifications.size();
+            ShortcutBadger.applyCount(context, numberOfOldMessages+1);
+            inboxStyle.setBigContentTitle((numberOfOldMessages+1) + " new messages");
+//            Iterator<String> notificationStringIterator = olderNotifications.iterator();
+//            while(notificationStringIterator.hasNext()){
+//                NotificationsModel notificationsBean = new Gson().fromJson(notificationStringIterator.next(), NotificationsModel.class);
+//                inboxStyle.addLine(notificationsBean.getBigContentTitle());
+//            }
+            for(NotificationsModel notificationsModel: olderNotifications){
+                inboxStyle.addLine(notificationsModel.getBigContentTitle());
+            }
+
+            //now add the current one
+            inboxStyle.addLine(message.getAlias());
+            inboxStyle.setSummaryText((numberOfOldMessages+1) + " new messages");
+            summaryNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_notification_96)
+//                    .setSmallIcon(R.drawable.ic_launcher_new)
+                    .setStyle(inboxStyle)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setGroup("kaboome_group")
+                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                    .setGroupSummary(true)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true)
+//                    .setNumber(numberOfOldMessages+1)
+                    .setNumber(0)
+                    .build();
+
+        }
+
+        notificationManager.notify(0, summaryNotification); //summary notification always uses 0
+
+
+
+    }
+
 }

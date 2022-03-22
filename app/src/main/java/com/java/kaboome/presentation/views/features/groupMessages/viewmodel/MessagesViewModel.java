@@ -93,6 +93,8 @@ public class MessagesViewModel extends ViewModel {
 
     private HashMap<String, String[]> messageAttachments = new HashMap<>();
 
+    private int lastRecycleViewPosition = -1;
+
     public SingleMediatorLiveEvent<DomainUpdateResource> getUploadMessageAttachment() {
         return uploadMessageAttachment;
     }
@@ -119,6 +121,7 @@ public class MessagesViewModel extends ViewModel {
     private boolean hasLoadedAll = false;
     private boolean cancelRequest;
     private Long lastAccessedTime = (new Date()).getTime();
+    private int limit = 30;
 
     public MessagesViewModel(UserGroupModel group) {
 
@@ -131,9 +134,10 @@ public class MessagesViewModel extends ViewModel {
         addNewMessageUseCase = new AddNewMessageUseCase(messagesListRepository);
 //        deleteMessageUseCase = new DeleteMessageUseCase(messagesListRepository);
         deleteLocalMessageUseCase = new DeleteLocalMessageUseCase(messagesListRepository);
+        int pageSize = 15;
         PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
-                .setPageSize(15).build();
+                .setPageSize(pageSize).build();
 
 //        dataSourceFactory = AppConfigHelper.getKabooMeDatabaseInstance().getMessageDao().getMessagesForGroup(this.group.getGroupId());
         dataSourceFactory = AppConfigHelper.getKabooMeDatabaseInstance().getMessageDao().getGroupMessagesForGroup(this.group.getGroupId());
@@ -179,7 +183,7 @@ public class MessagesViewModel extends ViewModel {
 
         Log.d(TAG, "loadServerMessages: with last accessed - "+lastAccessedTime);
 
-        final int limit = 15;
+//        final int limit = 10;
         if(lastAccessedTime == null){
             lastAccessedTime = (new Date()).getTime();
         }
@@ -207,20 +211,21 @@ public class MessagesViewModel extends ViewModel {
                         if (listDomainResource.status == DomainResource.Status.SUCCESS) {
 
                             if (listDomainResource.data != null) {
+                                Log.d(TAG, "Messages Received  - "+listDomainResource.data.size());
                                 if(listDomainResource.data.size() == 0){
                                     //there were only 15 records
                                     isLoading = false;
                                     hasLoadedAll = true;
                                     Log.d(TAG, "no more messages in the server...");
                                 }
-                                if (listDomainResource.data.size() > 0 && listDomainResource.data.size() < 15) {
+                                if (listDomainResource.data.size() > 0 && listDomainResource.data.size() < limit) {
                                     Log.d(TAG, "no more messages in the server...");
                                     isLoading = false;
                                     hasLoadedAll = true;
                                     lastAccessedTime = listDomainResource.data.get(listDomainResource.data.size()-1).getSentAt();
                                     Log.d(TAG, "onChanged: new last accessed becomes "+lastAccessedTime);
                                 }
-                                if(listDomainResource.data.size() == 15){
+                                if(listDomainResource.data.size() >= limit){
                                     Log.d(TAG, "There are more messages in the server...");
                                     isLoading = false;
                                     hasLoadedAll = false;
@@ -230,6 +235,7 @@ public class MessagesViewModel extends ViewModel {
                                 }
 
                             }
+                            serverMessages.setValue(listDomainResource);
                             serverMessages.removeSource(messagesSource);
                         } else if (listDomainResource.status == DomainResource.Status.LOADING) {
                             isLoading = true;
@@ -418,6 +424,7 @@ public class MessagesViewModel extends ViewModel {
 ////                message.setAttachmentUri(attachmentURI);
 //                message.setAttachmentLoadingGoingOn(true);
 //                message.setDeleted(false);
+                Log.d(TAG, "calling for file upload");
                 startUploadingAttachment(ioTMessage.getMessageId(), null);
             }
 
@@ -543,9 +550,13 @@ public class MessagesViewModel extends ViewModel {
                             Log.d(TAG, "Message attachment upload failed due to "+e.getMessage());
                         }
                     }
-                }, AppExecutors2.getInstance().diskIO());
+//                }, AppExecutors2.getInstance().diskIO());
+                }, AppExecutors2.getInstance().getServiceDiskIO());
             } catch (Exception e) {
                 Log.d(TAG, "Message attachment upload failed due to - "+e.getMessage());
+                //so message attachment upload failed -  there should be an update to the message
+                //with saying that uploaded is false but attachmentLoadingGoingOn is false
+                //so that the UI knows that the progress bar should not be there
             }
         }
 
@@ -760,6 +771,14 @@ public class MessagesViewModel extends ViewModel {
             progress = 0;
         }
         updateMessageLoadingProgressUseCase.execute(UpdateMessageLoadingProgressUseCase.Params.messageLoadingProgToBeUpdated(messageId, progress));
+    }
+
+    public void storeRecyclerViewPosition(int firstVisiblePosition) {
+        this.lastRecycleViewPosition = firstVisiblePosition;
+    }
+
+    public int getLastRecycleViewPosition() {
+        return lastRecycleViewPosition;
     }
 
 //    public void handleUploadOrDownloadUpdate(DomainResource<HashMap<String, Object>> domainResource){

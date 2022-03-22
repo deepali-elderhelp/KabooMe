@@ -155,6 +155,9 @@ public interface MessageDao {
     @Query("UPDATE messages SET hasAttachment = :has_attachments, attachmentUploaded = :attachment_uploaded,  attachmentLoadingGoingOn = :isLoading, attachmentMime = :mime_type, attachmentUri = :attachment_uri where messageId = :message_id")
     void updateMessageAttachmentData(String message_id, boolean has_attachments, boolean attachment_uploaded, boolean isLoading, String mime_type, String attachment_uri);
 
+    @Query("UPDATE messages SET attachmentLoadingGoingOn = :attachment_loading_going_on where messageId = :message_id")
+    void updateMessageAttachmentUploadStatus(String message_id, boolean attachment_loading_going_on);
+
     @Query("UPDATE messages SET loadingProgress = :loading_progress where messageId = :message_id")
     void updateMessageLoadingProgress(String message_id, int loading_progress);
 

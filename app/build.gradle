@@ -6,8 +6,8 @@ android {
         applicationId "com.java.kaboome"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 9
-        versionName "9.0"
+        versionCode 16
+        versionName "16.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -27,7 +27,7 @@ android {
         release {
            // minifyEnabled true
            // shrinkResources true
-            debuggable true //for now - to be removed in production version
+            debuggable false //for now - to be removed in production version
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -110,7 +110,8 @@ dependencies {
 //    implementation 'androidx.concurrent:concurrent-futures:1.1.0'
 
     //recycler-view custom paging library
-    implementation 'com.github.markomilos:paginate:0.5.1'
+//    implementation 'com.github.markomilos:paginate:0.5.1'
+//    implementation 'com.github.markomilos:paginate:1.0.0'
 
     implementation "com.google.android:flexbox:$flexboxVersion"
     implementation 'androidx.navigation:navigation-fragment:2.3.0-alpha02'
