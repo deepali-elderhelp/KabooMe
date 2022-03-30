@@ -80,10 +80,11 @@ public class MessageListViewAdapter extends PagedListAdapter<Message, RecyclerVi
         return mDiffer.getItemCount();
     }
 
+
     @Override
-    public void onCurrentListChanged(PagedList<Message> currentList) {
+    public void onCurrentListChanged(PagedList<Message> previousList, PagedList<Message> currentList) {
         Log.d(TAG, "onCurrentListChanged: ");
-        super.onCurrentListChanged(currentList);
+        super.onCurrentListChanged(previousList, currentList);
     }
 
     public void submitList(final PagedList<Message> pagedList, int indexToShowNewMessageHeaderAt) {
@@ -128,8 +129,6 @@ public class MessageListViewAdapter extends PagedListAdapter<Message, RecyclerVi
         userId = AppConfigHelper.getUserId();
         this.context = context;
 
-//        this.exoPlayer = exoPlayer;
-//        this.dataSourceFactory = dataSourceFactory;
     }
 
 
@@ -160,9 +159,12 @@ public class MessageListViewAdapter extends PagedListAdapter<Message, RecyclerVi
         this.requestManager = requestManager;
     }
 
-
-
-
+   public Message getItemAtIndex(int index){
+        if(mDiffer.getCurrentList() != null){
+            return mDiffer.getCurrentList().get(index);
+        }
+        return null;
+   }
 
     // Determines the appropriate ViewType according to the sender of the message.
     @Override

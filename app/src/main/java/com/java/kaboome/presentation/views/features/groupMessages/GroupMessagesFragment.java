@@ -402,7 +402,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                     Attachment[] attachments = (Attachment[]) o;
 
                     //first check if there is a connection and it is well subscribed
-                    if(NetworkHelper.isOnline() && connectionEstablished){
+//                    if(NetworkHelper.isOnline() && connectionEstablished){
+                    if(NetworkHelper.isOnline() && isConnectionEstablished()){
                         //TODO: right now only one attachment, handle more than one
                         final Attachment attachment = attachments[0];
                         Log.d(TAG, "Attachment details - " + attachment.getAttachmentURI());
@@ -588,6 +589,7 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         if(messagesViewModel.getLastRecycleViewPosition() != -1) {
             ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPosition(messagesViewModel.getLastRecycleViewPosition());
         }
+
 //        messagesViewModel.storeRecyclerViewPosition(-1); //reset
 //        messagesViewModel.updateLastAccess();
 
@@ -671,7 +673,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
             @Override
             public void onChanged(@Nullable DomainResource<List<DomainMessage>> listDomainResource) {
                 if(listDomainResource != null && listDomainResource.data != null){
-                    paginate.addToTotalCurrentCount(listDomainResource.data.size());
+//                    paginate.addToTotalCurrentCount(listDomainResource.data.size());
+                    paginate.setLastSentAt(messagesViewModel.getLastAccessedTime());
 //                    Log.d(TAG, "Status - "+listDomainResource.status+" and size "+listDomainResource.data.size());
                 }
             }
@@ -718,7 +721,13 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                 if(message != null){
                     Log.d(TAG, "New message received - "+message);
                     if(!message.getDeleted()){
-                        if(!message.getSentBy().equals(AppConfigHelper.getUserId())) {
+                        if(!message.getSentBy().equals(AppConfigHelper.getUserId()) &&
+                                (!messagesViewModel.doesMessageExist(message.getMessageId()))) {
+//                            TODO: Also check if the message is already there by ID
+//                            TODO: because when the attachment arrival comes again, it shows 2 messages for 1
+//                            TODO: because the publishing happens again
+
+
                             newMessagesCount++;
                         }
                     }
@@ -825,7 +834,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                     super.onItemRangeInserted(positionStart, itemCount);
 
                 int firstVisiblePosition = recyclerView.getLayoutManager().findFirstVisibleItemPosition();
-                if(positionStart == 0 && firstVisiblePosition <= 1 && messagesViewModel.getLastRecycleViewPosition() == -1) {  //first visible item 0 or 1
+                Log.d(TAG, "onItemRangeInserted: firstVisiblePosition "+firstVisiblePosition+" positionStart "+positionStart+" getLastRecycleViewPosition() -  "+messagesViewModel.getLastRecycleViewPosition());
+                if(positionStart == 0 && firstVisiblePosition <= 1 && ((messagesViewModel.getLastRecycleViewPosition() == -1) || (messagesViewModel.getLastRecycleViewPosition() == 0))) {  //first visible item 0 or 1
                     recyclerView.smoothScrollToPosition(0);
                 }
 
@@ -873,12 +883,12 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
                 int currentVisiblePosition = GroupMessagesFragment.this.recyclerView.getLayoutManager().findFirstVisibleItemPosition();
                 messagesViewModel.storeRecyclerViewPosition(currentVisiblePosition);
 //                Log.d(TAG, "onScrolled: dx - "+dx+" dy "+dy);
-//                userScrolled = true;
+                userScrolled = true;
                 if(newMessagesFlashIcon != null){
                     if(!recyclerView.canScrollVertically(1)){
                         newMessagesFlashIcon.setVisibility(View.GONE);
                         newMessagesCount = 0;
-//                        userScrolled = false;
+                        userScrolled = false;
                     }
                     else{
                         newMessagesFlashIcon.setVisibility(VISIBLE);
@@ -926,7 +936,8 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
 //        firstLoad = false;
         //check if the connection is there
         //also check if subscription has happened
-        if(NetworkHelper.isOnline() && connectionEstablished){
+//        if(NetworkHelper.isOnline() && connectionEstablished){
+        if(NetworkHelper.isOnline() && isConnectionEstablished()){
             Log.d(TAG, "onSubmit: tried with online and connection");
             messagesViewModel.publishIoTMessage(String.valueOf(input), urgentChecked ? 1 : 2, new PublishMessageCallback() {
                 @Override
@@ -1591,6 +1602,14 @@ public class GroupMessagesFragment extends BaseFragment implements EasyPermissio
         args.putSerializable("message", message);
         navController.navigate(R.id.action_groupMessagesFragment_to_userImageDisplayFragment, args);
         return;
+    }
+
+    private boolean isConnectionEstablished(){
+        if(connectionEstablished == true)
+            return true;
+        if(IoTHelper.getInstance().getConnectionEstablished().getValue() == true)
+            return true;
+        return false;
     }
 
 

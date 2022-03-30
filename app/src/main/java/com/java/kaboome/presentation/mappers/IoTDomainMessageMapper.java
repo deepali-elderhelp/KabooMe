@@ -43,6 +43,7 @@ public class IoTDomainMessageMapper {
         domainMessage.setSentToUserRole(ioTMessage.getSentToUserRole());
         domainMessage.setSentToImageTS(ioTMessage.getSentToImageTS());
         domainMessage.setIsSentToAdmin(ioTMessage.getIsSentToAdmin());
+        domainMessage.setUnread(ioTMessage.getUnread());
 
         return domainMessage;
     }
@@ -81,6 +82,7 @@ public class IoTDomainMessageMapper {
         ioTMessage.setSentToUserRole(domainMessage.getSentToUserRole());
         ioTMessage.setSentToImageTS(domainMessage.getSentToImageTS());
         ioTMessage.setIsSentToAdmin(domainMessage.getIsSentToAdmin());
+        ioTMessage.setUnread(domainMessage.getUnread());
 
         return ioTMessage;
     }

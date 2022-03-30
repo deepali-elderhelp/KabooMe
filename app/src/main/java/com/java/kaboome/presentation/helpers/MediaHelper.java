@@ -86,12 +86,20 @@ public class MediaHelper {
         }
         else{
 
+            //TODO: Only Images folder - not the audio and media? like the newer versions
             if (pathToMedia != null) {
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.DATA, pathToMedia);
                 // .DATA is deprecated in API 29
                 imageUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                if(imageUri == null){
+                if(imageUri == null){ //this happens when you try to insert already existing uri in API level P and below
+//                    Uri uriExisting = FileUtils.getUri(new File(pathToMedia));
+//                    context.getContentResolver().update(uriExisting, values, null, null);
+//                    return uriExisting.toString();
+                    Uri returnUri = getUriFromPath(pathToMedia, context.getContentResolver());
+                    if(returnUri != null){
+                        return returnUri.toString();
+                    }
                     return null;
                 }
                 return imageUri.toString();
@@ -101,6 +109,40 @@ public class MediaHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Gets the MediaStore image ID of a given file on external storage
+     * @param filePath The path (on external storage) of the file to resolve the ID of
+     * @param contentResolver The content resolver to use to perform the query.
+     * @return the video ID as a long
+     */
+    private static Uri getUriFromPath(String filePath, ContentResolver contentResolver) {
+
+            long imageId;
+            Log.d(TAG,"Loading file " + filePath);
+
+            // This returns us content://media/external/videos/media (or something like that)
+            // I pass in "external" because that's the MediaStore's name for the external
+            // storage on my device (the other possibility is "internal")
+            Uri imageUri = MediaStore.Images.Media.getContentUri("external");
+
+            Log.d(TAG,"imageUri = " + imageUri.toString());
+
+            String[] projection = {MediaStore.Images.ImageColumns._ID};
+
+            // TODO This will break if we have no matching item in the MediaStore.
+            Cursor cursor = contentResolver.query(imageUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(projection[0]);
+            imageId = cursor.getLong(columnIndex);
+
+            Log.d(TAG,"Image ID is " + imageId);
+            Uri uri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(imageId));
+            cursor.close();
+            return uri;
+
     }
 
     public static Uri getMediaImageUri(ContentResolver contentResolver, String displayName){
@@ -240,7 +282,7 @@ public class MediaHelper {
     public static String getGroupNameTrimmed(String originalGroupName){
 
         if(originalGroupName != null){
-            return originalGroupName.replaceAll("[^a-zA-Z]", "").replaceAll("\\s+","");
+            return originalGroupName.replaceAll("[^a-zA-Z0-9]", "").replaceAll("\\s+","");
         }
         return null;
     }

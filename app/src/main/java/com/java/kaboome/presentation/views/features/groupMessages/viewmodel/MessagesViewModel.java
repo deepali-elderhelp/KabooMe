@@ -41,6 +41,7 @@ import com.java.kaboome.domain.usecases.DeleteLocalMessageUseCase;
 //import com.java.kaboome.domain.usecases.DeleteMessageUseCase;
 import com.java.kaboome.domain.usecases.DownloadAttachmentUseCase;
 import com.java.kaboome.domain.usecases.GetLastOnlyGroupMessageInCacheSingleUseCase;
+import com.java.kaboome.domain.usecases.GetMessageSingleUseCase;
 import com.java.kaboome.domain.usecases.GetMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadGroupAllConversationMessagesUseCase;
 import com.java.kaboome.domain.usecases.GetNetUnreadGroupConversationMessagesUseCase;
@@ -177,6 +178,10 @@ public class MessagesViewModel extends ViewModel {
 
     private void removeMessageFromAttachmentMap(String messageId){
         messageAttachments.remove(messageId);
+    }
+
+    public Long getLastAccessedTime() {
+        return lastAccessedTime;
     }
 
     public void loadServerMessages(){
@@ -397,6 +402,7 @@ public class MessagesViewModel extends ViewModel {
         if(ioTMessage != null){
             Log.d(TAG, "handleMessageArrival: message came - "+ioTMessage);
             ioTMessage.setUploadedToServer(true); //message is coming back from server, so it is uploaded to server already
+            ioTMessage.setUnread(1);//message has been received in the chat window, hence not setting it as unread
             addNewMessageUseCase.execute(AddNewMessageUseCase.Params.newMessage(IoTDomainMessageMapper.transformFromIoTMessage(ioTMessage)));
 
             //if the message has attachment, and not uploaded, and sent by this user
@@ -779,6 +785,17 @@ public class MessagesViewModel extends ViewModel {
 
     public int getLastRecycleViewPosition() {
         return lastRecycleViewPosition;
+    }
+
+    public boolean doesMessageExist(String messageId){
+        GetMessageSingleUseCase getMessageUseCase = new GetMessageSingleUseCase(DataGroupMessagesRepository.getInstance());
+        DomainMessage message = getMessageUseCase.execute(GetMessageSingleUseCase.Params.messageToGet(messageId));
+        if(message == null){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 //    public void handleUploadOrDownloadUpdate(DomainResource<HashMap<String, Object>> domainResource){

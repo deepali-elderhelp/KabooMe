@@ -552,7 +552,7 @@ public class GroupUserAdminMessagesFragment extends BaseFragment implements Easy
                 @Override
                 public void onChanged(@Nullable DomainResource<List<DomainMessage>> listDomainResource) {
                     if(listDomainResource != null && listDomainResource.data != null){
-                        paginate.addToTotalCurrentCount(listDomainResource.data.size());
+//                        paginate.addToTotalCurrentCount(listDomainResource.data.size());
 //                    Log.d(TAG, "Status - "+listDomainResource.status+" and size "+listDomainResource.data.size());
                     }
                 }

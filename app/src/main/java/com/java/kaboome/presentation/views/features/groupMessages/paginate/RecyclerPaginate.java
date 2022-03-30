@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.java.kaboome.data.entities.Message;
 import com.java.kaboome.presentation.views.features.groupMessages.adapter.MessageListViewAdapter;
+
+import java.util.Date;
 
 public class RecyclerPaginate extends Paginate {
 
@@ -17,6 +20,7 @@ public class RecyclerPaginate extends Paginate {
     private final Paginate.Callbacks callbacks;
     private final int loadingTriggerThreshold;
     private int currentTotalItems = 0;
+    private Long lastSentAt = (new Date()).getTime();
     private int limit;
 
     public RecyclerPaginate(RecyclerView recyclerView, Paginate.Callbacks callbacks, int loadingTriggerThreshold, int limit) {
@@ -36,9 +40,17 @@ public class RecyclerPaginate extends Paginate {
         recyclerView.removeOnScrollListener(mOnScrollListener);
     }
 
-    @Override
-    public void addToTotalCurrentCount(int countToAdd) {
-        currentTotalItems+=countToAdd;
+//    @Override
+//    public void addToTotalCurrentCount(int countToAdd) {
+//        currentTotalItems+=countToAdd;
+//    }
+
+    public Long getLastSentAt() {
+        return lastSentAt;
+    }
+
+    public void setLastSentAt(Long lastSentAt) {
+        this.lastSentAt = lastSentAt;
     }
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -48,20 +60,45 @@ public class RecyclerPaginate extends Paginate {
         }
     };
 
+//    private void checkEndOffset() {
+//        int visibleItemCount = recyclerView.getChildCount();
+////        int totalItemCount = currentTotalItems;
+//        int totalItemCount = recyclerView.getAdapter().getItemCount();
+//        int firstVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+//
+//
+//        Log.d(TAG, "checkEndOffset: firstVisibleItemPosition "+firstVisibleItemPosition+" with id "+recyclerView.getAdapter().getItemId(firstVisibleItemPosition));
+//        // Check if end of the list is reached (counting threshold) or if there is no items at all
+//        if ((totalItemCount - visibleItemCount) <= (firstVisibleItemPosition + loadingTriggerThreshold) || totalItemCount == 0) {
+//            // Call load more only if loading is not currently in progress and if there is more items to load
+//            if (!callbacks.isLoading() && !callbacks.hasLoadedAllItems()) {
+//                callbacks.onLoadMore();
+////                currentTotalItems+=limit;
+//            }
+//        }
+//    }
+
     private void checkEndOffset() {
-        int visibleItemCount = recyclerView.getChildCount();
-//        int totalItemCount = currentTotalItems;
-        int totalItemCount = recyclerView.getAdapter().getItemCount();
-        int firstVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        Log.d(TAG, "checkEndOffset: firstVisibleItemPosition "+firstVisibleItemPosition+" with id "+recyclerView.getAdapter().getItemId(firstVisibleItemPosition));
-        // Check if end of the list is reached (counting threshold) or if there is no items at all
-        if ((totalItemCount - visibleItemCount) <= (firstVisibleItemPosition + loadingTriggerThreshold) || totalItemCount == 0) {
-            // Call load more only if loading is not currently in progress and if there is more items to load
+
+//        int firstVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+        int lastVisibleItemPosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+        //changing to last visible item position to avoid a bug where the last loaded ends between first and last visible item
+        //first is the down most in the view and last is the upmost in the recycler view for our purposes
+        Message currentMessage = null;
+        try {
+//            currentMessage = ((MessageListViewAdapter)recyclerView.getAdapter()).getItemAtIndex(firstVisibleItemPosition + 5);
+            currentMessage = ((MessageListViewAdapter)recyclerView.getAdapter()).getItemAtIndex(lastVisibleItemPosition + 5);
+//            Log.d(TAG, "checkEndOffset: firstVisibleItemPosition "+firstVisibleItemPosition+" - "+(currentMessage!=null?currentMessage.getSentAt() : "0"));
+//            Log.d(TAG, "checkEndOffset: firstVisibleItemPosition "+firstVisibleItemPosition+" - "+" LastVisibleItemPosition - "+lastVisibleItemPosition);
+        } catch (Exception exception) {
+            currentMessage = null;
+        }
+        if(currentMessage == null || (currentMessage.getSentAt() < lastSentAt)){
             if (!callbacks.isLoading() && !callbacks.hasLoadedAllItems()) {
                 callbacks.onLoadMore();
-//                currentTotalItems+=limit;
             }
         }
+
     }
 
 

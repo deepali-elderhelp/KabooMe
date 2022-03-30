@@ -64,6 +64,8 @@ public class IoTMessage {
 
     private Boolean isSentToAdmin;
 
+    private int unread = 0;
+
 
     public IoTMessage() {
     }
@@ -338,6 +340,14 @@ public class IoTMessage {
 
     public void setAttachmentUri(String attachmentUri) {
         this.attachmentUri = attachmentUri;
+    }
+
+    public int getUnread() {
+        return unread;
+    }
+
+    public void setUnread(int unread) {
+        this.unread = unread;
     }
 
     @Override

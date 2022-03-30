@@ -41,7 +41,9 @@ public abstract class Paginate {
      */
     abstract public void unbind();
 
-    abstract public void addToTotalCurrentCount(int countToAdd);
+//    abstract public void addToTotalCurrentCount(int countToAdd);
+    abstract public Long getLastSentAt();
+    abstract public void setLastSentAt(Long lastSentAt);
 
     /**
      * Create pagination functionality upon RecyclerView.
